@@ -1,3 +1,13 @@
+# Gradle & Java
+.gradle/
+build/
+bin/
+out/
+classes/
+run/
+logs/
+*.log
+
 # Python
 __pycache__/
 *.py[cod]
