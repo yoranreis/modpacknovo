@@ -4,7 +4,9 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"CaosArcanaMixin",
-		"PlayerRPGMixin"
+		"LivingEntityEquipmentMixin",
+		"PlayerRPGMixin",
+		"SlotRestrictionMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

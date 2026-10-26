@@ -8,10 +8,14 @@ import br.com.caosarcana.common.race.Race;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -148,7 +152,7 @@ public class CaosArcanaTests {
     public void testResetRacePreservesRPGData() {
         MockRPGPlayer player = new MockRPGPlayer(Race.ORC, 25);
         player.caosarcana$setMana(75.0f);
-        player.caosarcana$setMaxMana(120.0f);
+        player.caosarcana$setBaseMaxMana(120.0f);
         player.caosarcana$setSchoolLevel("pyromancy", 30);
 
         // Simula o comportamento do comando /caos resetrace
@@ -164,5 +168,59 @@ public class CaosArcanaTests {
         assertEquals(75.0f, player.caosarcana$getMana());
         assertEquals(120.0f, player.caosarcana$getMaxMana());
         assertEquals(30, player.caosarcana$getSchoolLevel("pyromancy"));
+    }
+
+    @Test
+    @DisplayName("Teste de derivação de Mana por Raça e Clamping Anti-Exploit")
+    public void testManaDerivationAndAntiExploitClamping() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.NONE, 1);
+        player.caosarcana$setBaseMaxMana(100.0f);
+        assertEquals(100.0f, player.caosarcana$getMaxMana());
+
+        // Ao selecionar Alto Elfo: ganha bônus racial de +50 de mana máxima
+        player.caosarcana$setRace(Race.ALTO_ELFO);
+        assertEquals(150.0f, player.caosarcana$getMaxMana(), "Alto Elfo deve possuir base + 50 de Mana Máxima");
+
+        // Jogador carrega 140 de mana
+        player.caosarcana$setMana(140.0f);
+        assertEquals(140.0f, player.caosarcana$getMana());
+
+        // Jogador reseta ou troca de raça para Orc (que não tem bônus de mana)
+        player.caosarcana$setRace(Race.ORC);
+        assertEquals(100.0f, player.caosarcana$getMaxMana(), "Orc deve possuir apenas a mana máxima base");
+
+        // A mana atual DEVE ser cortada (clamped) para 100, sem preservar 140 nem gerar mana grátis
+        assertEquals(100.0f, player.caosarcana$getMana(), "Mana atual deve ser clamped para o novo teto máximo");
+    }
+
+    @Test
+    @DisplayName("Teste de Custódia Segura e Devolução Parcial de Itens sem queda no chão")
+    public void testPendingDeliveriesSafeCustodyAndPartialDelivery() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.ORC, 5);
+        assertTrue(player.caosarcana$getPendingDeliveries().isEmpty());
+
+        ItemStack itemA = new ItemStack(Items.IRON_CHESTPLATE, 1);
+        ItemStack itemB = new ItemStack(Items.DIAMOND_HELMET, 1);
+
+        // Simula inventário cheio: itens são guardados na custódia do jogador
+        player.caosarcana$addPendingDelivery(itemA);
+        player.caosarcana$addPendingDelivery(itemB);
+
+        assertEquals(2, player.caosarcana$getPendingDeliveries().size());
+        assertEquals(Items.IRON_CHESTPLATE, player.caosarcana$getPendingDeliveries().get(0).getItem());
+        assertEquals(Items.DIAMOND_HELMET, player.caosarcana$getPendingDeliveries().get(1).getItem());
+
+        // Simula devolução parcial (1 slot liberado no inventário)
+        ItemStack delivered = player.caosarcana$getPendingDeliveries().remove(0);
+        assertEquals(Items.IRON_CHESTPLATE, delivered.getItem());
+
+        // Resta 1 item na custódia
+        assertEquals(1, player.caosarcana$getPendingDeliveries().size());
+        assertEquals(Items.DIAMOND_HELMET, player.caosarcana$getPendingDeliveries().get(0).getItem());
+
+        // Segundo slot liberado
+        ItemStack delivered2 = player.caosarcana$getPendingDeliveries().remove(0);
+        assertEquals(Items.DIAMOND_HELMET, delivered2.getItem());
+        assertTrue(player.caosarcana$getPendingDeliveries().isEmpty());
     }
 }

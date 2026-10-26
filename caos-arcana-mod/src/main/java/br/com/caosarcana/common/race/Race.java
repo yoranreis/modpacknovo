@@ -12,28 +12,32 @@ public enum Race {
         "Nenhuma",
         "Nenhuma",
         "Nenhuma",
-        "Nenhuma"),
+        "Nenhuma",
+        0.0f),
 
     ORC("orc", "Orc", "Mestres da forja e combate pesado. Corpo robusto e tenacidade incomparável.",
         "Referência Explícita (Decidido)",
         "Dano físico +2, Vida Máxima +4 (2 corações), Armadura Natural +2",
         "Velocidade de movimento -10%",
         "Nenhuma",
-        "Custo de mana +25%"),
+        "Custo de mana +25%",
+        0.0f),
 
     FELINO("felino", "Felino", "Povo ágil e silencioso. Perfeitos para exploração e combate acrobático.",
         "Referência Explícita (Decidido)",
         "Velocidade de movimento +15%",
         "Vida Máxima -2 (1 coração)",
         "Nenhuma",
-        "Redução de 50% de dano de queda, Salto aprimorado, Menor resistência contra dano pesado"),
+        "Redução de 50% de dano de queda, Salto aprimorado, Menor resistência contra dano pesado",
+        0.0f),
 
     ALTO_ELFO("alto_elfo", "Alto Elfo", "Linhagem mística ancestral com profundo domínio das artes arcanas.",
         "Proposta para Estudo (Pendente de Aprovação)",
         "Nenhuma",
         "Dano corpo a corpo -15%, Vida Máxima -2 (1 coração)",
-        "Mana Máxima +50 (campo NBT ativo, sistema mágico pendente)",
-        "Regeneração de mana +30%, Dano mágico +15%");
+        "Mana Máxima +50 (reserva ativa no NBT, consumo mágico pendente)",
+        "Regeneração de mana +30%, Dano mágico +15%",
+        50.0f);
 
     private static final UUID HEALTH_MOD_ID = UUID.fromString("c00a0001-ca05-4000-8000-000000000001");
     private static final UUID DAMAGE_MOD_ID = UUID.fromString("c00a0002-ca05-4000-8000-000000000002");
@@ -48,11 +52,13 @@ public enum Race {
     private final String activeDisadvantages;
     private final String partialTraits;
     private final String plannedTraits;
+    private final float manaBonus;
 
     Race(String id, String displayName, String description,
          String documentationStatus,
          String activeAdvantages, String activeDisadvantages,
-         String partialTraits, String plannedTraits) {
+         String partialTraits, String plannedTraits,
+         float manaBonus) {
         this.id = id;
         this.displayName = displayName;
         this.description = description;
@@ -61,6 +67,7 @@ public enum Race {
         this.activeDisadvantages = activeDisadvantages;
         this.partialTraits = partialTraits;
         this.plannedTraits = plannedTraits;
+        this.manaBonus = manaBonus;
     }
 
     public String getId() {
@@ -95,6 +102,10 @@ public enum Race {
         return plannedTraits;
     }
 
+    public float getManaBonus() {
+        return manaBonus;
+    }
+
     public static Race fromId(String id) {
         if (id == null) return NONE;
         for (Race race : values()) {
@@ -112,14 +123,14 @@ public enum Race {
         if (this == ORC) {
             applyModifier(player, Attributes.MAX_HEALTH, HEALTH_MOD_ID, "Orc Health", 4.0, AttributeModifier.Operation.ADDITION);
             applyModifier(player, Attributes.ATTACK_DAMAGE, DAMAGE_MOD_ID, "Orc Attack", 2.0, AttributeModifier.Operation.ADDITION);
-            applyModifier(player, Attributes.MOVEMENT_SPEED, SPEED_MOD_ID, "Orc Slowness", -0.10, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            applyModifier(player, Attributes.MOVEMENT_SPEED, SPEED_MOD_ID, "Orc Slowness", -0.10, AttributeModifier.Operation.MULTIPLY_BASE);
             applyModifier(player, Attributes.ARMOR, ARMOR_MOD_ID, "Orc Natural Armor", 2.0, AttributeModifier.Operation.ADDITION);
         } else if (this == FELINO) {
-            applyModifier(player, Attributes.MOVEMENT_SPEED, SPEED_MOD_ID, "Felino Agility", 0.15, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            applyModifier(player, Attributes.MOVEMENT_SPEED, SPEED_MOD_ID, "Felino Agility", 0.15, AttributeModifier.Operation.MULTIPLY_BASE);
             applyModifier(player, Attributes.MAX_HEALTH, HEALTH_MOD_ID, "Felino Frailty", -2.0, AttributeModifier.Operation.ADDITION);
         } else if (this == ALTO_ELFO) {
             applyModifier(player, Attributes.MAX_HEALTH, HEALTH_MOD_ID, "Elfo Fragility", -2.0, AttributeModifier.Operation.ADDITION);
-            applyModifier(player, Attributes.ATTACK_DAMAGE, DAMAGE_MOD_ID, "Elfo Weak Attack", -0.15, AttributeModifier.Operation.MULTIPLY_TOTAL);
+            applyModifier(player, Attributes.ATTACK_DAMAGE, DAMAGE_MOD_ID, "Elfo Weak Attack", -0.15, AttributeModifier.Operation.MULTIPLY_BASE);
         }
 
         if (player.getHealth() > player.getMaxHealth()) {
