@@ -15,6 +15,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 public class CaosArcanaCommands {
     public static void register() {
@@ -28,12 +29,22 @@ public class CaosArcanaCommands {
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
                     if (player instanceof IRPGPlayerData rpgPlayer) {
                         Race race = rpgPlayer.caosarcana$getRace();
+                        double speed = player.getAttributeValue(Attributes.MOVEMENT_SPEED);
+                        double maxHp = player.getMaxHealth();
+                        double attack = player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                        double armor = player.getAttributeValue(Attributes.ARMOR);
+
                         ctx.getSource().sendSuccess(() -> Component.literal("§6--- [Caos Arcana: Status do Personagem] ---"), false);
                         ctx.getSource().sendSuccess(() -> Component.literal("§eRaça Atual: §f" + race.getDisplayName() + " §7(" + race.getDocumentationStatus() + ")"), false);
                         ctx.getSource().sendSuccess(() -> Component.literal("§eNível Geral: §f" + rpgPlayer.caosarcana$getGeneralLevel()), false);
                         ctx.getSource().sendSuccess(() -> Component.literal("§bMana: §f" + String.format("%.0f/%.0f", rpgPlayer.caosarcana$getMana(), rpgPlayer.caosarcana$getMaxMana())), false);
-                        ctx.getSource().sendSuccess(() -> Component.literal("§aVantagens Ativas: §7" + race.getActiveAdvantages()), false);
-                        ctx.getSource().sendSuccess(() -> Component.literal("§cPenalidades Ativas: §7" + race.getActiveDisadvantages()), false);
+                        ctx.getSource().sendSuccess(() -> Component.literal("§aVantagens Declaradas: §7" + race.getActiveAdvantages()), false);
+                        ctx.getSource().sendSuccess(() -> Component.literal("§cPenalidades Declaradas: §7" + race.getActiveDisadvantages()), false);
+                        ctx.getSource().sendSuccess(() -> Component.literal("§6--- [Atributos Reais Medidos no Jogo] ---"), false);
+                        ctx.getSource().sendSuccess(() -> Component.literal(String.format("§f• Velocidade: §e%.3f §7(Base Vanilla: 0.100 | Felino: 0.115 | Orc: 0.090)", speed)), false);
+                        ctx.getSource().sendSuccess(() -> Component.literal(String.format("§f• Vida Máxima: §e%.1f §7(Base Vanilla: 20.0 = 10 corações)", maxHp)), false);
+                        ctx.getSource().sendSuccess(() -> Component.literal(String.format("§f• Dano de Ataque: §e%.1f §7(Base Vanilla: 1.0)", attack)), false);
+                        ctx.getSource().sendSuccess(() -> Component.literal(String.format("§f• Armadura Natural: §e%.1f §7(Base Vanilla: 0.0)", armor)), false);
                     }
                     return 1;
                 })
@@ -43,20 +54,13 @@ public class CaosArcanaCommands {
                 .executes(ctx -> {
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
                     if (player instanceof IRPGPlayerData rpgPlayer) {
-                        // 1. Remove modificadores antigos da raça
                         rpgPlayer.caosarcana$getRace().removeModifiers(player);
-
-                        // 2. Limpa SOMENTE os dados de raça, preservando nível geral, mana e escolas
                         rpgPlayer.caosarcana$setRace(Race.NONE);
                         rpgPlayer.caosarcana$setChosenRace(false);
 
-                        // 3. Sincroniza dados com o cliente
                         ModMessages.syncPlayerData(player);
-
-                        // 4. Valida e desequipa imediatamente itens que dependiam da raça antiga
                         EquipmentValidationHandler.validateAndEnforce(player);
 
-                        // 5. Reabre a tela de escolha obrigatória
                         FriendlyByteBuf buf = PacketByteBufs.create();
                         ServerPlayNetworking.send(player, ModMessages.OPEN_RACE_SELECT_ID, buf);
 

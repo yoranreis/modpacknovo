@@ -11,6 +11,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -31,23 +32,23 @@ public class RaceSelectionScreen extends Screen {
         super.init();
 
         int centerX = this.width / 2;
-        int listX = centerX - 190;
+        int listX = centerX - 240;
         int startY = 65;
-        int buttonWidth = 110;
+        int buttonWidth = 95;
         int buttonHeight = 24;
 
         Race[] availableRaces = new Race[]{Race.ORC, Race.FELINO, Race.ALTO_ELFO};
 
         for (int i = 0; i < availableRaces.length; i++) {
             Race race = availableRaces[i];
-            int y = startY + (i * (buttonHeight + 8));
+            int y = startY + (i * (buttonHeight + 10));
 
             this.addRenderableWidget(Button.builder(Component.literal(race.getDisplayName()), btn -> {
                 this.selectedRace = race;
             }).bounds(listX, y, buttonWidth, buttonHeight).build());
         }
 
-        int confirmY = this.height - 38;
+        int confirmY = this.height - 36;
         this.confirmButton = this.addRenderableWidget(Button.builder(
                 Component.literal("CONFIRMAR ESCOLHA").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD),
                 btn -> confirmSelection()
@@ -75,33 +76,62 @@ public class RaceSelectionScreen extends Screen {
         int centerX = this.width / 2;
 
         graphics.drawCenteredString(this.font, "§6§lCAOS ARCANA: CRIAÇÃO DE PERSONAGEM", centerX, 14, 0xFFFFFF);
-        graphics.drawCenteredString(this.font, "§7Escolha sua linhagem no Server do Caos. Essa escolha definirá seu destino.", centerX, 28, 0xAAAAAA);
+        graphics.drawCenteredString(this.font, "§7Escolha sua linhagem no Server do Caos. Essa escolha definirá seu destino.", centerX, 27, 0xAAAAAA);
 
-        int panelX = centerX - 65;
-        int panelY = 48;
-        int panelWidth = 265;
-        int panelHeight = this.height - 92;
+        int panelY = 46;
+        int panelHeight = this.height - 88;
 
-        graphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x88000000);
-        graphics.renderOutline(panelX, panelY, panelWidth, panelHeight, 0xFF444444);
+        // 1. Painel Central: Visualização 3D do Personagem (Modelo e Skin)
+        int previewBoxX = centerX - 130;
+        int previewBoxWidth = 110;
+
+        graphics.fill(previewBoxX, panelY, previewBoxX + previewBoxWidth, panelY + panelHeight, 0x88000000);
+        graphics.renderOutline(previewBoxX, panelY, previewBoxWidth, panelHeight, 0xFF555555);
+
+        graphics.drawCenteredString(this.font, "§ePrévia 3D", previewBoxX + (previewBoxWidth / 2), panelY + 8, 0xFFFFAA);
+        graphics.drawCenteredString(this.font, "§8[" + selectedRace.getDisplayName() + "]", previewBoxX + (previewBoxWidth / 2), panelY + 20, 0x888888);
+
+        // Renderiza o modelo 3D do jogador que segue o movimento do cursor do mouse
+        if (this.minecraft != null && this.minecraft.player != null) {
+            int entityX = previewBoxX + (previewBoxWidth / 2);
+            int entityY = panelY + panelHeight - 25;
+            int scale = Math.min(48, Math.max(30, panelHeight / 4));
+
+            InventoryScreen.renderEntityInInventoryFollowsMouse(
+                    graphics,
+                    entityX,
+                    entityY,
+                    scale,
+                    (float) entityX - mouseX,
+                    (float) (entityY - 45) - mouseY,
+                    this.minecraft.player
+            );
+        }
+
+        // 2. Painel Direito: Detalhes, Vantagens e Fraquezas da Raça
+        int detailsX = centerX - 10;
+        int detailsWidth = 250;
+
+        graphics.fill(detailsX, panelY, detailsX + detailsWidth, panelY + panelHeight, 0x88000000);
+        graphics.renderOutline(detailsX, panelY, detailsWidth, panelHeight, 0xFF555555);
 
         if (selectedRace != null && selectedRace != Race.NONE) {
             int textY = panelY + 8;
-            int textX = panelX + 10;
-            int wrapWidth = panelWidth - 20;
+            int textX = detailsX + 10;
+            int wrapWidth = detailsWidth - 20;
 
             graphics.drawString(this.font, "§e§lRaça: §f" + selectedRace.getDisplayName(), textX, textY, 0xFFFFFF);
             textY += 12;
 
             graphics.drawString(this.font, "§8Estado: §7" + selectedRace.getDocumentationStatus(), textX, textY, 0xAAAAAA);
-            textY += 14;
+            textY += 13;
 
             List<FormattedCharSequence> descLines = font.split(Component.literal("§7" + selectedRace.getDescription()), wrapWidth);
             for (FormattedCharSequence line : descLines) {
                 graphics.drawString(this.font, line, textX, textY, 0xFFFFFF);
                 textY += 10;
             }
-            textY += 8;
+            textY += 7;
 
             if (!selectedRace.getActiveAdvantages().equals("Nenhuma")) {
                 graphics.drawString(this.font, "§a§lVantagens Ativas (Funcionais):", textX, textY, 0x55FF55);
