@@ -47,8 +47,7 @@ public class RaceSelectionScreen extends Screen {
             }).bounds(listX, y, buttonWidth, buttonHeight).build());
         }
 
-        // Botão de Confirmação
-        int confirmY = this.height - 42;
+        int confirmY = this.height - 38;
         this.confirmButton = this.addRenderableWidget(Button.builder(
                 Component.literal("CONFIRMAR ESCOLHA").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD),
                 btn -> confirmSelection()
@@ -75,54 +74,76 @@ public class RaceSelectionScreen extends Screen {
 
         int centerX = this.width / 2;
 
-        // Título Principal
-        graphics.drawCenteredString(this.font, "§6§lCAOS ARCANA: CRIAÇÃO DE PERSONAGEM", centerX, 18, 0xFFFFFF);
-        graphics.drawCenteredString(this.font, "§7Escolha sua linhagem no Server do Caos. Essa escolha definirá seu destino.", centerX, 34, 0xAAAAAA);
+        graphics.drawCenteredString(this.font, "§6§lCAOS ARCANA: CRIAÇÃO DE PERSONAGEM", centerX, 14, 0xFFFFFF);
+        graphics.drawCenteredString(this.font, "§7Escolha sua linhagem no Server do Caos. Essa escolha definirá seu destino.", centerX, 28, 0xAAAAAA);
 
-        // Painel de Detalhes da Raça Selecionada
-        int panelX = centerX - 60;
-        int panelY = 60;
-        int panelWidth = 250;
-        int panelHeight = this.height - 115;
+        int panelX = centerX - 65;
+        int panelY = 48;
+        int panelWidth = 265;
+        int panelHeight = this.height - 92;
 
-        // Fundo do painel
         graphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, 0x88000000);
         graphics.renderOutline(panelX, panelY, panelWidth, panelHeight, 0xFF444444);
 
-        if (selectedRace != null) {
-            int textY = panelY + 12;
-            int textX = panelX + 12;
-            int wrapWidth = panelWidth - 24;
+        if (selectedRace != null && selectedRace != Race.NONE) {
+            int textY = panelY + 8;
+            int textX = panelX + 10;
+            int wrapWidth = panelWidth - 20;
 
-            // Nome da Raça
-            graphics.drawString(this.font, "§e§lRaça: " + selectedRace.getDisplayName(), textX, textY, 0xFFFFFF);
-            textY += 18;
+            graphics.drawString(this.font, "§e§lRaça: §f" + selectedRace.getDisplayName(), textX, textY, 0xFFFFFF);
+            textY += 12;
 
-            // Descrição da Raça
+            graphics.drawString(this.font, "§8Estado: §7" + selectedRace.getDocumentationStatus(), textX, textY, 0xAAAAAA);
+            textY += 14;
+
             List<FormattedCharSequence> descLines = font.split(Component.literal("§7" + selectedRace.getDescription()), wrapWidth);
             for (FormattedCharSequence line : descLines) {
                 graphics.drawString(this.font, line, textX, textY, 0xFFFFFF);
-                textY += 11;
+                textY += 10;
             }
-            textY += 10;
+            textY += 8;
 
-            // Vantagens
-            graphics.drawString(this.font, "§a§lVantagens Raciais:", textX, textY, 0x55FF55);
-            textY += 13;
-            List<FormattedCharSequence> advLines = font.split(Component.literal("§a• " + selectedRace.getAdvantages()), wrapWidth);
-            for (FormattedCharSequence line : advLines) {
-                graphics.drawString(this.font, line, textX, textY, 0xAAFFAA);
+            if (!selectedRace.getActiveAdvantages().equals("Nenhuma")) {
+                graphics.drawString(this.font, "§a§lVantagens Ativas (Funcionais):", textX, textY, 0x55FF55);
                 textY += 11;
+                List<FormattedCharSequence> advLines = font.split(Component.literal("§a• " + selectedRace.getActiveAdvantages()), wrapWidth);
+                for (FormattedCharSequence line : advLines) {
+                    graphics.drawString(this.font, line, textX, textY, 0xAAFFAA);
+                    textY += 10;
+                }
+                textY += 6;
             }
-            textY += 10;
 
-            // Desvantagens
-            graphics.drawString(this.font, "§c§lPenalidades & Fraquezas:", textX, textY, 0xFF5555);
-            textY += 13;
-            List<FormattedCharSequence> disLines = font.split(Component.literal("§c• " + selectedRace.getDisadvantages()), wrapWidth);
-            for (FormattedCharSequence line : disLines) {
-                graphics.drawString(this.font, line, textX, textY, 0xFFAAAA);
+            if (!selectedRace.getActiveDisadvantages().equals("Nenhuma")) {
+                graphics.drawString(this.font, "§c§lPenalidades Ativas (Funcionais):", textX, textY, 0xFF5555);
                 textY += 11;
+                List<FormattedCharSequence> disLines = font.split(Component.literal("§c• " + selectedRace.getActiveDisadvantages()), wrapWidth);
+                for (FormattedCharSequence line : disLines) {
+                    graphics.drawString(this.font, line, textX, textY, 0xFFAAAA);
+                    textY += 10;
+                }
+                textY += 6;
+            }
+
+            if (!selectedRace.getPartialTraits().equals("Nenhuma")) {
+                graphics.drawString(this.font, "§6§lParcialmente Implementado:", textX, textY, 0xFFAA00);
+                textY += 11;
+                List<FormattedCharSequence> partialLines = font.split(Component.literal("§6• " + selectedRace.getPartialTraits()), wrapWidth);
+                for (FormattedCharSequence line : partialLines) {
+                    graphics.drawString(this.font, line, textX, textY, 0xFFDDAA);
+                    textY += 10;
+                }
+                textY += 6;
+            }
+
+            if (!selectedRace.getPlannedTraits().equals("Nenhuma")) {
+                graphics.drawString(this.font, "§8§lApenas Planejado (Sem efeito no momento):", textX, textY, 0x888888);
+                textY += 11;
+                List<FormattedCharSequence> planLines = font.split(Component.literal("§8• " + selectedRace.getPlannedTraits()), wrapWidth);
+                for (FormattedCharSequence line : planLines) {
+                    graphics.drawString(this.font, line, textX, textY, 0x777777);
+                    textY += 10;
+                }
             }
         }
 

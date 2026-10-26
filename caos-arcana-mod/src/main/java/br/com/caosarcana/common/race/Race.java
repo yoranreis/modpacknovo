@@ -7,16 +7,33 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.UUID;
 
 public enum Race {
-    NONE("none", "Sem Raça", "Nenhuma raça selecionada."),
+    NONE("none", "Sem Raça", "Nenhuma raça selecionada.",
+        "Não Definido",
+        "Nenhuma",
+        "Nenhuma",
+        "Nenhuma",
+        "Nenhuma"),
+
     ORC("orc", "Orc", "Mestres da forja e combate pesado. Corpo robusto e tenacidade incomparável.",
+        "Referência Explícita (Decidido)",
         "Dano físico +2, Vida Máxima +4 (2 corações), Armadura Natural +2",
-        "Velocidade de movimento -10%, Custo de mana +25%"),
+        "Velocidade de movimento -10%",
+        "Nenhuma",
+        "Custo de mana +25%"),
+
     FELINO("felino", "Felino", "Povo ágil e silencioso. Perfeitos para exploração e combate acrobático.",
-        "Velocidade de movimento +15%, Redução de 50% de dano de queda, Salto aprimorado",
-        "Vida Máxima -2 (1 coração), Menor resistência física contra dano pesado"),
+        "Referência Explícita (Decidido)",
+        "Velocidade de movimento +15%",
+        "Vida Máxima -2 (1 coração)",
+        "Nenhuma",
+        "Redução de 50% de dano de queda, Salto aprimorado, Menor resistência contra dano pesado"),
+
     ALTO_ELFO("alto_elfo", "Alto Elfo", "Linhagem mística ancestral com profundo domínio das artes arcanas.",
-        "Mana Máxima +50, Regeneração de mana +30%, Dano mágico +15%",
-        "Dano corpo a corpo -15%, Vida Máxima -2 (1 coração)");
+        "Proposta para Estudo (Pendente de Aprovação)",
+        "Nenhuma",
+        "Dano corpo a corpo -15%, Vida Máxima -2 (1 coração)",
+        "Mana Máxima +50 (campo NBT ativo, sistema mágico pendente)",
+        "Regeneração de mana +30%, Dano mágico +15%");
 
     private static final UUID HEALTH_MOD_ID = UUID.fromString("c00a0001-ca05-4000-8000-000000000001");
     private static final UUID DAMAGE_MOD_ID = UUID.fromString("c00a0002-ca05-4000-8000-000000000002");
@@ -26,19 +43,24 @@ public enum Race {
     private final String id;
     private final String displayName;
     private final String description;
-    private final String advantages;
-    private final String disadvantages;
+    private final String documentationStatus;
+    private final String activeAdvantages;
+    private final String activeDisadvantages;
+    private final String partialTraits;
+    private final String plannedTraits;
 
-    Race(String id, String displayName, String description, String advantages, String disadvantages) {
+    Race(String id, String displayName, String description,
+         String documentationStatus,
+         String activeAdvantages, String activeDisadvantages,
+         String partialTraits, String plannedTraits) {
         this.id = id;
         this.displayName = displayName;
         this.description = description;
-        this.advantages = advantages;
-        this.disadvantages = disadvantages;
-    }
-
-    Race(String id, String displayName, String description) {
-        this(id, displayName, description, "", "");
+        this.documentationStatus = documentationStatus;
+        this.activeAdvantages = activeAdvantages;
+        this.activeDisadvantages = activeDisadvantages;
+        this.partialTraits = partialTraits;
+        this.plannedTraits = plannedTraits;
     }
 
     public String getId() {
@@ -53,17 +75,30 @@ public enum Race {
         return description;
     }
 
-    public String getAdvantages() {
-        return advantages;
+    public String getDocumentationStatus() {
+        return documentationStatus;
     }
 
-    public String getDisadvantages() {
-        return disadvantages;
+    public String getActiveAdvantages() {
+        return activeAdvantages;
+    }
+
+    public String getActiveDisadvantages() {
+        return activeDisadvantages;
+    }
+
+    public String getPartialTraits() {
+        return partialTraits;
+    }
+
+    public String getPlannedTraits() {
+        return plannedTraits;
     }
 
     public static Race fromId(String id) {
+        if (id == null) return NONE;
         for (Race race : values()) {
-            if (race.id.equalsIgnoreCase(id)) {
+            if (race.id.equalsIgnoreCase(id.trim())) {
                 return race;
             }
         }
@@ -71,6 +106,7 @@ public enum Race {
     }
 
     public void applyModifiers(ServerPlayer player) {
+        if (player == null) return;
         removeModifiers(player);
 
         if (this == ORC) {
@@ -92,10 +128,15 @@ public enum Race {
     }
 
     public void removeModifiers(ServerPlayer player) {
+        if (player == null) return;
         removeModifier(player, Attributes.MAX_HEALTH, HEALTH_MOD_ID);
         removeModifier(player, Attributes.ATTACK_DAMAGE, DAMAGE_MOD_ID);
         removeModifier(player, Attributes.MOVEMENT_SPEED, SPEED_MOD_ID);
         removeModifier(player, Attributes.ARMOR, ARMOR_MOD_ID);
+
+        if (player.getHealth() > player.getMaxHealth()) {
+            player.setHealth(player.getMaxHealth());
+        }
     }
 
     private static void applyModifier(ServerPlayer player, net.minecraft.world.entity.ai.attributes.Attribute attribute, UUID id, String name, double amount, AttributeModifier.Operation op) {

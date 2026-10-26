@@ -28,7 +28,8 @@ bin/
 
 *.DS_Store
 
-# fabric
+logs/
+*.log
 
 run/
 
