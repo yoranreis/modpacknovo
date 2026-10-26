@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "caosarcana",
+	"version": "${version}",
+	"name": "Caos Arcana",
+	"description": "RPG medieval e magico inspirado em Skyrim para o Server do Caos.",
+	"authors": [
+		"Matheus"
+	],
+	"contact": {
+		"homepage": "https://github.com/yoranreis/modpacknovo"
+	},
+	"license": "All-Rights-Reserved",
+	"icon": "assets/caosarcana/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"br.com.caosarcana.CaosArcana"
+		],
+		"client": [
+			"br.com.caosarcana.client.CaosArcanaClient"
+		]
+	},
+	"mixins": [
+		"caosarcana.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.0",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}

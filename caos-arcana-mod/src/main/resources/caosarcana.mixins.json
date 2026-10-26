@@ -1,0 +1,15 @@
+{
+	"required": true,
+	"package": "br.com.caosarcana.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"CaosArcanaMixin",
+		"PlayerRPGMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
