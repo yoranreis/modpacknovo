@@ -77,22 +77,25 @@ public class EquipmentValidationHandler {
 
             RequirementResult result = EquipmentRequirementRegistry.canEquip(player, stack);
             if (!result.isAllowed()) {
-                // 1. Clona a peça com todos os seus dados e NBT
+                // 1. Clona a peça com todos os seus dados e NBT (isolamento total de referência)
                 ItemStack itemToPreserve = stack.copy();
 
                 // 2. Desocupa imediatamente o slot no jogador
                 player.setItemSlot(slot, ItemStack.EMPTY);
 
-                // 3. Tenta devolver ao inventário do jogador
-                boolean addedToInventory = player.getInventory().add(itemToPreserve);
+                // 3. Tenta devolver ao inventário do jogador (Inventory.add muta itemToPreserve in-place)
+                player.getInventory().add(itemToPreserve);
 
-                if (!addedToInventory) {
-                    // Inventário cheio: guarda na fila de custódia persistente do jogador
+                if (!itemToPreserve.isEmpty()) {
+                    // Apenas o restante não inserido vai para a custódia segura
                     // NUNCA dropa no chão, NUNCA deleta, NUNCA entrega a outro jogador
                     rpgPlayer.caosarcana$addPendingDelivery(itemToPreserve);
-                    player.sendSystemMessage(Component.literal("§6[Caos Arcana] §cSeu inventário está lotado! O equipamento desequipado (§e" + itemToPreserve.getHoverName().getString() + "§c) foi guardado em sua custódia segura. Libere espaço no inventário para recebê-lo."));
+                    player.sendSystemMessage(Component.literal("§6[Caos Arcana] §cSeu inventário está lotado! O equipamento desequipado (§e" 
+                            + itemToPreserve.getHoverName().getString() 
+                            + " §7x" + itemToPreserve.getCount() 
+                            + "§c) foi guardado em sua custódia segura. Libere espaço no inventário para recebê-lo."));
                 } else {
-                    player.sendSystemMessage(Component.literal("§6[Caos Arcana] §cEquipamento desequipado e devolvido ao inventário: §e" + itemToPreserve.getHoverName().getString()));
+                    player.sendSystemMessage(Component.literal("§6[Caos Arcana] §cEquipamento desequipado e devolvido ao inventário: §e" + stack.getHoverName().getString()));
                 }
 
                 // 4. Envia mensagem formal de restrição e som de feedback
@@ -108,7 +111,7 @@ public class EquipmentValidationHandler {
 
     /**
      * Entrega itens da custódia segura do jogador assim que houver espaço no inventário.
-     * Suporta devolução parcial. Executado estritamente na Server Thread.
+     * Suporta devolução parcial sem duplicação ou perda. Executado estritamente na Server Thread.
      */
     public static void processPendingDeliveries(ServerPlayer player) {
         if (player == null || !(player instanceof IRPGPlayerData rpgPlayer)) {
@@ -130,13 +133,17 @@ public class EquipmentValidationHandler {
                 continue;
             }
 
-            // Tenta adicionar ao inventário
-            if (player.getInventory().add(stack)) {
+            // Tenta adicionar ao inventário principal (Inventory.add consome unidades do stack diretamente)
+            player.getInventory().add(stack);
+
+            // Verifica o estado real do stack após a inserção (em vez de confiar apenas em booleano)
+            if (stack.isEmpty()) {
                 iterator.remove();
                 deliveredCount++;
                 player.sendSystemMessage(Component.literal("§a[Caos Arcana] Equipamento recuperado da custódia segura: §e" + stack.getHoverName().getString()));
             } else {
-                // Inventário ainda está lotado, para a entrega para não gastar CPU
+                // Se o stack ainda tiver unidades restantes, significa que o inventário lotou durante a inserção parcial.
+                // O stack na lista agora armazena apenas a sobra não inserida. Interrompe a entrega.
                 break;
             }
         }

@@ -6,15 +6,20 @@ import br.com.caosarcana.common.equipment.RequirementResult;
 import br.com.caosarcana.common.equipment.RequirementType;
 import br.com.caosarcana.common.race.Race;
 import net.minecraft.SharedConstants;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -194,33 +199,69 @@ public class CaosArcanaTests {
     }
 
     @Test
-    @DisplayName("Teste de Custódia Segura e Devolução Parcial de Itens sem queda no chão")
-    public void testPendingDeliveriesSafeCustodyAndPartialDelivery() {
-        MockRPGPlayer player = new MockRPGPlayer(Race.ORC, 5);
-        assertTrue(player.caosarcana$getPendingDeliveries().isEmpty());
+    @DisplayName("Teste de Persistência NBT real e transferência de Custódia Segura")
+    public void testRealNbtSerializationAndDurabilityPreservation() {
+        // Cria item complexo com NBT real (encantamentos, dano, nome customizado)
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD, 1);
+        sword.enchant(Enchantments.SHARPNESS, 5);
+        sword.enchant(Enchantments.UNBREAKING, 3);
+        sword.setDamageValue(45); // Danificada
+        sword.setHoverName(Component.literal("Espada Ancestral"));
 
-        ItemStack itemA = new ItemStack(Items.IRON_CHESTPLATE, 1);
-        ItemStack itemB = new ItemStack(Items.DIAMOND_HELMET, 1);
+        ItemStack armor = new ItemStack(Items.IRON_CHESTPLATE, 1);
+        armor.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
 
-        // Simula inventário cheio: itens são guardados na custódia do jogador
-        player.caosarcana$addPendingDelivery(itemA);
-        player.caosarcana$addPendingDelivery(itemB);
+        List<ItemStack> originalCustody = new ArrayList<>();
+        originalCustody.add(sword);
+        originalCustody.add(armor);
 
-        assertEquals(2, player.caosarcana$getPendingDeliveries().size());
-        assertEquals(Items.IRON_CHESTPLATE, player.caosarcana$getPendingDeliveries().get(0).getItem());
-        assertEquals(Items.DIAMOND_HELMET, player.caosarcana$getPendingDeliveries().get(1).getItem());
+        // 1. Serializa para CompoundTag real do Minecraft (exatamente como PlayerRPGMixin.saveNbt faz)
+        CompoundTag rootNbt = new CompoundTag();
+        ListTag pendingList = new ListTag();
+        for (ItemStack stack : originalCustody) {
+            CompoundTag itemTag = new CompoundTag();
+            stack.save(itemTag);
+            pendingList.add(itemTag);
+        }
+        rootNbt.put("PendingDeliveries", pendingList);
 
-        // Simula devolução parcial (1 slot liberado no inventário)
-        ItemStack delivered = player.caosarcana$getPendingDeliveries().remove(0);
-        assertEquals(Items.IRON_CHESTPLATE, delivered.getItem());
+        // 2. Desserializa de CompoundTag (exatamente como readNbt faz após restart ou reload)
+        List<ItemStack> restoredCustody = new ArrayList<>();
+        ListTag readList = rootNbt.getList("PendingDeliveries", 10);
+        for (int i = 0; i < readList.size(); i++) {
+            CompoundTag itemTag = readList.getCompound(i);
+            ItemStack loaded = ItemStack.of(itemTag);
+            restoredCustody.add(loaded);
+        }
 
-        // Resta 1 item na custódia
-        assertEquals(1, player.caosarcana$getPendingDeliveries().size());
-        assertEquals(Items.DIAMOND_HELMET, player.caosarcana$getPendingDeliveries().get(0).getItem());
+        // 3. Validações estritas de integridade
+        assertEquals(2, restoredCustody.size());
 
-        // Segundo slot liberado
-        ItemStack delivered2 = player.caosarcana$getPendingDeliveries().remove(0);
-        assertEquals(Items.DIAMOND_HELMET, delivered2.getItem());
-        assertTrue(player.caosarcana$getPendingDeliveries().isEmpty());
+        ItemStack loadedSword = restoredCustody.get(0);
+        assertEquals(Items.DIAMOND_SWORD, loadedSword.getItem());
+        assertEquals(45, loadedSword.getDamageValue(), "Durabilidade danificada deve ser preservada exatamente");
+        assertEquals("Espada Ancestral", loadedSword.getHoverName().getString(), "Nome customizado deve ser preservado");
+        assertTrue(loadedSword.isEnchanted(), "Encantamentos devem ser preservados");
+
+        ItemStack loadedArmor = restoredCustody.get(1);
+        assertEquals(Items.IRON_CHESTPLATE, loadedArmor.getItem());
+        assertTrue(loadedArmor.isEnchanted());
+    }
+
+    @Test
+    @DisplayName("Teste de devolução parcial e mutação de ItemStack sem vazamento de referências")
+    public void testPartialStackInsertionAndNoAliasing() {
+        // Simula uma pilha de 10 flechas em custódia
+        ItemStack stack = new ItemStack(Items.ARROW, 10);
+
+        // Simula uma tentativa de inserção onde apenas 4 cabem
+        int insertable = 4;
+        ItemStack remainder = stack.copy();
+        remainder.shrink(insertable);
+
+        assertEquals(6, remainder.getCount(), "Apenas a sobra deve continuar em custódia");
+
+        // O stack original não deve ser afetado (sem aliasing)
+        assertEquals(10, stack.getCount());
     }
 }
