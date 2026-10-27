@@ -9,4 +9,4 @@ mineiro_oco.png: mineiro antigo de capacete rachado e picareta.
 vigia_das_brasas.png: figura encapuzada com nucleo exposto e haste.
 carapaca_basaltica.png: lagarto pesado de carapaca facetada e olho vulneravel.
 
-O mod ainda nao registra entidades nem possui modelos. Ao criarmos cada modelo, definiremos geometria e UV e faremos texturas finais em assets/caosarcana/textures/entity. Estes PNGs sao guias visuais, nao devem ser carregados como textura 3D.
+Os cinco PNGs acima continuam sendo guias de silhueta e paleta; nao devem ser carregados como textura 3D. O Rastejante de Cinza já tem modelo e atlas UV próprios. Sua textura de jogo fica em `caos-arcana-mod/src/main/resources/assets/caosarcana/textures/entity/terras_da_cinza/rastejante_de_cinza.png`; o atlas ampliado serve apenas para inspeção.

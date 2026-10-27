@@ -1,6 +1,6 @@
 # UV — Rastejante de Cinza v0.2
 
-Textura 64 x 64 px, com fundo transparente. O atlas foi organizado para cubos de modelo Java Fabric usando CubeListBuilder.texOffs(u, v).addBox(x, y, z, width, height, depth). A frente do mob aponta para +Z.
+Textura 64 x 64 px, com fundo transparente. O atlas foi organizado para cubos de modelo Java Fabric usando CubeListBuilder.texOffs(u, v).addBox(x, y, z, width, height, depth). A frente do mob aponta para -Z, o sentido frontal padrão dos modelos de entidades do Minecraft.
 
 | Parte | Caixa (largura x altura x profundidade) | UV inicial |
 |---|---:|---:|
@@ -10,7 +10,7 @@ Textura 64 x 64 px, com fundo transparente. O atlas foi organizado para cubos de
 | Pernas (seis, atlas compartilhado) | 2 x 3 x 2 | (22, 20) |
 | Mandíbulas (par, atlas compartilhado) | 2 x 2 x 1 | (32, 20) |
 
-Cada caixa usa o desdobramento padrão do Minecraft: topo, base e faixa das faces laterais, frontal e traseira. Pernas e mandíbulas reutilizam os pixels; podemos dar UVs próprios se quisermos assimetria. Nesta versão, todas as faces das caixas receberam pixels opacos para evitar áreas vazias no modelo. Os olhos foram colocados na face frontal (+Z) da cabeça; as fissuras de brasa aparecem no topo e na frente da carapaça.
+Cada caixa usa o desdobramento padrão do Minecraft: topo, base e faixa das faces laterais, frontal e traseira. Pernas e mandíbulas reutilizam os pixels; podemos dar UVs próprios se quisermos assimetria. Nesta versão, todas as faces das caixas receberam pixels opacos para evitar áreas vazias no modelo. Os olhos foram colocados na face frontal (-Z) da cabeça; as fissuras de brasa aparecem no topo e na frente da carapaça.
 
 As fissuras luminosas ficam na frente da carapaça. Os olhos amarelos estão na face frontal da cabeça. Topo e laterais usam tons variados de basalto; abdômen e juntas recebem reflexos menores de brasa.
 

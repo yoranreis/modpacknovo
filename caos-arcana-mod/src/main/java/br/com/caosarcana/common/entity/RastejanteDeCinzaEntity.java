@@ -22,17 +22,17 @@ public final class RastejanteDeCinzaEntity extends PathfinderMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 18.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.28D)
-                .add(Attributes.ATTACK_DAMAGE, 3.0D)
+                .add(Attributes.MAX_HEALTH, 4.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D)
+                .add(Attributes.ATTACK_DAMAGE, 1.0D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D)
-                .add(Attributes.ARMOR, 1.0D);
+                .add(Attributes.ARMOR, 0.0D);
     }
 
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(0, new FloatGoal(this));
-        goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.15D, false));
+        goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0D, false));
         goalSelector.addGoal(7, new RandomStrollGoal(this, 0.8D));
         goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));

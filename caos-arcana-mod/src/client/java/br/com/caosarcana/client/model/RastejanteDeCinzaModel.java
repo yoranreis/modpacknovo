@@ -62,20 +62,20 @@ public final class RastejanteDeCinzaModel extends EntityModel<RastejanteDeCinzaE
                 CubeListBuilder.create()
                         .texOffs(36, 0)
                         .addBox(-2.5F, -2.0F, -2.0F, 5.0F, 4.0F, 4.0F),
-                PartPose.offset(0.0F, 17.0F, 5.1F));
+                PartPose.offset(0.0F, 17.0F, -5.1F));
 
         root.addOrReplaceChild("abdomen",
                 CubeListBuilder.create()
                         .texOffs(0, 20)
                         .addBox(-3.0F, -1.5F, -2.0F, 6.0F, 3.0F, 4.0F),
-                PartPose.offset(0.0F, 21.5F, -5.4F));
+                PartPose.offset(0.0F, 21.5F, 5.4F));
 
-        addLeg(root, "front_left_leg", -5.5F, 3.0F);
+        addLeg(root, "front_left_leg", -5.5F, -3.0F);
         addLeg(root, "middle_left_leg", -5.5F, 0.0F);
-        addLeg(root, "rear_left_leg", -5.5F, -3.0F);
-        addLeg(root, "front_right_leg", 5.5F, 3.0F);
+        addLeg(root, "rear_left_leg", -5.5F, 3.0F);
+        addLeg(root, "front_right_leg", 5.5F, -3.0F);
         addLeg(root, "middle_right_leg", 5.5F, 0.0F);
-        addLeg(root, "rear_right_leg", 5.5F, -3.0F);
+        addLeg(root, "rear_right_leg", 5.5F, 3.0F);
 
         addMandible(root, "left_mandible", -2.5F);
         addMandible(root, "right_mandible", 2.5F);
@@ -96,7 +96,7 @@ public final class RastejanteDeCinzaModel extends EntityModel<RastejanteDeCinzaE
                 CubeListBuilder.create()
                         .texOffs(32, 20)
                         .addBox(-1.0F, -1.0F, -0.5F, 2.0F, 2.0F, 1.0F),
-                PartPose.offset(x, 19.0F, 7.3F));
+                PartPose.offset(x, 19.0F, -7.3F));
     }
 
     @Override
