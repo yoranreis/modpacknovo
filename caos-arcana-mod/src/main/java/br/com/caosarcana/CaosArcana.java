@@ -3,6 +3,7 @@ package br.com.caosarcana;
 import br.com.caosarcana.common.command.CaosArcanaCommands;
 import br.com.caosarcana.common.equipment.EquipmentRequirementRegistry;
 import br.com.caosarcana.common.equipment.EquipmentValidationHandler;
+import br.com.caosarcana.common.entity.CaosArcanaEntities;
 import br.com.caosarcana.common.network.ModMessages;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +18,7 @@ public class CaosArcana implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("[Caos Arcana] Inicializando sistemas RPG do Server do Caos...");
 
+        CaosArcanaEntities.register();
         ModMessages.registerC2SPackets();
         ModMessages.registerServerEvents();
         CaosArcanaCommands.register();
@@ -24,7 +26,7 @@ public class CaosArcana implements ModInitializer {
         EquipmentRequirementRegistry.registerProvisionalTestItems();
         EquipmentValidationHandler.register();
 
-        LOGGER.info("[Caos Arcana] Sistemas de Raças, Persistência e Restrições de Equipamentos carregados com sucesso.");
+        LOGGER.info("[Caos Arcana] Sistemas RPG e entidade inicial carregados.");
     }
 
     public static ResourceLocation id(String path) {
