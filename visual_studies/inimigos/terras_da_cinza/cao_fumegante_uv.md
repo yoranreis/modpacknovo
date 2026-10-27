@@ -1,4 +1,4 @@
-# UV — Cão Fumegante v0.1
+# UV — Cão Fumegante v0.2
 
 Atlas de 64 x 64 px, com fundo transparente, para cubos Java Fabric criados com CubeListBuilder.texOffs(u, v).addBox(...). A frente do modelo aponta para -Z.
 
@@ -21,3 +21,7 @@ O arquivo cao_fumegante.png dentro de assets/caosarcana/textures/entity/terras_d
 Invocação de teste: /summon caosarcana:cao_fumegante.
 
 O Cão Fumegante tem 10 pontos de vida (5 corações), 2 pontos de dano e velocidade 0.34. Fumaça leve sai do corpo; ao correr, pode soltar cinzas, e um acerto emite uma baforada curta com brasas.
+
+## Silhueta v0.2
+
+O atlas permanece 64 x 64 px. A geometria usa escala no corpo (mais estreito e ligeiramente mais alto), cabeça elevada e pernas alongadas para criar uma silhueta mais magra e alta sem distorcer nem remapear a textura. A caixa de colisão foi ajustada para 0.75 x 1.0 bloco.
