@@ -1,19 +1,22 @@
 package br.com.caosarcana.client;
 
+import br.com.caosarcana.client.gui.ManaHudOverlay;
 import br.com.caosarcana.client.gui.RaceSelectionScreen;
 import br.com.caosarcana.client.model.CaoFumeganteModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
 import br.com.caosarcana.client.renderer.CaoFumeganteRenderer;
 import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
+import br.com.caosarcana.common.data.IRPGPlayerData;
 import br.com.caosarcana.common.entity.CaosArcanaEntities;
 import br.com.caosarcana.common.network.ModMessages;
+import br.com.caosarcana.common.race.Race;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.Minecraft;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +26,10 @@ public class CaosArcanaClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        LOGGER.info("[Caos Arcana Client] Inicializando cliente, interface e sincronização de dados...");
+        LOGGER.info("[Caos Arcana Client] Inicializando cliente, HUD de Mana, inimigos e sincronização de dados...");
         registerEntityRendering();
         registerClientPackets();
+        HudRenderCallback.EVENT.register(ManaHudOverlay::render);
     }
 
     private void registerEntityRendering() {
@@ -59,8 +63,17 @@ public class CaosArcanaClient implements ClientModInitializer {
             float maxMana = buf.readFloat();
             int level = buf.readInt();
 
-            client.execute(() -> ClientRPGData.update(raceId, chosen, mana, maxMana, level));
+            client.execute(() -> {
+                ClientRPGData.update(raceId, chosen, mana, maxMana, level);
+                if (client.player instanceof IRPGPlayerData rpgPlayer) {
+                    rpgPlayer.caosarcana$setRace(Race.fromId(raceId));
+                    rpgPlayer.caosarcana$setChosenRace(chosen);
+                    rpgPlayer.caosarcana$setMana(mana);
+                    rpgPlayer.caosarcana$setBaseMaxMana(maxMana);
+                    rpgPlayer.caosarcana$setGeneralLevel(level);
+                }
+                ManaHudOverlay.wakeUp();
+            });
         });
     }
 }
-

@@ -25,6 +25,7 @@ public class CaosArcana implements ModInitializer {
 
         EquipmentRequirementRegistry.registerProvisionalTestItems();
         EquipmentValidationHandler.register();
+        br.com.caosarcana.content.ModItems.register();
 
         LOGGER.info("[Caos Arcana] Sistemas RPG e entidade inicial carregados.");
     }

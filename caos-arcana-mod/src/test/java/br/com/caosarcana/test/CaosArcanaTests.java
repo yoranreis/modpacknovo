@@ -264,4 +264,44 @@ public class CaosArcanaTests {
         // O stack original não deve ser afetado (sem aliasing)
         assertEquals(10, stack.getCount());
     }
+
+    @Test
+    @DisplayName("Teste de consumo, restauração e taxas raciais de regeneração de Mana")
+    public void testManaConsumptionRegenAndRacialRates() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.ORC, 5);
+        player.caosarcana$setMana(50.0f);
+
+        // 1. Consumo válido
+        assertTrue(player.caosarcana$consumeMana(20.0f), "Deve permitir consumir 20 de mana quando tem 50");
+        assertEquals(30.0f, player.caosarcana$getMana(), 0.01f);
+
+        // 2. Consumo recusado por falta de mana
+        assertFalse(player.caosarcana$consumeMana(40.0f), "Deve recusar consumir 40 de mana quando tem apenas 30");
+        assertEquals(30.0f, player.caosarcana$getMana(), 0.01f, "Mana não deve ser alterada se o consumo falhar");
+
+        // 3. Restauração respeitando o teto máximo
+        player.caosarcana$restoreMana(100.0f);
+        assertEquals(player.caosarcana$getMaxMana(), player.caosarcana$getMana(), 0.01f, "Restauração não pode ultrapassar a mana máxima");
+
+        // 4. Taxas raciais de regeneração
+        MockRPGPlayer elfo = new MockRPGPlayer(Race.ALTO_ELFO, 1);
+        MockRPGPlayer felino = new MockRPGPlayer(Race.FELINO, 1);
+        MockRPGPlayer orc = new MockRPGPlayer(Race.ORC, 1);
+
+        assertEquals(3.0f, elfo.caosarcana$getManaRegenPerSecond(), 0.01f, "Alto Elfo deve regenerar 3.0 mana/s");
+        assertEquals(2.0f, felino.caosarcana$getManaRegenPerSecond(), 0.01f, "Felino deve regenerar 2.0 mana/s");
+        assertEquals(1.5f, orc.caosarcana$getManaRegenPerSecond(), 0.01f, "Orc deve regenerar 1.5 mana/s");
+    }
+
+    @Test
+    @DisplayName("Teste de parâmetros e regras de expiração da Centelha Ígnea (tempo e distância)")
+    public void testFlameSparkProjectileExpirationLimits() {
+        // 1. Verificação dos limites provisórios de balanceamento
+        assertEquals(60, br.com.caosarcana.content.spells.FlameSparkProjectile.MAX_LIFETIME_TICKS, "Tempo de vida máximo deve ser 60 ticks (3 segundos)");
+        assertEquals(40.0, br.com.caosarcana.content.spells.FlameSparkProjectile.MAX_DISTANCE_BLOCKS, 0.001, "Alcance máximo deve ser 40 blocos");
+
+        // 2. Verificação de herança e não interferência em SmallFireball
+        assertTrue(net.minecraft.world.entity.projectile.SmallFireball.class.isAssignableFrom(br.com.caosarcana.content.spells.FlameSparkProjectile.class));
+        assertNotEquals(net.minecraft.world.entity.projectile.SmallFireball.class, br.com.caosarcana.content.spells.FlameSparkProjectile.class);
+    }
 }
