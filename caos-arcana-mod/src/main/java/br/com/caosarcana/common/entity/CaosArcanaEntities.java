@@ -48,6 +48,16 @@ public final class CaosArcanaEntities {
                             .build("vigia_das_brasas")
             );
 
+    public static final EntityType<CarapacaBasalticaEntity> CARAPACA_BASALTICA =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("carapaca_basaltica"),
+                    EntityType.Builder.of(CarapacaBasalticaEntity::new, MobCategory.MONSTER)
+                            .sized(1.35F, 1.4F)
+                            .clientTrackingRange(8)
+                            .build("carapaca_basaltica")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -67,6 +77,10 @@ public final class CaosArcanaEntities {
         FabricDefaultAttributeRegistry.register(
                 VIGIA_DAS_BRASAS,
                 VigiaDasBrasasEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                CARAPACA_BASALTICA,
+                CarapacaBasalticaEntity.createAttributes()
         );
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos das Terras da Cinza registrados.");
     }

@@ -3,10 +3,12 @@ package br.com.caosarcana.client;
 import br.com.caosarcana.client.gui.ManaHudOverlay;
 import br.com.caosarcana.client.gui.RaceSelectionScreen;
 import br.com.caosarcana.client.model.CaoFumeganteModel;
+import br.com.caosarcana.client.model.CarapacaBasalticaModel;
 import br.com.caosarcana.client.model.MineiroOcoModel;
 import br.com.caosarcana.client.model.VigiaDasBrasasModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
 import br.com.caosarcana.client.renderer.CaoFumeganteRenderer;
+import br.com.caosarcana.client.renderer.CarapacaBasalticaRenderer;
 import br.com.caosarcana.client.renderer.MineiroOcoRenderer;
 import br.com.caosarcana.client.renderer.VigiaDasBrasasRenderer;
 import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
@@ -68,6 +70,14 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.VIGIA_DAS_BRASAS,
                 VigiaDasBrasasRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                CarapacaBasalticaModel.LAYER_LOCATION,
+                CarapacaBasalticaModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.CARAPACA_BASALTICA,
+                CarapacaBasalticaRenderer::new
         );
     }
 
