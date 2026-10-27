@@ -15,7 +15,6 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.sounds.SoundEvent;
@@ -24,7 +23,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.particles.ParticleTypes;
 
-public final class CaoFumeganteEntity extends PathfinderMob {
+public final class CaoFumeganteEntity extends TerrasDaCinzaMob {
     public CaoFumeganteEntity(EntityType<? extends CaoFumeganteEntity> entityType, Level level) {
         super(entityType, level);
     }

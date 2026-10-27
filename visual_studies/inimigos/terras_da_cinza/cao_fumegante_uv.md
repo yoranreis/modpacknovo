@@ -11,7 +11,7 @@ Atlas de 64 x 64 px, com fundo transparente, para cubos Java Fabric criados com 
 | Nariz largo | 3 x 2 x 2 | (46, 22) |
 | Maxilar inferior | 4 x 1 x 3 | (40, 30) |
 | Interior da boca | 3 x 1 x 1 | (40, 38) |
-| Orelhas | 2 x 2 x 1 | (28, 22), (36, 22) |
+| Orelhas altas | 2 x 4 x 1 | (28, 22), (36, 22) |
 | Pernas (quatro, atlas compartilhado) | 3 x 4 x 3 | (0, 22) |
 | Cauda | 2 x 2 x 4 | (14, 22) |
 
@@ -23,7 +23,7 @@ O arquivo cao_fumegante.png dentro de assets/caosarcana/textures/entity/terras_d
 
 Invocação de teste: /summon caosarcana:cao_fumegante.
 
-O Cão Fumegante tem 10 pontos de vida (5 corações), 2 pontos de dano e velocidade 0.34. Ele persegue jogadores e animais passivos, mas ignora criaturas domesticáveis e inimigos hostis. Usa os sons do lobo com tom reduzido; ao atacar, rosna com um som grave. Fumaça leve sai do corpo; ao correr, pode soltar cinzas, e um acerto emite uma baforada curta com brasas.
+O Cão Fumegante tem 10 pontos de vida (5 corações), 2 pontos de dano e velocidade 0.34. Ele persegue jogadores e animais passivos, mas ignora criaturas domesticáveis e inimigos hostis. Usa os sons do lobo com tom reduzido; ao atacar, rosna com um som grave. Cão e Rastejante recebem metade do dano de fontes marcadas como fogo através da classe compartilhada TerrasDaCinzaMob. Fumaça leve sai do corpo; ao correr, pode soltar cinzas, e um acerto emite uma baforada curta com brasas.
 
 ## Silhueta v0.2
 

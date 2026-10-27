@@ -11,11 +11,10 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public final class RastejanteDeCinzaEntity extends PathfinderMob {
+public final class RastejanteDeCinzaEntity extends TerrasDaCinzaMob {
     public RastejanteDeCinzaEntity(EntityType<? extends RastejanteDeCinzaEntity> entityType, Level level) {
         super(entityType, level);
     }
