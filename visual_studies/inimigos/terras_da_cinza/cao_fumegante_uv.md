@@ -1,4 +1,4 @@
-# UV — Cão Fumegante v0.2
+# UV — Cão Fumegante v0.3
 
 Atlas de 64 x 64 px, com fundo transparente, para cubos Java Fabric criados com CubeListBuilder.texOffs(u, v).addBox(...). A frente do modelo aponta para -Z.
 
@@ -24,4 +24,4 @@ O Cão Fumegante tem 10 pontos de vida (5 corações), 2 pontos de dano e veloci
 
 ## Silhueta v0.2
 
-O atlas permanece 64 x 64 px. A geometria usa escala no corpo (mais estreito e ligeiramente mais alto), cabeça elevada e pernas alongadas para criar uma silhueta mais magra e alta sem distorcer nem remapear a textura. A caixa de colisão foi ajustada para 0.75 x 1.0 bloco.
+O atlas permanece 64 x 64 px. Para acentuar a silhueta, o corpo fica mais estreito e alto, a cabeça sobe e as pernas ficam compridas. A altura total do modelo é de aproximadamente 24 px (1,5 bloco), e o comprimento do focinho à cauda fica perto de 24 px (1,5 bloco). As regiões UV originais são mantidas e esticadas pelo modelo; a caixa de colisão mede 0,95 x 1,5 bloco.

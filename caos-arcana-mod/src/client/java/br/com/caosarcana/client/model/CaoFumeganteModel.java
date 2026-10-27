@@ -23,7 +23,9 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
     public static final ResourceLocation TEXTURE_LOCATION =
             CaosArcana.id("textures/entity/terras_da_cinza/cao_fumegante.png");
 
-    private static final float BODY_REST_Y = 16.5F;
+    // Os pés chegam perto de Y=24 e o topo da cabeça começa perto de Y=0:
+    // aproximadamente 1,5 bloco de altura no modelo vanilla de 16 px/bloco.
+    private static final float BODY_REST_Y = 13.5F;
 
     private final ModelPart root;
     private final ModelPart body;
@@ -47,7 +49,7 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
 
         // Silhueta mais alta e esguia sem alterar o atlas UV aprovado.
         this.body.xScale = 0.72F;
-        this.body.yScale = 1.2F;
+        this.body.yScale = 1.8F;
         this.head.xScale = 0.9F;
         this.head.yScale = 1.1F;
         this.frontLeftLeg.xScale = 0.72F;
@@ -58,10 +60,10 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
         this.frontRightLeg.zScale = 0.78F;
         this.rearLeftLeg.zScale = 0.78F;
         this.rearRightLeg.zScale = 0.78F;
-        this.frontLeftLeg.yScale = 1.45F;
-        this.frontRightLeg.yScale = 1.45F;
-        this.rearLeftLeg.yScale = 1.45F;
-        this.rearRightLeg.yScale = 1.45F;
+        this.frontLeftLeg.yScale = 2.8F;
+        this.frontRightLeg.yScale = 2.8F;
+        this.rearLeftLeg.yScale = 2.8F;
+        this.rearRightLeg.yScale = 2.8F;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -78,7 +80,7 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
                 CubeListBuilder.create()
                         .texOffs(40, 0)
                         .addBox(-3.0F, -2.5F, -2.5F, 6.0F, 5.0F, 5.0F),
-                PartPose.offset(0.0F, 14.2F, -6.5F));
+                PartPose.offset(0.0F, 3.0F, -6.5F));
 
         PartDefinition muzzle = head.addOrReplaceChild("muzzle",
                 CubeListBuilder.create()
@@ -103,6 +105,13 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
                         .addBox(-1.0F, -1.5F, -0.5F, 2.0F, 2.0F, 1.0F),
                 PartPose.offset(2.2F, -1.8F, -0.3F));
 
+        // Pescoço alto liga a cabeça elevada ao tronco sem deixar um vão.
+        root.addOrReplaceChild("neck",
+                CubeListBuilder.create()
+                        .texOffs(0, 0)
+                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 9.0F, 4.0F),
+                PartPose.offset(0.0F, 6.0F, -4.5F));
+
         addLeg(root, "front_left_leg", -2.4F, -3.5F);
         addLeg(root, "front_right_leg", 2.4F, -3.5F);
         addLeg(root, "rear_left_leg", -2.4F, 4.0F);
@@ -112,7 +121,7 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
                 CubeListBuilder.create()
                         .texOffs(14, 22)
                         .addBox(-1.0F, -1.0F, 0.0F, 2.0F, 2.0F, 4.0F),
-                PartPose.offset(0.0F, 15.5F, 5.0F));
+                PartPose.offset(0.0F, BODY_REST_Y, 5.0F));
 
         return LayerDefinition.create(mesh, 64, 64);
     }
@@ -122,7 +131,7 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
                 CubeListBuilder.create()
                         .texOffs(0, 22)
                         .addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F),
-                PartPose.offset(x, 17.0F, z));
+                PartPose.offset(x, 12.5F, z));
     }
 
     @Override

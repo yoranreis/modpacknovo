@@ -23,7 +23,7 @@ public final class CaosArcanaEntities {
                     BuiltInRegistries.ENTITY_TYPE,
                     CaosArcana.id("cao_fumegante"),
                     EntityType.Builder.of(CaoFumeganteEntity::new, MobCategory.MONSTER)
-                            .sized(0.75F, 1.0F)
+                            .sized(0.95F, 1.5F)
                             .clientTrackingRange(8)
                             .build("cao_fumegante")
             );
