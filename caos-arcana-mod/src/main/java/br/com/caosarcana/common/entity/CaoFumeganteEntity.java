@@ -73,7 +73,7 @@ public final class CaoFumeganteEntity extends PathfinderMob {
     }
 
     @Override
-    protected float getVoicePitch() {
+    public float getVoicePitch() {
         return 0.64F + getRandom().nextFloat() * 0.08F;
     }
 
