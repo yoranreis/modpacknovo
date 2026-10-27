@@ -2,6 +2,7 @@ package br.com.caosarcana.client.model;
 
 import br.com.caosarcana.CaosArcana;
 import br.com.caosarcana.common.entity.MineiroOcoEntity;
+import net.minecraft.client.model.ArmedModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
@@ -15,9 +16,10 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.HumanoidArm;
 
 @Environment(EnvType.CLIENT)
-public final class MineiroOcoModel extends EntityModel<MineiroOcoEntity> {
+public final class MineiroOcoModel extends EntityModel<MineiroOcoEntity> implements ArmedModel {
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(CaosArcana.id("mineiro_oco"), "main");
     public static final ResourceLocation TEXTURE_LOCATION =
@@ -59,24 +61,15 @@ public final class MineiroOcoModel extends EntityModel<MineiroOcoEntity> {
                 CubeListBuilder.create().texOffs(32, 20)
                         .addBox(-4.0F, -5.0F, -4.0F, 8.0F, 3.0F, 8.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
+        head.addOrReplaceChild("helmet_lamp",
+                CubeListBuilder.create().texOffs(28, 40)
+                        .addBox(-1.5F, -1.0F, -0.5F, 3.0F, 2.0F, 1.0F),
+                PartPose.offset(0.0F, -3.5F, -4.0F));
 
         PartDefinition rightArm = root.addOrReplaceChild("right_arm",
                 CubeListBuilder.create().texOffs(0, 20)
                         .addBox(-1.5F, 0.0F, -1.5F, 3.0F, 10.0F, 3.0F),
                 PartPose.offset(-5.5F, 10.0F, 0.0F));
-        rightArm.addOrReplaceChild("pickaxe_handle",
-                CubeListBuilder.create().texOffs(28, 40)
-                        .addBox(-0.5F, 6.0F, -0.5F, 1.0F, 10.0F, 1.0F),
-                PartPose.ZERO);
-        rightArm.addOrReplaceChild("pickaxe_head",
-                CubeListBuilder.create().texOffs(34, 40)
-                        .addBox(-4.0F, 5.0F, -1.0F, 8.0F, 2.0F, 2.0F),
-                PartPose.ZERO);
-        rightArm.addOrReplaceChild("pickaxe_point",
-                CubeListBuilder.create().texOffs(54, 40)
-                        .addBox(2.0F, 3.5F, -1.0F, 2.0F, 4.0F, 2.0F),
-                PartPose.ZERO);
-
         root.addOrReplaceChild("left_arm",
                 CubeListBuilder.create().texOffs(14, 20)
                         .addBox(-1.5F, 0.0F, -1.5F, 3.0F, 10.0F, 3.0F),
@@ -95,6 +88,11 @@ public final class MineiroOcoModel extends EntityModel<MineiroOcoEntity> {
     }
 
     @Override
+    public void translateToHand(HumanoidArm arm, PoseStack poseStack) {
+        (arm == HumanoidArm.RIGHT ? rightArm : leftArm).translateAndRotate(poseStack);
+    }
+
+    @Override
     public void setupAnim(MineiroOcoEntity entity, float limbSwing, float limbSwingAmount,
                           float ageInTicks, float netHeadYaw, float headPitch) {
         head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
@@ -105,15 +103,19 @@ public final class MineiroOcoModel extends EntityModel<MineiroOcoEntity> {
         rightLeg.xRot = (float) Math.cos(walk) * step;
         leftLeg.xRot = (float) Math.cos(walk + Math.PI) * step;
 
+        rightArm.xRot = (float) Math.cos(walk + Math.PI) * 0.5F * limbSwingAmount;
+        leftArm.xRot = (float) Math.cos(walk) * 0.5F * limbSwingAmount;
         if (entity.isAggressive()) {
-            float raisedPickaxe = -1.1F + (float) Math.sin(ageInTicks * 0.18F) * 0.08F;
-            rightArm.xRot = raisedPickaxe - this.attackTime * 0.85F;
+            rightArm.xRot = -0.9F + (float) Math.sin(ageInTicks * 0.18F) * 0.06F;
             leftArm.xRot = -0.12F;
-        } else {
-            rightArm.xRot = 0.12F + (float) Math.cos(walk) * 0.08F;
-            leftArm.xRot = 0.12F + (float) Math.cos(walk + Math.PI) * 0.08F;
         }
-        rightArm.zRot = -0.08F;
+        if (this.attackTime > 0.0F) {
+            float strike = (float) Math.sin(this.attackTime * Math.PI);
+            rightArm.xRot = -1.2F + strike * 1.8F;
+            rightArm.zRot = -0.12F - strike * 0.18F;
+        } else {
+            rightArm.zRot = -0.08F;
+        }
         leftArm.zRot = 0.08F;
         body.y = 12.0F + (float) Math.cos(ageInTicks * 0.08F) * 0.08F;
     }

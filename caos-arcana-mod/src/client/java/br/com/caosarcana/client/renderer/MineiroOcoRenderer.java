@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
@@ -14,6 +15,7 @@ public final class MineiroOcoRenderer extends MobRenderer<MineiroOcoEntity, Mine
         super(context,
                 new MineiroOcoModel(context.bakeLayer(MineiroOcoModel.LAYER_LOCATION)),
                 0.45F);
+        addLayer(new ItemInHandLayer<>(this));
     }
 
     @Override

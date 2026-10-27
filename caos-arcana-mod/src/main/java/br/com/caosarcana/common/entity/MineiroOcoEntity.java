@@ -1,6 +1,7 @@
 package br.com.caosarcana.common.entity;
 
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -11,11 +12,14 @@ import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 public final class MineiroOcoEntity extends TerrasDaCinzaMob {
     public MineiroOcoEntity(EntityType<? extends MineiroOcoEntity> entityType, Level level) {
         super(entityType, level);
+        setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
     }
 
     public static AttributeSupplier.Builder createAttributes() {
