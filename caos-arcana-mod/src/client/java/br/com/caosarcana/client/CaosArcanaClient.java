@@ -4,9 +4,11 @@ import br.com.caosarcana.client.gui.ManaHudOverlay;
 import br.com.caosarcana.client.gui.RaceSelectionScreen;
 import br.com.caosarcana.client.model.CaoFumeganteModel;
 import br.com.caosarcana.client.model.MineiroOcoModel;
+import br.com.caosarcana.client.model.VigiaDasBrasasModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
 import br.com.caosarcana.client.renderer.CaoFumeganteRenderer;
 import br.com.caosarcana.client.renderer.MineiroOcoRenderer;
+import br.com.caosarcana.client.renderer.VigiaDasBrasasRenderer;
 import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
 import br.com.caosarcana.common.data.IRPGPlayerData;
 import br.com.caosarcana.common.entity.CaosArcanaEntities;
@@ -58,6 +60,14 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.MINEIRO_OCO,
                 MineiroOcoRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                VigiaDasBrasasModel.LAYER_LOCATION,
+                VigiaDasBrasasModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.VIGIA_DAS_BRASAS,
+                VigiaDasBrasasRenderer::new
         );
     }
 

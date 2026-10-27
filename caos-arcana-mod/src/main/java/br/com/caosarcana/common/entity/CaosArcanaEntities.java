@@ -38,6 +38,16 @@ public final class CaosArcanaEntities {
                             .build("mineiro_oco")
             );
 
+    public static final EntityType<VigiaDasBrasasEntity> VIGIA_DAS_BRASAS =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("vigia_das_brasas"),
+                    EntityType.Builder.of(VigiaDasBrasasEntity::new, MobCategory.MONSTER)
+                            .sized(0.8F, 1.9F)
+                            .clientTrackingRange(8)
+                            .build("vigia_das_brasas")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -53,6 +63,10 @@ public final class CaosArcanaEntities {
         FabricDefaultAttributeRegistry.register(
                 MINEIRO_OCO,
                 MineiroOcoEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                VIGIA_DAS_BRASAS,
+                VigiaDasBrasasEntity.createAttributes()
         );
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos das Terras da Cinza registrados.");
     }
