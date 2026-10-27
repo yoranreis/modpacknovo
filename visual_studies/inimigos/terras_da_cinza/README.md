@@ -5,8 +5,8 @@ Paleta basalto/carvao: #17191E, #24262E, #3A3D46, #484E5C, #555A63. Brasa: #B32D
 
 rastejante_de_cinza.png: emboscador baixo, placas e olhos incandescentes.
 cao_fumegante.png: quadrupede perseguidor, focinho escuro e fissuras de brasa.
-mineiro_oco.png: mineiro antigo de capacete rachado e picareta.
+mineiro_oco.png: mineiro antigo de capacete rachado e picareta; primeiro mob humanoide das Terras da Cinza.
 vigia_das_brasas.png: figura encapuzada com nucleo exposto e haste.
 carapaca_basaltica.png: lagarto pesado de carapaca facetada e olho vulneravel.
 
-Os cinco PNGs acima continuam sendo guias de silhueta e paleta; nao devem ser carregados como textura 3D. O Rastejante de Cinza e o Cão Fumegante têm modelos e atlas UV próprios. As texturas de jogo ficam em `caos-arcana-mod/src/main/resources/assets/caosarcana/textures/entity/terras_da_cinza/`; os atlas ampliados servem apenas para inspeção.
+Os estudos conceituais continuam servindo como guias de silhueta e paleta; nao devem ser carregados como textura 3D. Rastejante de Cinza, Cão Fumegante e Mineiro Oco têm modelos e atlas UV próprios. As texturas de jogo ficam em `caos-arcana-mod/src/main/resources/assets/caosarcana/textures/entity/terras_da_cinza/`; os atlas ampliados servem apenas para inspeção.
