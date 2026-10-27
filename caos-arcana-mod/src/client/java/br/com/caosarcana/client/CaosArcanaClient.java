@@ -9,6 +9,7 @@ import br.com.caosarcana.client.model.VigiaDasBrasasModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
 import br.com.caosarcana.client.renderer.CaoFumeganteRenderer;
 import br.com.caosarcana.client.renderer.CarapacaBasalticaRenderer;
+import br.com.caosarcana.client.renderer.ColossoBasalticoRenderer;
 import br.com.caosarcana.client.renderer.MineiroOcoRenderer;
 import br.com.caosarcana.client.renderer.VigiaDasBrasasRenderer;
 import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
@@ -78,6 +79,10 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.CARAPACA_BASALTICA,
                 CarapacaBasalticaRenderer::new
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.COLOSSO_BASALTICO,
+                ColossoBasalticoRenderer::new
         );
     }
 

@@ -9,9 +9,10 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
-public final class CarapacaBasalticaRenderer extends MobRenderer<CarapacaBasalticaEntity, CarapacaBasalticaModel> {
+public final class CarapacaBasalticaRenderer
+        extends MobRenderer<CarapacaBasalticaEntity, CarapacaBasalticaModel<CarapacaBasalticaEntity>> {
     public CarapacaBasalticaRenderer(EntityRendererProvider.Context context) {
-        super(context, new CarapacaBasalticaModel(context.bakeLayer(CarapacaBasalticaModel.LAYER_LOCATION)), 0.55F);
+        super(context, new CarapacaBasalticaModel<>(context.bakeLayer(CarapacaBasalticaModel.LAYER_LOCATION)), 0.55F);
     }
 
     @Override

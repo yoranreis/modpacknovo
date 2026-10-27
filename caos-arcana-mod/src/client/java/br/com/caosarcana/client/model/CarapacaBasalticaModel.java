@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -18,7 +19,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
-public final class CarapacaBasalticaModel extends EntityModel<CarapacaBasalticaEntity> {
+public final class CarapacaBasalticaModel<T extends Mob> extends EntityModel<T> {
     public static final ModelLayerLocation LAYER_LOCATION =
             new ModelLayerLocation(CaosArcana.id("carapaca_basaltica"), "main");
     public static final ResourceLocation TEXTURE_LOCATION =
@@ -105,7 +106,7 @@ public final class CarapacaBasalticaModel extends EntityModel<CarapacaBasalticaE
     }
 
     @Override
-    public void setupAnim(CarapacaBasalticaEntity entity, float limbSwing, float limbSwingAmount,
+    public void setupAnim(T entity, float limbSwing, float limbSwingAmount,
                           float ageInTicks, float netHeadYaw, float headPitch) {
         head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
         head.xRot = headPitch * ((float) Math.PI / 180.0F);
