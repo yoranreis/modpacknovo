@@ -23,13 +23,14 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
     public static final ResourceLocation TEXTURE_LOCATION =
             CaosArcana.id("textures/entity/terras_da_cinza/cao_fumegante.png");
 
-    // Os pés chegam perto de Y=24 e o topo da cabeça começa perto de Y=0:
-    // aproximadamente 1,5 bloco de altura no modelo vanilla de 16 px/bloco.
-    private static final float BODY_REST_Y = 13.5F;
+    // O modelo usa 24 px de altura, equivalentes a 1,5 bloco.
+    private static final float BODY_REST_Y = 14.5F;
 
     private final ModelPart root;
     private final ModelPart body;
+    private final ModelPart neck;
     private final ModelPart head;
+    private final ModelPart jaw;
     private final ModelPart frontLeftLeg;
     private final ModelPart frontRightLeg;
     private final ModelPart rearLeftLeg;
@@ -40,16 +41,18 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
         super(net.minecraft.client.renderer.RenderType::entityCutoutNoCull);
         this.root = root;
         this.body = root.getChild("body");
-        this.head = root.getChild("head");
+        this.neck = root.getChild("neck");
+        this.head = neck.getChild("head");
+        this.jaw = head.getChild("jaw");
         this.frontLeftLeg = root.getChild("front_left_leg");
         this.frontRightLeg = root.getChild("front_right_leg");
         this.rearLeftLeg = root.getChild("rear_left_leg");
         this.rearRightLeg = root.getChild("rear_right_leg");
         this.tail = root.getChild("tail");
 
-        // Silhueta mais alta e esguia sem alterar o atlas UV aprovado.
+        // Tronco baixo e estreito; pernas longas, mas separadas do ventre.
         this.body.xScale = 0.72F;
-        this.body.yScale = 1.8F;
+        this.body.yScale = 1.0F;
         this.head.xScale = 0.9F;
         this.head.yScale = 1.1F;
         this.frontLeftLeg.xScale = 0.72F;
@@ -60,10 +63,10 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
         this.frontRightLeg.zScale = 0.78F;
         this.rearLeftLeg.zScale = 0.78F;
         this.rearRightLeg.zScale = 0.78F;
-        this.frontLeftLeg.yScale = 2.8F;
-        this.frontRightLeg.yScale = 2.8F;
-        this.rearLeftLeg.yScale = 2.8F;
-        this.rearRightLeg.yScale = 2.8F;
+        this.frontLeftLeg.yScale = 1.75F;
+        this.frontRightLeg.yScale = 1.75F;
+        this.rearLeftLeg.yScale = 1.75F;
+        this.rearRightLeg.yScale = 1.75F;
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -76,46 +79,56 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
                         .addBox(-4.0F, -3.0F, -5.5F, 8.0F, 6.0F, 11.0F),
                 PartPose.offset(0.0F, BODY_REST_Y, 0.0F));
 
-        PartDefinition head = root.addOrReplaceChild("head",
+        PartDefinition neck = root.addOrReplaceChild("neck",
+                CubeListBuilder.create()
+                        .texOffs(0, 34)
+                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 9.0F, 4.0F),
+                PartPose.offset(0.0F, 7.5F, -4.5F));
+
+        PartDefinition head = neck.addOrReplaceChild("head",
                 CubeListBuilder.create()
                         .texOffs(40, 0)
                         .addBox(-3.0F, -2.5F, -2.5F, 6.0F, 5.0F, 5.0F),
-                PartPose.offset(0.0F, 3.0F, -6.5F));
+                PartPose.offset(0.0F, -2.0F, -2.0F));
 
         PartDefinition muzzle = head.addOrReplaceChild("muzzle",
                 CubeListBuilder.create()
                         .texOffs(40, 12)
-                        .addBox(-2.0F, -1.5F, -2.0F, 4.0F, 3.0F, 3.0F),
+                        .addBox(-2.0F, -1.5F, -2.0F, 4.0F, 2.0F, 3.0F),
                 PartPose.offset(0.0F, 1.5F, -2.3F));
 
-        muzzle.addOrReplaceChild("nose",
+        head.addOrReplaceChild("nose",
                 CubeListBuilder.create()
                         .texOffs(46, 22)
-                        .addBox(-1.0F, -1.0F, -1.0F, 2.0F, 2.0F, 1.0F),
-                PartPose.offset(0.0F, 0.0F, -1.6F));
+                        .addBox(-1.5F, -1.0F, -2.0F, 3.0F, 2.0F, 2.0F),
+                PartPose.offset(0.0F, 0.7F, -5.0F));
+
+        PartDefinition jaw = head.addOrReplaceChild("jaw",
+                CubeListBuilder.create()
+                        .texOffs(40, 30)
+                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 1.0F, 3.0F),
+                PartPose.offset(0.0F, 2.5F, -2.3F));
+        jaw.addOrReplaceChild("mouth_inner",
+                CubeListBuilder.create()
+                        .texOffs(40, 38)
+                        .addBox(-1.5F, -0.5F, -1.0F, 3.0F, 1.0F, 1.0F),
+                PartPose.offset(0.0F, 0.0F, -1.0F));
 
         head.addOrReplaceChild("left_ear",
                 CubeListBuilder.create()
                         .texOffs(28, 22)
-                        .addBox(-1.0F, -1.5F, -0.5F, 2.0F, 2.0F, 1.0F),
-                PartPose.offset(-2.2F, -1.8F, -0.3F));
+                        .addBox(-1.0F, -3.0F, -0.5F, 2.0F, 4.0F, 1.0F),
+                PartPose.offset(-2.2F, -2.1F, -0.3F));
         head.addOrReplaceChild("right_ear",
                 CubeListBuilder.create()
                         .texOffs(36, 22)
-                        .addBox(-1.0F, -1.5F, -0.5F, 2.0F, 2.0F, 1.0F),
-                PartPose.offset(2.2F, -1.8F, -0.3F));
+                        .addBox(-1.0F, -3.0F, -0.5F, 2.0F, 4.0F, 1.0F),
+                PartPose.offset(2.2F, -2.1F, -0.3F));
 
-        // Pescoço alto liga a cabeça elevada ao tronco sem deixar um vão.
-        root.addOrReplaceChild("neck",
-                CubeListBuilder.create()
-                        .texOffs(0, 0)
-                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 9.0F, 4.0F),
-                PartPose.offset(0.0F, 6.0F, -4.5F));
-
-        addLeg(root, "front_left_leg", -2.4F, -3.5F);
-        addLeg(root, "front_right_leg", 2.4F, -3.5F);
-        addLeg(root, "rear_left_leg", -2.4F, 4.0F);
-        addLeg(root, "rear_right_leg", 2.4F, 4.0F);
+        addLeg(root, "front_left_leg", -2.7F, -3.5F);
+        addLeg(root, "front_right_leg", 2.7F, -3.5F);
+        addLeg(root, "rear_left_leg", -2.7F, 4.0F);
+        addLeg(root, "rear_right_leg", 2.7F, 4.0F);
 
         root.addOrReplaceChild("tail",
                 CubeListBuilder.create()
@@ -131,7 +144,7 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
                 CubeListBuilder.create()
                         .texOffs(0, 22)
                         .addBox(-1.5F, 0.0F, -1.5F, 3.0F, 4.0F, 3.0F),
-                PartPose.offset(x, 12.5F, z));
+                PartPose.offset(x, 17.0F, z));
     }
 
     @Override
@@ -140,6 +153,7 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
         body.y = BODY_REST_Y + (float) Math.cos(ageInTicks * 0.16F) * 0.12F;
         head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
         head.xRot = headPitch * ((float) Math.PI / 180.0F);
+        jaw.xRot = entity.isAggressive() ? 0.18F : 0.04F;
 
         float swing = limbSwing * 0.6662F;
         float amplitude = 0.9F * limbSwingAmount;
