@@ -15,7 +15,7 @@ public final class MineiroOcoRenderer extends MobRenderer<MineiroOcoEntity, Mine
         super(context,
                 new MineiroOcoModel(context.bakeLayer(MineiroOcoModel.LAYER_LOCATION)),
                 0.45F);
-        addLayer(new ItemInHandLayer<>(this));
+        addLayer(new ItemInHandLayer<>(this, context.getItemInHandRenderer()));
     }
 
     @Override
