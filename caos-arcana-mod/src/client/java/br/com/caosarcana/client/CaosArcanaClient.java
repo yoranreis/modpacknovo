@@ -1,7 +1,9 @@
 package br.com.caosarcana.client;
 
 import br.com.caosarcana.client.gui.RaceSelectionScreen;
+import br.com.caosarcana.client.model.CaoFumeganteModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
+import br.com.caosarcana.client.renderer.CaoFumeganteRenderer;
 import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
 import br.com.caosarcana.common.entity.CaosArcanaEntities;
 import br.com.caosarcana.common.network.ModMessages;
@@ -11,7 +13,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,14 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.RASTEJANTE_DE_CINZA,
                 RastejanteDeCinzaRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                CaoFumeganteModel.LAYER_LOCATION,
+                CaoFumeganteModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.CAO_FUMEGANTE,
+                CaoFumeganteRenderer::new
         );
     }
 

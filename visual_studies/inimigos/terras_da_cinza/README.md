@@ -9,4 +9,4 @@ mineiro_oco.png: mineiro antigo de capacete rachado e picareta.
 vigia_das_brasas.png: figura encapuzada com nucleo exposto e haste.
 carapaca_basaltica.png: lagarto pesado de carapaca facetada e olho vulneravel.
 
-Os cinco PNGs acima continuam sendo guias de silhueta e paleta; nao devem ser carregados como textura 3D. O Rastejante de Cinza já tem modelo e atlas UV próprios. Sua textura de jogo fica em `caos-arcana-mod/src/main/resources/assets/caosarcana/textures/entity/terras_da_cinza/rastejante_de_cinza.png`; o atlas ampliado serve apenas para inspeção.
+Os cinco PNGs acima continuam sendo guias de silhueta e paleta; nao devem ser carregados como textura 3D. O Rastejante de Cinza e o Cão Fumegante têm modelos e atlas UV próprios. As texturas de jogo ficam em `caos-arcana-mod/src/main/resources/assets/caosarcana/textures/entity/terras_da_cinza/`; os atlas ampliados servem apenas para inspeção.

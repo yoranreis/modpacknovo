@@ -18,6 +18,16 @@ public final class CaosArcanaEntities {
                             .build("rastejante_de_cinza")
             );
 
+    public static final EntityType<CaoFumeganteEntity> CAO_FUMEGANTE =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("cao_fumegante"),
+                    EntityType.Builder.of(CaoFumeganteEntity::new, MobCategory.MONSTER)
+                            .sized(0.85F, 0.8F)
+                            .clientTrackingRange(8)
+                            .build("cao_fumegante")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -26,7 +36,11 @@ public final class CaosArcanaEntities {
                 RASTEJANTE_DE_CINZA,
                 RastejanteDeCinzaEntity.createAttributes()
         );
-        CaosArcana.LOGGER.info("[Caos Arcana] Entidade Rastejante de Cinza registrada.");
+        FabricDefaultAttributeRegistry.register(
+                CAO_FUMEGANTE,
+                CaoFumeganteEntity.createAttributes()
+        );
+        CaosArcana.LOGGER.info("[Caos Arcana] Inimigos das Terras da Cinza registrados.");
     }
 }
 
