@@ -81,6 +81,30 @@ public class MockRPGPlayer implements IRPGPlayerData {
     }
 
     @Override
+    public boolean caosarcana$consumeMana(float amount) {
+        if (amount <= 0.0f) return true;
+        if (this.mana >= amount) {
+            this.mana -= amount;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void caosarcana$restoreMana(float amount) {
+        if (amount <= 0.0f) return;
+        float max = caosarcana$getMaxMana();
+        this.mana = Math.min(max, this.mana + amount);
+    }
+
+    @Override
+    public float caosarcana$getManaRegenPerSecond() {
+        if (this.race == Race.ALTO_ELFO) return 3.0f;
+        if (this.race == Race.ORC) return 1.5f;
+        return 2.0f;
+    }
+
+    @Override
     public int caosarcana$getGeneralLevel() {
         return generalLevel;
     }

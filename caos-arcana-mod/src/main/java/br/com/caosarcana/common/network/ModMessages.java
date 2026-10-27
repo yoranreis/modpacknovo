@@ -162,6 +162,23 @@ public class ModMessages {
             return InteractionResultHolder.pass(player.getItemInHand(hand));
         });
 
+        // Regeneração de Mana a cada 1 segundo (20 ticks) na thread do servidor
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if (server.getTickCount() % 20 == 0) {
+                for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                    if (player instanceof IRPGPlayerData rpg && rpg.caosarcana$hasChosenRace()) {
+                        float currentMana = rpg.caosarcana$getMana();
+                        float maxMana = rpg.caosarcana$getMaxMana();
+                        if (currentMana < maxMana) {
+                            float regen = rpg.caosarcana$getManaRegenPerSecond();
+                            rpg.caosarcana$restoreMana(regen);
+                            syncPlayerData(player);
+                        }
+                    }
+                }
+            }
+        });
+
         // Lembrete periódico e re-abertura forçada na tela para jogadores sem raça
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if (server.getTickCount() % 60 == 0) { // A cada 3 segundos

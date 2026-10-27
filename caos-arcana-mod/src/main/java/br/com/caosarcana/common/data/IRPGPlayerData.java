@@ -20,6 +20,10 @@ public interface IRPGPlayerData {
     float caosarcana$getMaxMana();
     void caosarcana$recalculateMaxMana();
 
+    boolean caosarcana$consumeMana(float amount);
+    void caosarcana$restoreMana(float amount);
+    float caosarcana$getManaRegenPerSecond();
+
     int caosarcana$getGeneralLevel();
     void caosarcana$setGeneralLevel(int level);
 

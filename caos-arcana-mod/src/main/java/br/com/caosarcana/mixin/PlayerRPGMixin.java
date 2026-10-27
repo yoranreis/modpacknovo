@@ -94,6 +94,33 @@ public class PlayerRPGMixin implements IRPGPlayerData {
     }
 
     @Override
+    public boolean caosarcana$consumeMana(float amount) {
+        if (amount <= 0.0f) return true;
+        if (this.caosarcana$mana >= amount) {
+            this.caosarcana$mana -= amount;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void caosarcana$restoreMana(float amount) {
+        if (amount <= 0.0f) return;
+        float max = caosarcana$getMaxMana();
+        this.caosarcana$mana = Math.min(max, this.caosarcana$mana + amount);
+    }
+
+    @Override
+    public float caosarcana$getManaRegenPerSecond() {
+        if (this.caosarcana$race == Race.ALTO_ELFO) {
+            return 3.0f; // Bônus arcano de regeneração
+        } else if (this.caosarcana$race == Race.ORC) {
+            return 1.5f; // Foco físico, regeneração mais lenta
+        }
+        return 2.0f; // Taxa padrão (Felino e outros)
+    }
+
+    @Override
     public int caosarcana$getGeneralLevel() {
         return caosarcana$generalLevel;
     }

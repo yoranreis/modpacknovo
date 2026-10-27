@@ -8,6 +8,9 @@
 		"InventoryArmorSlotMixin",
 		"PlayerRPGMixin"
 	],
+	"client": [
+		"client.GuiHealthOverlayMixin"
+	],
 	"injectors": {
 		"defaultRequire": 1
 	},

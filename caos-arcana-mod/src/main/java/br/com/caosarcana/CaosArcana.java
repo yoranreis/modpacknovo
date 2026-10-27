@@ -23,6 +23,7 @@ public class CaosArcana implements ModInitializer {
 
         EquipmentRequirementRegistry.registerProvisionalTestItems();
         EquipmentValidationHandler.register();
+        br.com.caosarcana.content.ModItems.register();
 
         LOGGER.info("[Caos Arcana] Sistemas de Raças, Persistência e Restrições de Equipamentos carregados com sucesso.");
     }

@@ -86,6 +86,21 @@ public class CaosArcanaCommands {
                     })
                 )
             )
+            .then(Commands.literal("setmana")
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.argument("amount", com.mojang.brigadier.arguments.FloatArgumentType.floatArg(0.0f, 500.0f))
+                    .executes(ctx -> {
+                        float amount = com.mojang.brigadier.arguments.FloatArgumentType.getFloat(ctx, "amount");
+                        ServerPlayer player = ctx.getSource().getPlayerOrException();
+                        if (player instanceof IRPGPlayerData rpgPlayer) {
+                            rpgPlayer.caosarcana$setMana(amount);
+                            ModMessages.syncPlayerData(player);
+                            ctx.getSource().sendSuccess(() -> Component.literal(String.format("§a[Caos Arcana] Mana alterada para §b%.0f/%.0f§a.", rpgPlayer.caosarcana$getMana(), rpgPlayer.caosarcana$getMaxMana())), true);
+                        }
+                        return 1;
+                    })
+                )
+            )
             .then(Commands.literal("checkequipment")
                 .executes(ctx -> {
                     ServerPlayer player = ctx.getSource().getPlayerOrException();
