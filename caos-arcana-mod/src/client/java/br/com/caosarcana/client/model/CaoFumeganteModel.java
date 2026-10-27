@@ -97,11 +97,11 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
                         .addBox(-2.0F, -1.5F, -2.0F, 4.0F, 2.0F, 3.0F),
                 PartPose.offset(0.0F, 1.5F, -2.3F));
 
-        head.addOrReplaceChild("nose",
+        muzzle.addOrReplaceChild("nose",
                 CubeListBuilder.create()
                         .texOffs(46, 22)
                         .addBox(-1.5F, -1.0F, -2.0F, 3.0F, 2.0F, 2.0F),
-                PartPose.offset(0.0F, 0.7F, -5.0F));
+                PartPose.offset(0.0F, -0.1F, -2.6F));
 
         PartDefinition jaw = head.addOrReplaceChild("jaw",
                 CubeListBuilder.create()
@@ -117,13 +117,13 @@ public final class CaoFumeganteModel extends EntityModel<CaoFumeganteEntity> {
         head.addOrReplaceChild("left_ear",
                 CubeListBuilder.create()
                         .texOffs(28, 22)
-                        .addBox(-1.0F, -3.0F, -0.5F, 2.0F, 4.0F, 1.0F),
-                PartPose.offset(-2.2F, -2.1F, -0.3F));
+                        .addBox(-1.0F, -1.5F, -0.5F, 2.0F, 2.0F, 1.0F),
+                PartPose.offset(-2.2F, -1.8F, -0.3F));
         head.addOrReplaceChild("right_ear",
                 CubeListBuilder.create()
                         .texOffs(36, 22)
-                        .addBox(-1.0F, -3.0F, -0.5F, 2.0F, 4.0F, 1.0F),
-                PartPose.offset(2.2F, -2.1F, -0.3F));
+                        .addBox(-1.0F, -1.5F, -0.5F, 2.0F, 2.0F, 1.0F),
+                PartPose.offset(2.2F, -1.8F, -0.3F));
 
         addLeg(root, "front_left_leg", -2.7F, -3.5F);
         addLeg(root, "front_right_leg", 2.7F, -3.5F);
