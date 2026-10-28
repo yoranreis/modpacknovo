@@ -2,12 +2,14 @@ package br.com.caosarcana.client;
 
 import br.com.caosarcana.client.gui.ManaHudOverlay;
 import br.com.caosarcana.client.gui.RaceSelectionScreen;
+import br.com.caosarcana.client.model.AranhaCascaSoltaModel;
 import br.com.caosarcana.client.model.CaoFumeganteModel;
 import br.com.caosarcana.client.model.GuardiaoMadeiraNegraModel;
 import br.com.caosarcana.client.model.CarapacaBasalticaModel;
 import br.com.caosarcana.client.model.MineiroOcoModel;
 import br.com.caosarcana.client.model.VigiaDasBrasasModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
+import br.com.caosarcana.client.renderer.AranhaCascaSoltaRenderer;
 import br.com.caosarcana.client.renderer.CaoFumeganteRenderer;
 import br.com.caosarcana.client.renderer.GuardiaoMadeiraNegraRenderer;
 import br.com.caosarcana.client.renderer.CarapacaBasalticaRenderer;
@@ -26,6 +28,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +96,18 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.GUARDIAO_MADEIRA_NEGRA,
                 GuardiaoMadeiraNegraRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                AranhaCascaSoltaModel.LAYER_LOCATION,
+                AranhaCascaSoltaModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.ARANHA_CASCA_SOLTA,
+                AranhaCascaSoltaRenderer::new
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.TEIA_DE_CASCA,
+                context -> new ThrownItemRenderer<>(context, 1.0F, true)
         );
     }
 

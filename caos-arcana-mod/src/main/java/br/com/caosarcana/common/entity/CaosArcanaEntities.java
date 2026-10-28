@@ -78,6 +78,27 @@ public final class CaosArcanaEntities {
                             .build("guardiao_madeira_negra")
             );
 
+    public static final EntityType<AranhaCascaSoltaEntity> ARANHA_CASCA_SOLTA =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("aranha_casca_solta"),
+                    EntityType.Builder.of(AranhaCascaSoltaEntity::new, MobCategory.MONSTER)
+                            .sized(1.2F, 0.75F)
+                            .clientTrackingRange(8)
+                            .build("aranha_casca_solta")
+            );
+
+    public static final EntityType<TeiaDeCascaProjectile> TEIA_DE_CASCA =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("teia_de_casca"),
+                    EntityType.Builder.<TeiaDeCascaProjectile>of(TeiaDeCascaProjectile::new, MobCategory.MISC)
+                            .sized(0.35F, 0.35F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10)
+                            .build("teia_de_casca")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -110,7 +131,11 @@ public final class CaosArcanaEntities {
                 GUARDIAO_MADEIRA_NEGRA,
                 GuardiaoMadeiraNegraEntity.createAttributes()
         );
-        CaosArcana.LOGGER.info("[Caos Arcana] Inimigos das Terras da Cinza registrados.");
+        FabricDefaultAttributeRegistry.register(
+                ARANHA_CASCA_SOLTA,
+                AranhaCascaSoltaEntity.createAttributes()
+        );
+        CaosArcana.LOGGER.info("[Caos Arcana] Inimigos registrados com sucesso.");
     }
 }
 
