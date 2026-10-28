@@ -99,6 +99,16 @@ public final class CaosArcanaEntities {
                             .build("teia_de_casca")
             );
 
+    public static final EntityType<EspiritoNevoaEntity> ESPIRITO_NEVOA =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("espirito_nevoa"),
+                    EntityType.Builder.of(EspiritoNevoaEntity::new, MobCategory.MONSTER)
+                            .sized(0.7F, 1.8F)
+                            .clientTrackingRange(8)
+                            .build("espirito_nevoa")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -135,7 +145,10 @@ public final class CaosArcanaEntities {
                 ARANHA_CASCA_SOLTA,
                 AranhaCascaSoltaEntity.createAttributes()
         );
-        CaosArcana.LOGGER.info("[Caos Arcana] Inimigos registrados com sucesso.");
+        FabricDefaultAttributeRegistry.register(
+                ESPIRITO_NEVOA,
+                EspiritoNevoaEntity.createAttributes()
+        );
+        CaosArcana.LOGGER.info("[Caos Arcana] Inimigos e entidades registrados com sucesso.");
     }
 }
-
