@@ -5,6 +5,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -28,13 +30,13 @@ import net.minecraft.world.level.block.Blocks;
 /**
  * Predadora ágil da Floresta Negra.
  * Camuflada com placas de casca solta sobre o corpo, dispara teias pegajosas de seiva
- * que desaceleram a presa e realiza saltos rápidos de emboscada.
+ * que desaceleram a presa e realiza botes rasantes de emboscada sem sofrer dano de queda.
  */
 public final class AranhaCascaSoltaEntity extends Spider {
     private int webCooldown = 60;
     private int webWindup = 0;
 
-    private int leapCooldown = 40;
+    private int leapCooldown = 100;
     private int leapWindup = 0;
     private int inLeapTicks = 0;
 
@@ -66,6 +68,20 @@ public final class AranhaCascaSoltaEntity extends Spider {
 
         targetSelector.addGoal(1, new HurtByTargetGoal(this));
         targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    @Override
+    public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
+        // Imune a qualquer dano de queda ao saltar de árvores e desníveis
+        return false;
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (source.is(DamageTypeTags.IS_FALL)) {
+            return false;
+        }
+        return super.hurt(source, amount);
     }
 
     @Override
@@ -155,10 +171,11 @@ public final class AranhaCascaSoltaEntity extends Spider {
                 return;
             }
 
-            // Bote de Emboscada: curta/média distância (4 a 12 blocos)
-            if (leapCooldown == 0 && distanceSqr >= 16.0D && distanceSqr <= 144.0D) {
-                leapCooldown = 110;
-                leapWindup = 10; // ~0.5s de telegrafia
+            // Bote de Emboscada: 3 a no máximo 12 blocos (distância máxima de 12 blocos)
+            // Cooldown de pelo menos 10 segundos (200 ticks)
+            if (leapCooldown == 0 && distanceSqr >= 9.0D && distanceSqr <= 144.0D) {
+                leapCooldown = 200; // 10 segundos
+                leapWindup = 10;    // ~0.5s de telegrafia
                 serverLevel.playSound(null, getX(), getY(), getZ(), SoundEvents.SPIDER_HURT,
                         SoundSource.HOSTILE, 0.75F, 1.35F);
                 serverLevel.sendParticles(
@@ -192,13 +209,25 @@ public final class AranhaCascaSoltaEntity extends Spider {
         double dist = Math.max(0.001D, Math.sqrt(dx * dx + dz * dz));
         double dy = target.getY() - getY();
 
-        double vx = (dx / dist) * 0.95D;
-        double vz = (dz / dist) * 0.95D;
-        double vy = Math.max(0.38D, dy * 0.28D + 0.38D);
+        // Trajetória rasante e controlada: alcance máximo horizontal de 12 blocos
+        double clampedDist = Math.min(12.0D, dist);
+        double speed = Math.min(0.72D, 0.35D + clampedDist * 0.032D);
+        double vx = (dx / dist) * speed;
+        double vz = (dz / dist) * speed;
+
+        // Altura vertical moderada (evita pular excessivamente alto)
+        double vy;
+        if (dy > 0.5D) {
+            vy = Math.min(0.28D, dy * 0.16D + 0.18D);
+        } else if (dy < -0.5D) {
+            vy = Math.max(-0.15D, dy * 0.10D + 0.10D);
+        } else {
+            vy = 0.20D; // Arco baixo e rente ao solo
+        }
 
         setDeltaMovement(vx, vy, vz);
         hasImpulse = true;
-        inLeapTicks = 16;
+        inLeapTicks = 14;
 
         serverLevel.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_ATTACK_SWEEP,
                 SoundSource.HOSTILE, 0.85F, 0.75F);
