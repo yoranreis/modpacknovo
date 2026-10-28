@@ -63,7 +63,7 @@ public final class CaosArcanaEntities {
                     BuiltInRegistries.ENTITY_TYPE,
                     CaosArcana.id("colosso_basaltico"),
                     EntityType.Builder.of(ColossoBasalticoEntity::new, MobCategory.MONSTER)
-                            .sized(3.8F, 3.2F)
+                            .sized(2.8F, 3.2F)
                             .clientTrackingRange(12)
                             .build("colosso_basaltico")
             );

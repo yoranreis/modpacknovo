@@ -20,7 +20,7 @@ public final class ColossoBasalticoRenderer
 
     @Override
     protected void scale(ColossoBasalticoEntity entity, PoseStack poseStack, float partialTick) {
-        poseStack.scale(3.6F, 2.3F, 2.1F);
+        poseStack.scale(3.8F, 2.3F, 1.65F);
     }
 
     @Override
