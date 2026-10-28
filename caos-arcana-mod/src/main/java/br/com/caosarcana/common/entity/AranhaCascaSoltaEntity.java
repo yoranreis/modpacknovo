@@ -171,9 +171,9 @@ public final class AranhaCascaSoltaEntity extends Spider {
                 return;
             }
 
-            // Bote de Emboscada: 3 a no máximo 12 blocos (distância máxima de 12 blocos)
+            // Bote de Emboscada: 3 a no máximo 36 blocos (3x o alcance original)
             // Cooldown de pelo menos 10 segundos (200 ticks)
-            if (leapCooldown == 0 && distanceSqr >= 9.0D && distanceSqr <= 144.0D) {
+            if (leapCooldown == 0 && distanceSqr >= 9.0D && distanceSqr <= 1296.0D) {
                 leapCooldown = 200; // 10 segundos
                 leapWindup = 10;    // ~0.5s de telegrafia
                 serverLevel.playSound(null, getX(), getY(), getZ(), SoundEvents.SPIDER_HURT,
@@ -210,15 +210,15 @@ public final class AranhaCascaSoltaEntity extends Spider {
         double dy = target.getY() - getY();
 
         // ── Física do bote rasante ───────────────────────────────────────────
-        // Velocidade horizontal fixa de 0.65 blocos/tick, limitada a 12 blocos.
-        // A aranha sai voando "para frente", rente ao solo, em direção ao alvo.
-        double hSpeed = 0.65D; // blocos/tick - valor perceptível e controlado
+        // Velocidade horizontal de 1.95 blocos/tick (3× o valor original de 0.65).
+        // Alcance máximo de ~36 blocos, arco baixo e direto ao alvo.
+        double hSpeed = 1.95D;
         double vx = (dx / dist) * hSpeed;
         double vz = (dz / dist) * hSpeed;
 
         // Estima o tempo de voo (em ticks) para cobrir a distância horizontal.
-        // Usa a equação cinemática: dist = hSpeed * t  →  t = dist/hSpeed
-        double ticks = Math.min(dist, 12.0D) / hSpeed;
+        // Limita o alcance efetivo a 36 blocos.
+        double ticks = Math.min(dist, 36.0D) / hSpeed;
 
         // Calcula vy para que a aranha chegue à altura do alvo no meio do voo.
         // Fórmula: vy_inicial = (dy - 0.5 * g * t^2) / t , onde g = -0.08 blocos/tick²
@@ -226,8 +226,8 @@ public final class AranhaCascaSoltaEntity extends Spider {
         double vy = (dy - 0.5D * gravity * ticks * ticks) / ticks;
 
         // Clampa vy: mínimo 0.20 (aranha decola mesmo em terreno plano),
-        // máximo 0.55 (garante no máximo ~3-4 blocos de altitude no pico).
-        vy = Math.max(0.20D, Math.min(0.55D, vy));
+        // máximo 0.80 (garante no máximo ~4-5 blocos de altitude no pico do arco longo).
+        vy = Math.max(0.20D, Math.min(0.80D, vy));
 
         setDeltaMovement(vx, vy, vz);
         hasImpulse = true;
