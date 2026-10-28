@@ -1,3 +1,20 @@
 {
-  "item.caosarcana.centelha_ignea": "Centelha Ígnea"
+  "item.caosarcana.centelha_ignea": "Grimoire: Flame Spark",
+  "item.caosarcana.grimorio_geada": "Grimoire: Frostbite",
+  "item.caosarcana.grimorio_relampago": "Grimoire: Arcane Lightning",
+  "item.caosarcana.grimorio_cura": "Grimoire: Healing Touch",
+  "item.caosarcana.grimorio_circulo_sagrado": "Grimoire: Sacred Ward",
+  "item.caosarcana.grimorio_carvalho": "Grimoire: Oakflesh",
+  "item.caosarcana.grimorio_luz": "Grimoire: Candlelight",
+  "item.caosarcana.grimorio_espada": "Grimoire: Bound Sword",
+  "item.caosarcana.grimorio_familiar": "Grimoire: Conjure Familiar",
+  "item.caosarcana.grimorio_sombras": "Grimoire: Shadowcloak",
+
+  "item.caosarcana.moeda_cobre": "Copper Coin",
+  "item.caosarcana.moeda_prata": "Silver Coin",
+  "item.caosarcana.moeda_ouro": "Gold Septim",
+
+  "category.caosarcana.spells": "Caos Arcana - Spells",
+  "key.caosarcana.cast_spell": "Cast Active Spell",
+  "key.caosarcana.open_spell_menu": "Open Spell Grimoire"
 }

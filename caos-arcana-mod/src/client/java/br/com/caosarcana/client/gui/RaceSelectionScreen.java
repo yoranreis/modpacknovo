@@ -32,23 +32,35 @@ public class RaceSelectionScreen extends Screen {
         super.init();
 
         int centerX = this.width / 2;
-        int listX = centerX - 240;
-        int startY = 65;
-        int buttonWidth = 95;
-        int buttonHeight = 24;
+        int listX = centerX - 250;
+        int startY = 46;
+        int buttonWidth = 110;
+        int buttonHeight = 18;
+        int spacing = 3;
 
-        Race[] availableRaces = new Race[]{Race.ORC, Race.FELINO, Race.ALTO_ELFO};
+        Race[] availableRaces = new Race[]{
+                Race.ORC,
+                Race.FELINO,
+                Race.ALTO_ELFO,
+                Race.NORDICO,
+                Race.ELFO_NEGRO,
+                Race.ELFO_FLORESTA,
+                Race.BRETAO,
+                Race.IMPERIAL,
+                Race.GUARDA_VERMELHO,
+                Race.ARGONIANO
+        };
 
         for (int i = 0; i < availableRaces.length; i++) {
             Race race = availableRaces[i];
-            int y = startY + (i * (buttonHeight + 10));
+            int y = startY + (i * (buttonHeight + spacing));
 
             this.addRenderableWidget(Button.builder(Component.literal(race.getDisplayName()), btn -> {
                 this.selectedRace = race;
             }).bounds(listX, y, buttonWidth, buttonHeight).build());
         }
 
-        int confirmY = this.height - 36;
+        int confirmY = this.height - 34;
         this.confirmButton = this.addRenderableWidget(Button.builder(
                 Component.literal("CONFIRMAR ESCOLHA").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD),
                 btn -> confirmSelection()

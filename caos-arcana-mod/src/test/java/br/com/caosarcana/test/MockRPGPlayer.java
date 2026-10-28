@@ -17,6 +17,8 @@ public class MockRPGPlayer implements IRPGPlayerData {
     private int generalLevel = 1;
     private final Map<String, Integer> schools = new HashMap<>();
     private final List<ItemStack> pendingDeliveries = new ArrayList<>();
+    private final java.util.Set<String> knownSpells = new java.util.HashSet<>();
+    private String selectedSpell = "";
 
     public MockRPGPlayer(Race race, int generalLevel) {
         this.race = race;
@@ -122,6 +124,45 @@ public class MockRPGPlayer implements IRPGPlayerData {
     @Override
     public void caosarcana$setSchoolLevel(String school, int level) {
         schools.put(school.toLowerCase(), level);
+    }
+
+    @Override
+    public boolean caosarcana$knowsSpell(String spellId) {
+        if (spellId == null || spellId.trim().isEmpty()) return false;
+        return knownSpells.contains(spellId.trim().toLowerCase());
+    }
+
+    @Override
+    public boolean caosarcana$learnSpell(String spellId) {
+        if (spellId == null || spellId.trim().isEmpty()) return false;
+        String normalized = spellId.trim().toLowerCase();
+        boolean added = knownSpells.add(normalized);
+        if (added && (selectedSpell == null || selectedSpell.isEmpty())) {
+            selectedSpell = normalized;
+        }
+        return added;
+    }
+
+    @Override
+    public java.util.Set<String> caosarcana$getKnownSpells() {
+        return java.util.Collections.unmodifiableSet(knownSpells);
+    }
+
+    @Override
+    public String caosarcana$getSelectedSpell() {
+        return selectedSpell != null ? selectedSpell : "";
+    }
+
+    @Override
+    public void caosarcana$setSelectedSpell(String spellId) {
+        if (spellId == null || spellId.trim().isEmpty()) {
+            this.selectedSpell = "";
+            return;
+        }
+        String normalized = spellId.trim().toLowerCase();
+        if (knownSpells.contains(normalized)) {
+            this.selectedSpell = normalized;
+        }
     }
 
     @Override

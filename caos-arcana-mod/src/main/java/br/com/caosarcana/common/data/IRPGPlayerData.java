@@ -30,6 +30,13 @@ public interface IRPGPlayerData {
     int caosarcana$getSchoolLevel(String school);
     void caosarcana$setSchoolLevel(String school, int level);
 
+    boolean caosarcana$knowsSpell(String spellId);
+    boolean caosarcana$learnSpell(String spellId);
+    java.util.Set<String> caosarcana$getKnownSpells();
+
+    String caosarcana$getSelectedSpell();
+    void caosarcana$setSelectedSpell(String spellId);
+
     List<ItemStack> caosarcana$getPendingDeliveries();
     void caosarcana$addPendingDelivery(ItemStack stack);
     void caosarcana$clearPendingDeliveries();
