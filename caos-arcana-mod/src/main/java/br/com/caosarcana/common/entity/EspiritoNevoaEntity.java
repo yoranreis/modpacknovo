@@ -30,7 +30,6 @@ public final class EspiritoNevoaEntity extends PathfinderMob {
 
     public EspiritoNevoaEntity(EntityType<? extends EspiritoNevoaEntity> type, Level level) {
         super(type, level);
-        this.noPhysics = true; // Flutua levemente pela névoa
     }
 
     public static AttributeSupplier.Builder createAttributes() {
