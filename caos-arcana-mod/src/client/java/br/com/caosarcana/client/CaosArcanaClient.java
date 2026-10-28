@@ -3,11 +3,13 @@ package br.com.caosarcana.client;
 import br.com.caosarcana.client.gui.ManaHudOverlay;
 import br.com.caosarcana.client.gui.RaceSelectionScreen;
 import br.com.caosarcana.client.model.CaoFumeganteModel;
+import br.com.caosarcana.client.model.GuardiaoMadeiraNegraModel;
 import br.com.caosarcana.client.model.CarapacaBasalticaModel;
 import br.com.caosarcana.client.model.MineiroOcoModel;
 import br.com.caosarcana.client.model.VigiaDasBrasasModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
 import br.com.caosarcana.client.renderer.CaoFumeganteRenderer;
+import br.com.caosarcana.client.renderer.GuardiaoMadeiraNegraRenderer;
 import br.com.caosarcana.client.renderer.CarapacaBasalticaRenderer;
 import br.com.caosarcana.client.renderer.ColossoBasalticoRenderer;
 import br.com.caosarcana.client.renderer.MineiroOcoRenderer;
@@ -83,6 +85,14 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.COLOSSO_BASALTICO,
                 ColossoBasalticoRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                GuardiaoMadeiraNegraModel.LAYER_LOCATION,
+                GuardiaoMadeiraNegraModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.GUARDIAO_MADEIRA_NEGRA,
+                GuardiaoMadeiraNegraRenderer::new
         );
     }
 

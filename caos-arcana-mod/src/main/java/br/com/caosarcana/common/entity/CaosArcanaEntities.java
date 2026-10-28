@@ -68,6 +68,16 @@ public final class CaosArcanaEntities {
                             .build("colosso_basaltico")
             );
 
+    public static final EntityType<GuardiaoMadeiraNegraEntity> GUARDIAO_MADEIRA_NEGRA =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("guardiao_madeira_negra"),
+                    EntityType.Builder.of(GuardiaoMadeiraNegraEntity::new, MobCategory.MONSTER)
+                            .sized(0.85F, 1.5F)
+                            .clientTrackingRange(8)
+                            .build("guardiao_madeira_negra")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -95,6 +105,10 @@ public final class CaosArcanaEntities {
         FabricDefaultAttributeRegistry.register(
                 COLOSSO_BASALTICO,
                 ColossoBasalticoEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                GUARDIAO_MADEIRA_NEGRA,
+                GuardiaoMadeiraNegraEntity.createAttributes()
         );
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos das Terras da Cinza registrados.");
     }
