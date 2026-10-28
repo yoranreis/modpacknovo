@@ -209,26 +209,32 @@ public final class AranhaCascaSoltaEntity extends Spider {
         double dist = Math.max(0.001D, Math.sqrt(dx * dx + dz * dz));
         double dy = target.getY() - getY();
 
-        // Trajetória rasante e controlada: alcance máximo horizontal de 12 blocos
-        double clampedDist = Math.min(12.0D, dist);
-        double speed = Math.min(0.72D, 0.35D + clampedDist * 0.032D);
-        double vx = (dx / dist) * speed;
-        double vz = (dz / dist) * speed;
+        // ── Física do bote rasante ───────────────────────────────────────────
+        // Velocidade horizontal fixa de 0.65 blocos/tick, limitada a 12 blocos.
+        // A aranha sai voando "para frente", rente ao solo, em direção ao alvo.
+        double hSpeed = 0.65D; // blocos/tick - valor perceptível e controlado
+        double vx = (dx / dist) * hSpeed;
+        double vz = (dz / dist) * hSpeed;
 
-        // Altura vertical moderada (evita pular excessivamente alto)
-        double vy;
-        if (dy > 0.5D) {
-            vy = Math.min(0.28D, dy * 0.16D + 0.18D);
-        } else if (dy < -0.5D) {
-            vy = Math.max(-0.15D, dy * 0.10D + 0.10D);
-        } else {
-            vy = 0.20D; // Arco baixo e rente ao solo
-        }
+        // Estima o tempo de voo (em ticks) para cobrir a distância horizontal.
+        // Usa a equação cinemática: dist = hSpeed * t  →  t = dist/hSpeed
+        double ticks = Math.min(dist, 12.0D) / hSpeed;
+
+        // Calcula vy para que a aranha chegue à altura do alvo no meio do voo.
+        // Fórmula: vy_inicial = (dy - 0.5 * g * t^2) / t , onde g = -0.08 blocos/tick²
+        double gravity = -0.08D;
+        double vy = (dy - 0.5D * gravity * ticks * ticks) / ticks;
+
+        // Clampa vy: mínimo 0.20 (aranha decola mesmo em terreno plano),
+        // máximo 0.55 (garante no máximo ~3-4 blocos de altitude no pico).
+        vy = Math.max(0.20D, Math.min(0.55D, vy));
 
         setDeltaMovement(vx, vy, vz);
         hasImpulse = true;
-        inLeapTicks = 14;
+        inLeapTicks = (int) Math.ceil(ticks) + 6; // margem extra de detecção de colisão
 
+        serverLevel.playSound(null, getX(), getY(), getZ(), SoundEvents.SPIDER_STEP,
+                SoundSource.HOSTILE, 1.0F, 0.6F);
         serverLevel.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_ATTACK_SWEEP,
                 SoundSource.HOSTILE, 0.85F, 0.75F);
     }
