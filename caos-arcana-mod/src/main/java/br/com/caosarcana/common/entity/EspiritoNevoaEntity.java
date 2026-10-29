@@ -13,27 +13,40 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomFlyingGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public final class EspiritoNevoaEntity extends PathfinderMob {
     private static final int ATTACK_COOLDOWN_TICKS = 90; // ~4.5 segundos entre disparos
     private static final double MAX_ATTACK_RANGE = 14.0D;
-    private static final double MAX_FLIGHT_HEIGHT_ABOVE_PLAYER = 4.0D;
+    private static final double MAX_HEIGHT_ABOVE_GROUND = 4.0D;
 
     private int attackCooldown = 30;
     private int attackWindup = 0;
 
     public EspiritoNevoaEntity(EntityType<? extends EspiritoNevoaEntity> type, Level level) {
         super(type, level);
-        this.noPhysics = false;
+        this.moveControl = new FlyingMoveControl(this, 20, true);
         this.setNoGravity(true);
+    }
+
+    @Override
+    protected PathNavigation createNavigation(Level level) {
+        FlyingPathNavigation navigation = new FlyingPathNavigation(this, level);
+        navigation.setCanOpenDoors(false);
+        navigation.setCanFloat(true);
+        navigation.setCanPassDoors(true);
+        return navigation;
     }
 
     // Mob fraco: 14 HP (7 corações), sem armadura, dano base baixo
@@ -41,6 +54,7 @@ public final class EspiritoNevoaEntity extends PathfinderMob {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 14.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.22D)
+                .add(Attributes.FLYING_SPEED, 0.35D)
                 .add(Attributes.ATTACK_DAMAGE, 2.0D)
                 .add(Attributes.FOLLOW_RANGE, 16.0D)
                 .add(Attributes.ARMOR, 0.0D);
@@ -49,7 +63,8 @@ public final class EspiritoNevoaEntity extends PathfinderMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.6D));
+        // Patrulha a área voando suavemente entre os obstáculos
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomFlyingGoal(this, 1.0D));
         this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 12.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
@@ -68,6 +83,21 @@ public final class EspiritoNevoaEntity extends PathfinderMob {
             return false;
         }
         return super.hurt(source, amount);
+    }
+
+    /**
+     * Localiza a altura real do chão sólido abaixo da entidade
+     */
+    private double getGroundY() {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(this.getBlockX(), this.getBlockY(), this.getBlockZ());
+        int minY = Math.max(this.level().getMinBuildHeight(), this.getBlockY() - 24);
+        for (int y = this.getBlockY(); y >= minY; y--) {
+            pos.setY(y);
+            if (!this.level().getBlockState(pos).isAir() && this.level().getBlockState(pos).blocksMotion()) {
+                return y + 1.0D;
+            }
+        }
+        return this.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, this.blockPosition()).getY();
     }
 
     @Override
@@ -104,49 +134,56 @@ public final class EspiritoNevoaEntity extends PathfinderMob {
 
         LivingEntity target = this.getTarget();
 
-        // 1. CONTROLE ESTRITO DE ALTURA DE VOO (NUNCA MAIS DE 4 BLOCOS ACIMA DO JOGADOR)
+        // CONTROLE ESTRITO DE ALTURA DE VOO (NUNCA MAIS DE 4 BLOCOS DE ALTURA)
         if (target != null && target.isAlive()) {
             double playerY = target.getY();
             double currentY = this.getY();
             double heightDiff = currentY - playerY;
 
             // Se subir mais do que 4 blocos acima do jogador, força queda imediata
-            if (heightDiff > MAX_FLIGHT_HEIGHT_ABOVE_PLAYER) {
-                this.setDeltaMovement(this.getDeltaMovement().x, -0.12D, this.getDeltaMovement().z);
+            if (heightDiff > MAX_HEIGHT_ABOVE_GROUND) {
+                this.setDeltaMovement(this.getDeltaMovement().x, -0.15D, this.getDeltaMovement().z);
             } else if (heightDiff > 2.8D) {
-                // Zona alta permitida (entre 2.8 e 4 blocos): desce suave
                 this.setDeltaMovement(this.getDeltaMovement().x, -0.04D, this.getDeltaMovement().z);
-            } else if (heightDiff < 1.2D) {
-                // Zona baixa: sobe para manter altitude flutuante segura
-                this.setDeltaMovement(this.getDeltaMovement().x, 0.05D, this.getDeltaMovement().z);
+            } else if (heightDiff < 1.0D) {
+                this.setDeltaMovement(this.getDeltaMovement().x, 0.04D, this.getDeltaMovement().z);
             } else {
-                // Amortecimento vertical
-                this.setDeltaMovement(this.getDeltaMovement().x, this.getDeltaMovement().y * 0.85D, this.getDeltaMovement().z);
+                this.setDeltaMovement(this.getDeltaMovement().x, this.getDeltaMovement().y * 0.8D, this.getDeltaMovement().z);
             }
 
-            // Distância horizontal: aproxima-se se estiver longe (> 8 blocos), recua se muito perto (< 2.5 blocos)
+            // Manter distância tática de combate
             double distSqr = this.distanceToSqr(target.getX(), this.getY(), target.getZ());
             if (distSqr > 64.0D) {
                 this.getNavigation().moveTo(target, 1.0D);
             } else if (distSqr < 6.25D) {
-                // Muito perto: dá passos para trás suavemente
                 double backX = this.getX() - (target.getX() - this.getX());
                 double backZ = this.getZ() - (target.getZ() - this.getZ());
-                this.getNavigation().moveTo(backX, this.getY(), backZ, 0.8D);
+                this.getNavigation().moveTo(backX, this.getY(), backZ, 0.85D);
             }
         } else {
-            // Sem alvo: patrulha flutuando entre 1.5 e 2.5 blocos acima do solo
-            BlockPos posBelow = this.getBlockPosBelowThatAffectsMyMovement();
-            double groundY = posBelow.getY() + 1.0D;
+            // SEM ALVO: Patrulha a área respeitando o teto de 4 blocos acima do chão
+            double groundY = getGroundY();
             double currentY = this.getY();
-            if (currentY - groundY > 2.8D) {
-                this.setDeltaMovement(this.getDeltaMovement().x, -0.06D, this.getDeltaMovement().z);
-            } else if (currentY - groundY < 1.2D) {
+            double heightAboveGround = currentY - groundY;
+
+            // Limite rígido de 4 blocos acima do chão
+            if (heightAboveGround > MAX_HEIGHT_ABOVE_GROUND) {
+                this.setDeltaMovement(this.getDeltaMovement().x, -0.16D, this.getDeltaMovement().z);
+            } else if (heightAboveGround > 3.0D) {
+                this.setDeltaMovement(this.getDeltaMovement().x, -0.05D, this.getDeltaMovement().z);
+            } else if (heightAboveGround < 1.4D) {
                 this.setDeltaMovement(this.getDeltaMovement().x, 0.04D, this.getDeltaMovement().z);
+            } else {
+                this.setDeltaMovement(this.getDeltaMovement().x, this.getDeltaMovement().y * 0.75D, this.getDeltaMovement().z);
+            }
+
+            // Trava rígida de subida sem alvo (impede qualquer subida infinita)
+            if (this.getDeltaMovement().y > 0.06D) {
+                this.setDeltaMovement(this.getDeltaMovement().x, 0.06D, this.getDeltaMovement().z);
             }
         }
 
-        // 2. CICLO DE ATAQUE MÁGICO TELEGRAFADO
+        // CICLO DE ATAQUE MÁGICO TELEGRAFADO
         if (this.attackCooldown > 0) {
             this.attackCooldown--;
         }
@@ -164,7 +201,6 @@ public final class EspiritoNevoaEntity extends PathfinderMob {
             this.getNavigation().stop();
             this.setDeltaMovement(0.0D, this.getDeltaMovement().y * 0.5D, 0.0D);
 
-            // Partículas de magia concentrando-se no peito/olho
             serverLevel.sendParticles(ParticleTypes.SCULK_SOUL,
                     this.getX(), this.getY() + 0.6D, this.getZ(),
                     3, 0.2D, 0.2D, 0.2D, 0.02D);
@@ -178,12 +214,10 @@ public final class EspiritoNevoaEntity extends PathfinderMob {
             return;
         }
 
-        // Disparo do ataque se estiver dentro do alcance e com visão direta
         if (this.attackCooldown == 0 && distSqr <= (MAX_ATTACK_RANGE * MAX_ATTACK_RANGE) && this.hasLineOfSight(target)) {
             this.attackCooldown = ATTACK_COOLDOWN_TICKS;
             this.attackWindup = 15; // ~0.75s de aviso antes de lançar
 
-            // Som de aviso sobrenatural de conjuração
             serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
                     SoundEvents.EVOKER_PREPARE_ATTACK, SoundSource.HOSTILE, 0.7F, 1.3F);
         }
@@ -199,7 +233,6 @@ public final class EspiritoNevoaEntity extends PathfinderMob {
         projectile.shoot(dx, dy, dz, 0.95F, 1.2F);
         serverLevel.addFreshEntity(projectile);
 
-        // Som de disparo de feitiço espectral
         serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
                 SoundEvents.SOUL_ESCAPE, SoundSource.HOSTILE, 1.0F, 1.2F);
     }
