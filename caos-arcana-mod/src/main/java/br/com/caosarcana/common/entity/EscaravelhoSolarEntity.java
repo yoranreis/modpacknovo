@@ -10,8 +10,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,17 +27,21 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
+import java.util.List;
+
 /**
- * Escaravelho Solar — Inimigo encouraçado do Deserto das Dunas Douradas.
- * Carapaça dourada resistente e investida solar telegrafada com chifres.
+ * Escaravelho Solar — Mob Hostil / Enxame do Deserto das Dunas Douradas.
+ * - Reflexão Térmica: Reflete 15% de dano à distância/mágico sob luz solar direta.
+ * - Investida em Bando: Ataca coletivamente em enxame com mordidas rápidas para desestabilizar o jogador.
  */
 public final class EscaravelhoSolarEntity extends PathfinderMob {
     private static final EntityDataAccessor<Boolean> DATA_CHARGING_SOLAR =
             SynchedEntityData.defineId(EscaravelhoSolarEntity.class, EntityDataSerializers.BOOLEAN);
 
-    private int solarChargeCooldown = 70;
+    private int solarChargeCooldown = 60;
     private int solarChargeWindup = 0;
     private int lungeTicks = 0;
     private boolean hitDuringLunge = false;
@@ -49,11 +52,11 @@ public final class EscaravelhoSolarEntity extends PathfinderMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 22.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.28D)
-                .add(Attributes.ATTACK_DAMAGE, 4.5D)
-                .add(Attributes.ATTACK_KNOCKBACK, 0.5D)
-                .add(Attributes.KNOCKBACK_RESISTANCE, 0.35D)
+                .add(Attributes.MAX_HEALTH, 20.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.31D)
+                .add(Attributes.ATTACK_DAMAGE, 4.0D)
+                .add(Attributes.ATTACK_KNOCKBACK, 0.45D)
+                .add(Attributes.KNOCKBACK_RESISTANCE, 0.3D)
                 .add(Attributes.FOLLOW_RANGE, 24.0D)
                 .add(Attributes.ARMOR, 6.0D);
     }
@@ -80,21 +83,54 @@ public final class EscaravelhoSolarEntity extends PathfinderMob {
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.1D, false));
-        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8D));
+        // Mordidas rápidas em enxame (attack interval reduzido para 14 ticks)
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.2D, false) {
+            @Override
+            protected int getAttackInterval() {
+                return 14;
+            }
+        });
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.85D));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 10.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this).setAlertOthers(EscaravelhoSolarEntity.class));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
+    }
+
+    public boolean isExposedToDirectSunlight() {
+        return this.level().isDay()
+                && !this.level().isRaining()
+                && this.level().canSeeSky(this.blockPosition());
     }
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (source.is(DamageTypeTags.IS_FIRE)) {
-            return super.hurt(source, amount * 0.5F);
+        boolean hurtResult = super.hurt(source, amount);
+        if (hurtResult && !this.level().isClientSide && isExposedToDirectSunlight()) {
+            boolean isRangedOrMagic = source.is(DamageTypeTags.IS_PROJECTILE)
+                    || source.is(DamageTypeTags.WITCH_RESISTANT_TO)
+                    || source.is(DamageTypes.MAGIC)
+                    || source.is(DamageTypes.INDIRECT_MAGIC)
+                    || source.isIndirect();
+
+            if (isRangedOrMagic && source.getEntity() instanceof LivingEntity attacker && attacker != this) {
+                float reflected = amount * 0.15F;
+                if (reflected > 0.05F) {
+                    attacker.hurt(this.damageSources().thorns(this), reflected);
+                    if (this.level() instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(
+                                ParticleTypes.WAX_ON,
+                                this.getX(), this.getY() + 0.55D, this.getZ(),
+                                12, 0.35D, 0.25D, 0.35D, 0.06D
+                        );
+                        serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
+                                SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.HOSTILE, 1.0F, 1.35F);
+                    }
+                }
+            }
         }
-        return super.hurt(source, amount);
+        return hurtResult;
     }
 
     @Override
@@ -102,7 +138,7 @@ public final class EscaravelhoSolarEntity extends PathfinderMob {
         super.aiStep();
 
         if (this.level().isClientSide) {
-            if (this.getRandom().nextInt(5) == 0) {
+            if (isExposedToDirectSunlight() && this.getRandom().nextInt(4) == 0) {
                 this.level().addParticle(
                         ParticleTypes.WAX_ON,
                         this.getX() + (this.getRandom().nextDouble() - 0.5D) * 0.9D,
@@ -128,7 +164,7 @@ public final class EscaravelhoSolarEntity extends PathfinderMob {
             return;
         }
 
-        // Fase 1: Windup telegrafado (carapaça brilhando antes da investida)
+        // Fase 1: Windup da Investida em Bando
         if (this.solarChargeWindup > 0) {
             this.solarChargeWindup--;
             this.getNavigation().stop();
@@ -138,70 +174,82 @@ public final class EscaravelhoSolarEntity extends PathfinderMob {
             serverLevel.sendParticles(
                     ParticleTypes.WAX_ON,
                     this.getX(), this.getY() + 0.5D, this.getZ(),
-                    4, 0.35D, 0.25D, 0.35D, 0.05D
-            );
-            serverLevel.sendParticles(
-                    ParticleTypes.FLAME,
-                    this.getX(), this.getY() + 0.45D, this.getZ(),
-                    2, 0.25D, 0.15D, 0.25D, 0.02D
+                    3, 0.3D, 0.2D, 0.3D, 0.04D
             );
 
             if (this.solarChargeWindup == 0) {
                 this.setChargingSolar(false);
-                launchSolarHornCharge(serverLevel, target);
+                launchSwarmCharge(serverLevel, target);
             }
             return;
         }
 
-        // Fase 2: Investida com os chifres dourados em andamento
+        // Fase 2: Investida ativa
         if (this.lungeTicks > 0) {
             this.lungeTicks--;
-            if (!this.hitDuringLunge && this.getBoundingBox().inflate(0.3D).intersects(target.getBoundingBox())) {
+            if (!this.hitDuringLunge && this.getBoundingBox().inflate(0.28D).intersects(target.getBoundingBox())) {
                 this.hitDuringLunge = true;
-                target.hurt(this.damageSources().mobAttack(this), 6.5F);
-                target.knockback(0.95D, this.getX() - target.getX(), this.getZ() - target.getZ());
-                target.setSecondsOnFire(3);
-                target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 40, 0), this);
+                target.hurt(this.damageSources().mobAttack(this), 5.0F);
+                target.knockback(0.65D, this.getX() - target.getX(), this.getZ() - target.getZ());
                 serverLevel.sendParticles(
-                        ParticleTypes.FLAME,
-                        target.getX(), target.getY() + 0.6D, target.getZ(),
-                        16, 0.35D, 0.35D, 0.35D, 0.06D
+                        ParticleTypes.CRIT,
+                        target.getX(), target.getY() + 0.5D, target.getZ(),
+                        10, 0.3D, 0.3D, 0.3D, 0.05D
                 );
-                serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
-                        SoundEvents.ANVIL_PLACE, SoundSource.HOSTILE, 0.7F, 1.6F);
             }
             return;
         }
 
         double distSqr = this.distanceToSqr(target);
-        if (this.solarChargeCooldown == 0 && distSqr >= 9.0D && distSqr <= 64.0D && this.hasLineOfSight(target)) {
-            this.solarChargeCooldown = 130;
-            this.solarChargeWindup = 20; // 1.0s de telegrafia
-            this.setChargingSolar(true);
-            serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
-                    SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE, 1.4F, 1.1F);
+        if (this.solarChargeCooldown == 0 && distSqr >= 6.0D && distSqr <= 49.0D && this.hasLineOfSight(target)) {
+            triggerPackCharge(serverLevel, target);
         }
     }
 
-    private void launchSolarHornCharge(ServerLevel serverLevel, LivingEntity target) {
+    public void triggerPackCharge(ServerLevel serverLevel, LivingEntity target) {
+        this.solarChargeCooldown = 110;
+        this.solarChargeWindup = 14;
+        this.setChargingSolar(true);
+        serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
+                SoundEvents.SILVERFISH_AMBIENT, SoundSource.HOSTILE, 1.1F, 0.85F);
+
+        // Sincroniza outros Escaravelhos Solares próximos para Investida em Bando
+        List<EscaravelhoSolarEntity> pack = serverLevel.getEntitiesOfClass(
+                EscaravelhoSolarEntity.class,
+                this.getBoundingBox().inflate(10.0D),
+                other -> other != this && other.isAlive() && other.solarChargeWindup == 0 && other.lungeTicks == 0
+        );
+        for (EscaravelhoSolarEntity ally : pack) {
+            if (ally.getTarget() == null) {
+                ally.setTarget(target);
+            }
+            if (ally.solarChargeCooldown <= 40) {
+                ally.solarChargeCooldown = 110;
+                ally.solarChargeWindup = 14;
+                ally.setChargingSolar(true);
+            }
+        }
+    }
+
+    private void launchSwarmCharge(ServerLevel serverLevel, LivingEntity target) {
         double dx = target.getX() - this.getX();
         double dz = target.getZ() - this.getZ();
         double len = Math.max(0.001D, Math.sqrt(dx * dx + dz * dz));
         this.setDeltaMovement(
-                (dx / len) * 0.95D,
-                Math.max(0.18D, this.getDeltaMovement().y),
-                (dz / len) * 0.95D
+                (dx / len) * 0.88D,
+                Math.max(0.16D, this.getDeltaMovement().y),
+                (dz / len) * 0.88D
         );
         this.hasImpulse = true;
-        this.lungeTicks = 10;
+        this.lungeTicks = 9;
         this.hitDuringLunge = false;
-        serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
-                SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 1.0F, 1.2F);
-        serverLevel.sendParticles(
-                ParticleTypes.FLAME,
-                this.getX(), this.getY() + 0.35D, this.getZ(),
-                14, 0.35D, 0.2D, 0.35D, 0.05D
-        );
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+        super.dropCustomDeathLoot(source, looting, recentlyHit);
+        int count = 1 + this.random.nextInt(2 + looting);
+        this.spawnAtLocation(Items.GOLD_NUGGET, count);
     }
 
     @Override
@@ -211,7 +259,7 @@ public final class EscaravelhoSolarEntity extends PathfinderMob {
             serverLevel.sendParticles(
                     ParticleTypes.WAX_ON,
                     target.getX(), target.getY() + 0.5D, target.getZ(),
-                    8, 0.25D, 0.25D, 0.25D, 0.04D
+                    6, 0.25D, 0.25D, 0.25D, 0.04D
             );
         }
         return hit;

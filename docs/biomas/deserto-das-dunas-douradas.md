@@ -1,26 +1,35 @@
 # Deserto das Dunas Douradas
 
-## Identidade do bioma
+## 1. Visão Geral da Região
+* **Nome do Bioma:** Deserto das Dunas Douradas
+* **Atmosfera:** Vasta extensão de areias escaldantes, ruínas antigas soterradas, monumentos de arenito com hieróglifos e variações térmicas drásticas entre o dia e a noite.
+* **Objetivo de Gameplay:** Área de exploração de nível intermediário/alto focada em combate tático, resistência ambiental (calor/fome) e exploração de estruturas complexas (pirâmides e santuários).
 
-Um vasto deserto de areias douradas, ruínas solares soterradas e templos antigos guardados por construtos, feras adaptadas ao calor escaldante e mortos-vivos reais. Os combates combinam armaduras pesadas, venenos desérticos, maldições ancestrais e ataques solares telegrafados.
+---
 
-## Inimigos
+## 2. Inimigos Normais (Mobs)
 
-| Inimigo | Papel no combate | Mecânica central | Estado |
+| Inimigo | Tipo / Papel | Mecânicas e Habilidades | Estado |
 | --- | --- | --- | --- |
-| Escaravelho Solar | Tanque ágil de curta distância | Carapaça dourada blindada; carrega energia solar por 1s antes de dar uma investida com os chifres que ofusca e queima o alvo | Implementado; aguardando teste em jogo |
-| Víbora das Areias | Predadora rápida e venenosa | Bote veloz e mordida com presas que aplica veneno e lentidão | Planejado |
-| Múmia Esquelética | Guerreiro amaldiçoado | Armada com espada antiga; golpes aplicam fome/exaustão e fraqueza das tumbas | Planejado |
-| Golem de Areia | Colosso defensivo | Alta vida e armadura de arenito; golpeia o chão erguendo tempestade de areia ao redor | Planejado |
+| **Víbora das Arenas** (`caosarcana:vibora_das_arenas`) | Hostil / Emboscada | **Emboscada Subterrânea:** Oculta sob blocos de areia até o jogador chegar a menos de 3 blocos.<br>**Mordida Paralisante:** Aplica *Lentidão IV* + *Veneno* por 4 segundos (80 ticks). | Implementado; aguardando teste em jogo |
+| **Escaravelho Solar** (`caosarcana:escaravelho_solar`) | Hostil / Enxame | **Reflexão Térmica:** Reflete 15% de dano à distância/mágico sob luz solar direta.<br>**Investida em Bando:** Alerta e avança coletivamente com outros escaravelhos próximos com mordidas rápidas. | Implementado; aguardando teste em jogo |
+| **Golem de Areia** (`caosarcana:golem_de_areia`) | Hostil / Tanque | **Desmoronamento Tático:** Desfaz-se temporariamente em poeira ao receber dano de alto impacto, esquivando-se e reposicionando-se.<br>**Soco Sísmico:** Ataque em área (AoE) no chão com repulsão severa. | Planejado |
+| **Múmia Esquelética** (`caosarcana:mumia_esqueletica`) | Hostil / Combatente Ágil | **Fúria do Deserto:** Aumenta velocidade de movimento e ataque ao avistar o jogador diretamente.<br>**Maldição da Desidratação:** Acelera o consumo da barra de fome do jogador durante o combate. | Planejado |
 
-## Chefe: Faraó do Sol Eterno
+---
 
-Soberano imortal das Dunas Douradas empunhando o Cetro do Sol Eterno. Controla feixes solares telegrafados, invoca servos das tumbas e desencadeia erupções de luz dourada em três fases de combate.
+## 3. Chefão da Região: Faraó do Sol Eterno (`caosarcana:farao_do_sol_eterno`)
+* **Aparência:** Entidade real colossal com bandagens douradas, touca azul/dourada, olhos incandescentes e cajado sagrado solar.
+* **Fases e Habilidades:**
+  * **Raio Solar Incandescente:** Canaliza o cajado para disparar um feixe de luz guiado que persegue o alvo.
+  * **Redemoinho de Areia:** Tempestade de vento localizada que puxa o jogador para o centro da arena.
+  * **Invocação de Guardiões (Fase 2):** Convoca ondas de Múmias Esqueléticas para regenerar o chefe e desviar o foco.
+
+---
 
 ## Testes atuais
 
-Para invocar e testar os mobs no mundo:
-
 ```mcfunction
 /summon caosarcana:escaravelho_solar ~ ~ ~
+/summon caosarcana:vibora_das_arenas ~ ~ ~
 ```

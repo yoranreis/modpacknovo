@@ -161,6 +161,16 @@ public final class CaosArcanaEntities {
                             .build("escaravelho_solar")
             );
 
+    public static final EntityType<ViboraDasArenasEntity> VIBORA_DAS_ARENAS =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("vibora_das_arenas"),
+                    EntityType.Builder.of(ViboraDasArenasEntity::new, MobCategory.MONSTER)
+                            .sized(0.85F, 1.05F)
+                            .clientTrackingRange(8)
+                            .build("vibora_das_arenas")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -212,6 +222,10 @@ public final class CaosArcanaEntities {
         FabricDefaultAttributeRegistry.register(
                 ESCARAVELHO_SOLAR,
                 EscaravelhoSolarEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                VIBORA_DAS_ARENAS,
+                ViboraDasArenasEntity.createAttributes()
         );
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos e entidades registrados com sucesso.");
     }

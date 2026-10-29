@@ -14,6 +14,7 @@ import br.com.caosarcana.client.model.EspiritoNevoaModel;
 import br.com.caosarcana.client.model.GuardiaoMadeiraNegraModel;
 import br.com.caosarcana.client.model.MineiroOcoModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
+import br.com.caosarcana.client.model.ViboraDasArenasModel;
 import br.com.caosarcana.client.model.VigiaDasBrasasModel;
 import br.com.caosarcana.client.renderer.AnciaoDasSombrasRenderer;
 import br.com.caosarcana.client.renderer.AranhaCascaSoltaRenderer;
@@ -26,6 +27,7 @@ import br.com.caosarcana.client.renderer.EspiritoNevoaRenderer;
 import br.com.caosarcana.client.renderer.GuardiaoMadeiraNegraRenderer;
 import br.com.caosarcana.client.renderer.MineiroOcoRenderer;
 import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
+import br.com.caosarcana.client.renderer.ViboraDasArenasRenderer;
 import br.com.caosarcana.client.renderer.VigiaDasBrasasRenderer;
 import br.com.caosarcana.common.data.IRPGPlayerData;
 import br.com.caosarcana.common.entity.CaosArcanaEntities;
@@ -208,6 +210,14 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.ESCARAVELHO_SOLAR,
                 EscaravelhoSolarRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                ViboraDasArenasModel.LAYER_LOCATION,
+                ViboraDasArenasModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.VIBORA_DAS_ARENAS,
+                ViboraDasArenasRenderer::new
         );
     }
 
