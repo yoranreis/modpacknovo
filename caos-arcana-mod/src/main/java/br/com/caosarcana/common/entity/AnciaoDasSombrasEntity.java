@@ -82,7 +82,7 @@ public final class AnciaoDasSombrasEntity extends PathfinderMob {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 220.0D)
+                .add(Attributes.MAX_HEALTH, 320.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 9.0D)
                 .add(Attributes.ATTACK_KNOCKBACK, 1.0D)
