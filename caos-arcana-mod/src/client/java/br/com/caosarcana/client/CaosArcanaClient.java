@@ -119,6 +119,10 @@ public class CaosArcanaClient implements ClientModInitializer {
                 CaosArcanaEntities.ESPIRITO_NEVOA,
                 EspiritoNevoaRenderer::new
         );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.ESPIRITO_NEVOA_PROJECTILE,
+                context -> new ThrownItemRenderer<>(context, 1.0F, true)
+        );
     }
 
     private void registerClientPackets() {

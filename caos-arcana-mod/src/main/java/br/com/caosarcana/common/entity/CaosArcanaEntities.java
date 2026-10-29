@@ -109,6 +109,17 @@ public final class CaosArcanaEntities {
                             .build("espirito_nevoa")
             );
 
+    public static final EntityType<EspiritoNevoaProjectile> ESPIRITO_NEVOA_PROJECTILE =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("espirito_nevoa_projectile"),
+                    EntityType.Builder.<EspiritoNevoaProjectile>of(EspiritoNevoaProjectile::new, MobCategory.MISC)
+                            .sized(0.3F, 0.3F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10)
+                            .build("espirito_nevoa_projectile")
+            );
+
     private CaosArcanaEntities() {
     }
 
