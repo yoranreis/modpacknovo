@@ -4,6 +4,7 @@ import br.com.caosarcana.client.gui.GrimoireStudyScreen;
 import br.com.caosarcana.client.gui.ManaHudOverlay;
 import br.com.caosarcana.client.gui.RaceSelectionScreen;
 import br.com.caosarcana.client.gui.SpellSelectionScreen;
+import br.com.caosarcana.client.model.AnciaoDasSombrasModel;
 import br.com.caosarcana.client.model.AranhaCascaSoltaModel;
 import br.com.caosarcana.client.model.CaoFumeganteModel;
 import br.com.caosarcana.client.model.CarapacaBasalticaModel;
@@ -13,6 +14,7 @@ import br.com.caosarcana.client.model.GuardiaoMadeiraNegraModel;
 import br.com.caosarcana.client.model.MineiroOcoModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
 import br.com.caosarcana.client.model.VigiaDasBrasasModel;
+import br.com.caosarcana.client.renderer.AnciaoDasSombrasRenderer;
 import br.com.caosarcana.client.renderer.AranhaCascaSoltaRenderer;
 import br.com.caosarcana.client.renderer.CaoFumeganteRenderer;
 import br.com.caosarcana.client.renderer.CarapacaBasalticaRenderer;
@@ -188,6 +190,14 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.MALDICAO_OCULTA_PROJECTILE,
                 context -> new ThrownItemRenderer<>(context, 1.0F, true)
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                AnciaoDasSombrasModel.LAYER_LOCATION,
+                AnciaoDasSombrasModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.ANCIAO_DAS_SOMBRAS,
+                AnciaoDasSombrasRenderer::new
         );
     }
 

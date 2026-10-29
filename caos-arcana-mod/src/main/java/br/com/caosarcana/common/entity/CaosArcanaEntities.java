@@ -141,6 +141,16 @@ public final class CaosArcanaEntities {
                             .build("maldicao_oculta_projectile")
             );
 
+    public static final EntityType<AnciaoDasSombrasEntity> ANCIAO_DAS_SOMBRAS =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("anciao_das_sombras"),
+                    EntityType.Builder.of(AnciaoDasSombrasEntity::new, MobCategory.MONSTER)
+                            .sized(1.6F, 3.1F)
+                            .clientTrackingRange(12)
+                            .build("anciao_das_sombras")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -184,6 +194,10 @@ public final class CaosArcanaEntities {
         FabricDefaultAttributeRegistry.register(
                 CULTISTA_OCULTO,
                 CultistaOcultoEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                ANCIAO_DAS_SOMBRAS,
+                AnciaoDasSombrasEntity.createAttributes()
         );
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos e entidades registrados com sucesso.");
     }

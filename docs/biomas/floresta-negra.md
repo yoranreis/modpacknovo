@@ -26,4 +26,5 @@ Para invocar e testar os mobs no mundo:
 /summon caosarcana:aranha_casca_solta ~ ~ ~
 /summon caosarcana:espirito_nevoa ~ ~ ~
 /summon caosarcana:cultista_oculto ~ ~ ~
+/summon caosarcana:anciao_das_sombras ~ ~ ~
 ```
