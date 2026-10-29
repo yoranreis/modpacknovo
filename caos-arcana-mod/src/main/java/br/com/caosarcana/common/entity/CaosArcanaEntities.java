@@ -120,6 +120,27 @@ public final class CaosArcanaEntities {
                             .build("espirito_nevoa_projectile")
             );
 
+    public static final EntityType<CultistaOcultoEntity> CULTISTA_OCULTO =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("cultista_oculto"),
+                    EntityType.Builder.of(CultistaOcultoEntity::new, MobCategory.MONSTER)
+                            .sized(0.75F, 1.95F)
+                            .clientTrackingRange(8)
+                            .build("cultista_oculto")
+            );
+
+    public static final EntityType<MaldicaoOcultaProjectile> MALDICAO_OCULTA_PROJECTILE =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("maldicao_oculta_projectile"),
+                    EntityType.Builder.<MaldicaoOcultaProjectile>of(MaldicaoOcultaProjectile::new, MobCategory.MISC)
+                            .sized(0.35F, 0.35F)
+                            .clientTrackingRange(4)
+                            .updateInterval(10)
+                            .build("maldicao_oculta_projectile")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -159,6 +180,10 @@ public final class CaosArcanaEntities {
         FabricDefaultAttributeRegistry.register(
                 ESPIRITO_NEVOA,
                 EspiritoNevoaEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                CULTISTA_OCULTO,
+                CultistaOcultoEntity.createAttributes()
         );
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos e entidades registrados com sucesso.");
     }

@@ -10,8 +10,8 @@ Uma mata fechada ao redor de uma vila antiga. Os encontros devem usar árvores, 
 | --- | --- | --- | --- |
 | Guardião de Madeira Negra | Emboscador de curta distância | Camufla-se parado perto de troncos e folhas; revela-se ao mover, receber dano ou quando o jogador se aproxima | Implementado; aguardando teste em jogo |
 | Aranha de Casca Solta | Caçadora vertical | Prepara teias nas copas, aplica lentidão e salta sobre o alvo | Implementado; aguardando teste em jogo |
-| Espírito da Névoa | Controle de área | Usa efeitos breves de cegueira e desorientação, com avisos de névoa antes do feitiço | Planejado |
-| Cultista Oculto | Conjurador e suporte | Lança maldições e chama espíritos menores para distrair o jogador | Planejado |
+| Espírito da Névoa | Controle de área | Flutua a até 4 blocos, dispara orbe com bafo de dragão que causa lentidão e cegueira | Implementado; aguardando teste em jogo |
+| Cultista Oculto | Conjurador e suporte | Dispara projéteis de maldição (fraqueza) com báculo arcano e invoca espíritos para distrair | Implementado; aguardando teste em jogo |
 
 ## Chefe: Ancião das Sombras
 
@@ -24,4 +24,6 @@ Para invocar e testar os mobs no mundo:
 ```mcfunction
 /summon caosarcana:guardiao_madeira_negra ~ ~ ~
 /summon caosarcana:aranha_casca_solta ~ ~ ~
+/summon caosarcana:espirito_nevoa ~ ~ ~
+/summon caosarcana:cultista_oculto ~ ~ ~
 ```
