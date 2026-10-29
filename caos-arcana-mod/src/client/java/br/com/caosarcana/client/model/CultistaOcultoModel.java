@@ -30,6 +30,8 @@ public final class CultistaOcultoModel extends EntityModel<CultistaOcultoEntity>
     private final ModelPart rightArm;
     private final ModelPart leftArm;
     private final ModelPart staffOrb;
+    private final ModelPart leftWisp;
+    private final ModelPart rightWisp;
 
     public CultistaOcultoModel(ModelPart root) {
         super(net.minecraft.client.renderer.RenderType::entityCutoutNoCull);
@@ -39,51 +41,71 @@ public final class CultistaOcultoModel extends EntityModel<CultistaOcultoEntity>
         this.rightArm = root.getChild("right_arm");
         this.leftArm = root.getChild("left_arm");
         this.staffOrb = this.rightArm.getChild("staff").getChild("staff_orb");
+        this.leftWisp = this.body.getChild("left_wisp");
+        this.rightWisp = this.body.getChild("right_wisp");
     }
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
 
-        // 1. Cabeça (Crânio de alma sob capuz profundo)
+        // 1. Cabeça: Crânio verde brilhante recuado + Capuz profundo com recorte frontal em arco
         PartDefinition head = root.addOrReplaceChild("head",
                 CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-3.5F, -7.0F, -3.5F, 7.0F, 7.0F, 7.0F)
-                        .texOffs(32, 0).addBox(-4.5F, -8.0F, -4.5F, 9.0F, 9.0F, 9.0F, new CubeDeformation(0.25F)),
+                        .texOffs(0, 0).addBox(-4.0F, -8.0F, -3.5F, 8.0F, 8.0F, 7.0F)
+                        .texOffs(32, 0).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 9.0F, 9.0F, new CubeDeformation(0.15F)),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        // 2. Tronco e Manto Longo
+        // 2. Tronco, Manto Rasgado nos Ombros, Túnica Inferior e Base Interna
         PartDefinition body = root.addOrReplaceChild("body",
                 CubeListBuilder.create()
                         .texOffs(0, 16).addBox(-4.0F, 0.0F, -2.5F, 8.0F, 12.0F, 5.0F)
-                        .texOffs(0, 34).addBox(-4.5F, 11.5F, -3.0F, 9.0F, 12.5F, 6.0F),
+                        .texOffs(28, 18).addBox(-4.5F, -0.2F, -3.0F, 9.0F, 6.0F, 6.0F, new CubeDeformation(0.1F))
+                        .texOffs(0, 34).addBox(-4.5F, 11.0F, -3.0F, 9.0F, 11.0F, 6.0F)
+                        .texOffs(32, 34).addBox(-3.5F, 14.0F, -2.0F, 7.0F, 10.0F, 4.0F),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        // 3. Braço Direito com Cajado e Orbe Flutuante
+        // Trilhas espectrais verdes fluindo das costas (como na arte de referência)
+        body.addOrReplaceChild("left_wisp",
+                CubeListBuilder.create()
+                        .texOffs(60, 48).addBox(-0.5F, -6.0F, 0.0F, 1.0F, 12.0F, 8.0F),
+                PartPose.offsetAndRotation(2.5F, 4.0F, 2.5F, 0.25F, 0.35F, 0.0F));
+
+        body.addOrReplaceChild("right_wisp",
+                CubeListBuilder.create()
+                        .texOffs(60, 48).addBox(-0.5F, -6.0F, 0.0F, 1.0F, 12.0F, 8.0F),
+                PartPose.offsetAndRotation(-2.5F, 4.0F, 2.5F, 0.2F, -0.35F, 0.0F));
+
+        // 3. Braço Direito segurando o Cajado de Raízes com Orbe Verde
         PartDefinition rightArm = root.addOrReplaceChild("right_arm",
                 CubeListBuilder.create()
-                        .texOffs(28, 18).addBox(-2.5F, -1.0F, -2.0F, 4.0F, 10.0F, 4.0F),
-                PartPose.offset(-5.0F, 2.0F, 0.0F));
+                        .texOffs(0, 52).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 11.0F, 4.0F)
+                        .texOffs(18, 52).addBox(-2.5F, 3.0F, -2.5F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.1F)),
+                PartPose.offset(-5.5F, 2.0F, 0.0F));
 
         PartDefinition staff = rightArm.addOrReplaceChild("staff",
                 CubeListBuilder.create()
-                        .texOffs(46, 18).addBox(-1.0F, -13.0F, -6.0F, 2.0F, 25.0F, 2.0F)
-                        .texOffs(44, 48).addBox(-2.5F, -17.0F, -7.5F, 5.0F, 4.0F, 5.0F),
+                        .texOffs(70, 0).addBox(-1.0F, -10.0F, -4.5F, 2.0F, 24.0F, 2.0F)
+                        .texOffs(80, 0).addBox(-1.5F, -12.0F, -5.0F, 3.0F, 3.0F, 3.0F)
+                        .texOffs(80, 8).addBox(-3.5F, -18.0F, -4.5F, 2.0F, 7.0F, 2.0F)
+                        .texOffs(90, 8).addBox(1.5F, -18.0F, -4.5F, 2.0F, 7.0F, 2.0F)
+                        .texOffs(80, 18).addBox(-4.5F, -20.0F, -4.0F, 9.0F, 8.0F, 1.0F),
                 PartPose.ZERO);
 
         staff.addOrReplaceChild("staff_orb",
                 CubeListBuilder.create()
-                        .texOffs(28, 34).addBox(-1.0F, -16.0F, -6.0F, 2.0F, 2.0F, 2.0F),
+                        .texOffs(78, 30).addBox(-1.5F, -16.5F, -5.0F, 3.0F, 3.0F, 3.0F)
+                        .texOffs(78, 38).addBox(-2.5F, -17.5F, -4.0F, 5.0F, 5.0F, 1.0F),
                 PartPose.ZERO);
 
-        // 4. Braço Esquerdo com gavinha de galhos saindo da manga
+        // 4. Braço Esquerdo com gavinhas e raízes retorcidas saindo da manga
         root.addOrReplaceChild("left_arm",
                 CubeListBuilder.create()
-                        .texOffs(28, 18).addBox(-1.5F, -1.0F, -2.0F, 4.0F, 10.0F, 4.0F)
-                        .texOffs(44, 48).addBox(-1.0F, 7.5F, -3.0F, 3.0F, 4.0F, 4.0F),
-                PartPose.offset(5.0F, 2.0F, 0.0F));
+                        .texOffs(0, 68).addBox(-2.0F, -2.0F, -2.0F, 4.0F, 11.0F, 4.0F)
+                        .texOffs(18, 68).addBox(-2.5F, 2.0F, -2.5F, 5.0F, 9.0F, 5.0F, new CubeDeformation(0.1F)),
+                PartPose.offset(5.5F, 2.0F, 0.0F));
 
-        return LayerDefinition.create(mesh, 64, 64);
+        return LayerDefinition.create(mesh, 128, 128);
     }
 
     @Override
@@ -92,17 +114,23 @@ public final class CultistaOcultoModel extends EntityModel<CultistaOcultoEntity>
         this.head.yRot = netHeadYaw * ((float) Math.PI / 180.0F);
         this.head.xRot = headPitch * ((float) Math.PI / 180.0F);
 
-        // Braço do cajado erguido para a frente
-        this.rightArm.xRot = -0.42F + (float) Math.sin(ageInTicks * 0.08F) * 0.04F;
-        this.leftArm.xRot = 0.15F + (float) Math.cos(ageInTicks * 0.08F) * 0.05F;
+        // Braço direito mantém o cajado erguido à frente como na referência
+        this.rightArm.xRot = -0.35F + (float) Math.sin(ageInTicks * 0.08F) * 0.04F;
+        this.rightArm.yRot = -0.1F;
+        this.leftArm.xRot = 0.12F + (float) Math.cos(ageInTicks * 0.08F) * 0.05F;
+        this.leftArm.zRot = -0.08F;
 
-        // Orbe arcano flutuando suavemente nas pontas do cajado
-        this.staffOrb.y = (float) Math.sin(ageInTicks * 0.15F) * 0.8F;
+        // Orbe verde pulsando/flutuando no topo do cajado
+        this.staffOrb.y = (float) Math.sin(ageInTicks * 0.15F) * 0.6F;
 
-        // Manto balança suavemente ao caminhar
+        // Ondulação das trilhas de energia verde nas costas
+        this.leftWisp.yRot = 0.35F + (float) Math.sin(ageInTicks * 0.12F) * 0.12F;
+        this.rightWisp.yRot = -0.35F - (float) Math.cos(ageInTicks * 0.12F) * 0.12F;
+
+        // Balanço sutil ao caminhar
         float walk = limbSwing * 0.6F;
         float stride = Math.min(0.6F, limbSwingAmount);
-        this.body.yRot = (float) Math.sin(walk) * 0.08F * stride;
+        this.body.yRot = (float) Math.sin(walk) * 0.06F * stride;
     }
 
     @Override
