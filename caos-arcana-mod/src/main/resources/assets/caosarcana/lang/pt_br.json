@@ -17,6 +17,11 @@
   "entity.caosarcana.golem_de_areia": "Golem de Areia",
   "entity.caosarcana.mumia_esqueletica": "Múmia Esquelética",
   "entity.caosarcana.farao_do_sol_eterno": "Faraó do Sol Eterno",
+  "entity.caosarcana.tragador_do_abismo": "Tragador do Abismo",
+  "entity.caosarcana.guardiao_de_obsidiana": "Guardião de Obsidiana",
+  "entity.caosarcana.medusa_bioluminescente": "Medusa Bioluminescente",
+  "entity.caosarcana.sereia_das_profundezas": "Sereia das Profundezas",
+  "entity.caosarcana.lorde_das_mares_abissais": "Lorde das Marés Abissais",
 
   "item.caosarcana.centelha_ignea": "Grimório: Centelha Ígnea",
   "item.caosarcana.grimorio_geada": "Grimório: Geada Congelante",
@@ -49,6 +54,11 @@
   "item.caosarcana.golem_de_areia_spawn_egg": "Ovo de Invocação de Golem de Areia",
   "item.caosarcana.mumia_esqueletica_spawn_egg": "Ovo de Invocação de Múmia Esquelética",
   "item.caosarcana.farao_do_sol_eterno_spawn_egg": "Ovo de Invocação de Faraó do Sol Eterno",
+  "item.caosarcana.tragador_do_abismo_spawn_egg": "Ovo de Invocação de Tragador do Abismo",
+  "item.caosarcana.guardiao_de_obsidiana_spawn_egg": "Ovo de Invocação de Guardião de Obsidiana",
+  "item.caosarcana.medusa_bioluminescente_spawn_egg": "Ovo de Invocação de Medusa Bioluminescente",
+  "item.caosarcana.sereia_das_profundezas_spawn_egg": "Ovo de Invocação de Sereia das Profundezas",
+  "item.caosarcana.lorde_das_mares_abissais_spawn_egg": "Ovo de Invocação de Lorde das Marés Abissais",
 
   "category.caosarcana.spells": "Caos Arcana - Magias",
   "key.caosarcana.cast_spell": "Conjurar Magia Ativa",

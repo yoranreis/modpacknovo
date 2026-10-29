@@ -13,10 +13,15 @@ import br.com.caosarcana.client.model.EscaravelhoSolarModel;
 import br.com.caosarcana.client.model.EspiritoNevoaModel;
 import br.com.caosarcana.client.model.FaraoDoSolEternoModel;
 import br.com.caosarcana.client.model.GolemDeAreiaModel;
+import br.com.caosarcana.client.model.GuardiaoDeObsidianaModel;
 import br.com.caosarcana.client.model.GuardiaoMadeiraNegraModel;
+import br.com.caosarcana.client.model.LordeDasMaresAbissaisModel;
+import br.com.caosarcana.client.model.MedusaBioluminescenteModel;
 import br.com.caosarcana.client.model.MineiroOcoModel;
 import br.com.caosarcana.client.model.MumiaEsqueleticaModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
+import br.com.caosarcana.client.model.SereiaDasProfundezasModel;
+import br.com.caosarcana.client.model.TragadorDoAbismoModel;
 import br.com.caosarcana.client.model.ViboraDasArenasModel;
 import br.com.caosarcana.client.model.VigiaDasBrasasModel;
 import br.com.caosarcana.client.renderer.AnciaoDasSombrasRenderer;
@@ -29,10 +34,15 @@ import br.com.caosarcana.client.renderer.EscaravelhoSolarRenderer;
 import br.com.caosarcana.client.renderer.EspiritoNevoaRenderer;
 import br.com.caosarcana.client.renderer.FaraoDoSolEternoRenderer;
 import br.com.caosarcana.client.renderer.GolemDeAreiaRenderer;
+import br.com.caosarcana.client.renderer.GuardiaoDeObsidianaRenderer;
 import br.com.caosarcana.client.renderer.GuardiaoMadeiraNegraRenderer;
+import br.com.caosarcana.client.renderer.LordeDasMaresAbissaisRenderer;
+import br.com.caosarcana.client.renderer.MedusaBioluminescenteRenderer;
 import br.com.caosarcana.client.renderer.MineiroOcoRenderer;
 import br.com.caosarcana.client.renderer.MumiaEsqueleticaRenderer;
 import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
+import br.com.caosarcana.client.renderer.SereiaDasProfundezasRenderer;
+import br.com.caosarcana.client.renderer.TragadorDoAbismoRenderer;
 import br.com.caosarcana.client.renderer.ViboraDasArenasRenderer;
 import br.com.caosarcana.client.renderer.VigiaDasBrasasRenderer;
 import br.com.caosarcana.common.data.IRPGPlayerData;
@@ -251,6 +261,46 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.FARAO_DO_SOL_ETERNO,
                 FaraoDoSolEternoRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                TragadorDoAbismoModel.LAYER_LOCATION,
+                TragadorDoAbismoModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.TRAGADOR_DO_ABISMO,
+                TragadorDoAbismoRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                GuardiaoDeObsidianaModel.LAYER_LOCATION,
+                GuardiaoDeObsidianaModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.GUARDIAO_DE_OBSIDIANA,
+                GuardiaoDeObsidianaRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                MedusaBioluminescenteModel.LAYER_LOCATION,
+                MedusaBioluminescenteModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.MEDUSA_BIOLUMINESCENTE,
+                MedusaBioluminescenteRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                SereiaDasProfundezasModel.LAYER_LOCATION,
+                SereiaDasProfundezasModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.SEREIA_DAS_PROFUNDEZAS,
+                SereiaDasProfundezasRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                LordeDasMaresAbissaisModel.LAYER_LOCATION,
+                LordeDasMaresAbissaisModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.LORDE_DAS_MARES_ABISSAIS,
+                LordeDasMaresAbissaisRenderer::new
         );
         ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> ((SpawnEggItem) stack.getItem()).getColor(tintIndex),

@@ -52,6 +52,18 @@ public final class CaosArcanaSpawnEggs {
     public static final SpawnEggItem FARAO_DO_SOL_ETERNO_SPAWN_EGG = registerEgg(
             "farao_do_sol_eterno_spawn_egg", CaosArcanaEntities.FARAO_DO_SOL_ETERNO, 0x1D3C8C, 0xF2C64E);
 
+    // 4. Recife de Coral Abissal & Arquipélago
+    public static final SpawnEggItem TRAGADOR_DO_ABISMO_SPAWN_EGG = registerEgg(
+            "tragador_do_abismo_spawn_egg", CaosArcanaEntities.TRAGADOR_DO_ABISMO, 0x122A3A, 0x00F5FF);
+    public static final SpawnEggItem GUARDIAO_DE_OBSIDIANA_SPAWN_EGG = registerEgg(
+            "guardiao_de_obsidiana_spawn_egg", CaosArcanaEntities.GUARDIAO_DE_OBSIDIANA, 0x261C38, 0xFF6914);
+    public static final SpawnEggItem MEDUSA_BIOLUMINESCENTE_SPAWN_EGG = registerEgg(
+            "medusa_bioluminescente_spawn_egg", CaosArcanaEntities.MEDUSA_BIOLUMINESCENTE, 0x4BE1FF, 0xFF82EB);
+    public static final SpawnEggItem SEREIA_DAS_PROFUNDEZAS_SPAWN_EGG = registerEgg(
+            "sereia_das_profundezas_spawn_egg", CaosArcanaEntities.SEREIA_DAS_PROFUNDEZAS, 0x225880, 0x50FAFF);
+    public static final SpawnEggItem LORDE_DAS_MARES_ABISSAIS_SPAWN_EGG = registerEgg(
+            "lorde_das_mares_abissais_spawn_egg", CaosArcanaEntities.LORDE_DAS_MARES_ABISSAIS, 0x164460, 0xEEBE3E);
+
     public static final SpawnEggItem[] ALL_EGGS = new SpawnEggItem[]{
             RASTEJANTE_DE_CINZA_SPAWN_EGG,
             CAO_FUMEGANTE_SPAWN_EGG,
@@ -68,7 +80,12 @@ public final class CaosArcanaSpawnEggs {
             VIBORA_DAS_ARENAS_SPAWN_EGG,
             GOLEM_DE_AREIA_SPAWN_EGG,
             MUMIA_ESQUELETICA_SPAWN_EGG,
-            FARAO_DO_SOL_ETERNO_SPAWN_EGG
+            FARAO_DO_SOL_ETERNO_SPAWN_EGG,
+            TRAGADOR_DO_ABISMO_SPAWN_EGG,
+            GUARDIAO_DE_OBSIDIANA_SPAWN_EGG,
+            MEDUSA_BIOLUMINESCENTE_SPAWN_EGG,
+            SEREIA_DAS_PROFUNDEZAS_SPAWN_EGG,
+            LORDE_DAS_MARES_ABISSAIS_SPAWN_EGG
     };
 
     private CaosArcanaSpawnEggs() {

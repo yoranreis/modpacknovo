@@ -201,6 +201,56 @@ public final class CaosArcanaEntities {
                             .build("farao_do_sol_eterno")
             );
 
+    public static final EntityType<TragadorDoAbismoEntity> TRAGADOR_DO_ABISMO =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("tragador_do_abismo"),
+                    EntityType.Builder.of(TragadorDoAbismoEntity::new, MobCategory.MONSTER)
+                            .sized(0.85F, 1.95F)
+                            .clientTrackingRange(8)
+                            .build("tragador_do_abismo")
+            );
+
+    public static final EntityType<GuardiaoDeObsidianaEntity> GUARDIAO_DE_OBSIDIANA =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("guardiao_de_obsidiana"),
+                    EntityType.Builder.of(GuardiaoDeObsidianaEntity::new, MobCategory.MONSTER)
+                            .sized(1.15F, 2.35F)
+                            .clientTrackingRange(8)
+                            .build("guardiao_de_obsidiana")
+            );
+
+    public static final EntityType<MedusaBioluminescenteEntity> MEDUSA_BIOLUMINESCENTE =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("medusa_bioluminescente"),
+                    EntityType.Builder.of(MedusaBioluminescenteEntity::new, MobCategory.MONSTER)
+                            .sized(0.9F, 1.45F)
+                            .clientTrackingRange(8)
+                            .build("medusa_bioluminescente")
+            );
+
+    public static final EntityType<SereiaDasProfundezasEntity> SEREIA_DAS_PROFUNDEZAS =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("sereia_das_profundezas"),
+                    EntityType.Builder.of(SereiaDasProfundezasEntity::new, MobCategory.MONSTER)
+                            .sized(0.8F, 1.95F)
+                            .clientTrackingRange(8)
+                            .build("sereia_das_profundezas")
+            );
+
+    public static final EntityType<LordeDasMaresAbissaisEntity> LORDE_DAS_MARES_ABISSAIS =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("lorde_das_mares_abissais"),
+                    EntityType.Builder.of(LordeDasMaresAbissaisEntity::new, MobCategory.MONSTER)
+                            .sized(1.45F, 2.95F)
+                            .clientTrackingRange(12)
+                            .build("lorde_das_mares_abissais")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -268,6 +318,26 @@ public final class CaosArcanaEntities {
         FabricDefaultAttributeRegistry.register(
                 FARAO_DO_SOL_ETERNO,
                 FaraoDoSolEternoEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                TRAGADOR_DO_ABISMO,
+                TragadorDoAbismoEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                GUARDIAO_DE_OBSIDIANA,
+                GuardiaoDeObsidianaEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                MEDUSA_BIOLUMINESCENTE,
+                MedusaBioluminescenteEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                SEREIA_DAS_PROFUNDEZAS,
+                SereiaDasProfundezasEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                LORDE_DAS_MARES_ABISSAIS,
+                LordeDasMaresAbissaisEntity.createAttributes()
         );
         CaosArcanaSpawnEggs.register();
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos e entidades registrados com sucesso.");
