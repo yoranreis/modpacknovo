@@ -19,6 +19,7 @@ public class MockRPGPlayer implements IRPGPlayerData {
     private final List<ItemStack> pendingDeliveries = new ArrayList<>();
     private final java.util.Set<String> knownSpells = new java.util.HashSet<>();
     private String selectedSpell = "";
+    private final Map<String, Long> spellCooldowns = new HashMap<>();
 
     public MockRPGPlayer(Race race, int generalLevel) {
         this.race = race;
@@ -180,5 +181,37 @@ public class MockRPGPlayer implements IRPGPlayerData {
     @Override
     public void caosarcana$clearPendingDeliveries() {
         pendingDeliveries.clear();
+    }
+
+    @Override
+    public boolean caosarcana$isSpellOnCooldown(String spellId, long currentTick) {
+        if (spellId == null || spellId.isEmpty()) return false;
+        Long ready = spellCooldowns.get(spellId.toLowerCase());
+        return ready != null && currentTick < ready;
+    }
+
+    @Override
+    public void caosarcana$setSpellCooldown(String spellId, long readyTick) {
+        if (spellId != null && !spellId.isEmpty()) {
+            spellCooldowns.put(spellId.toLowerCase(), readyTick);
+        }
+    }
+
+    @Override
+    public long caosarcana$getSpellReadyTick(String spellId) {
+        if (spellId == null) return 0L;
+        return spellCooldowns.getOrDefault(spellId.toLowerCase(), 0L);
+    }
+
+    private java.util.UUID activeFamiliarId = null;
+
+    @Override
+    public java.util.UUID caosarcana$getActiveFamiliarId() {
+        return activeFamiliarId;
+    }
+
+    @Override
+    public void caosarcana$setActiveFamiliarId(java.util.UUID id) {
+        this.activeFamiliarId = id;
     }
 }

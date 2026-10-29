@@ -14,15 +14,20 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.UUID;
 
 public class ModMessages {
     public static final ResourceLocation OPEN_RACE_SELECT_ID = CaosArcana.id("open_race_select");
@@ -155,6 +160,25 @@ public class ModMessages {
             }
         });
 
+        // 1.1. Desconexão do jogador: dissipa Familiar Espectral ativo
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            ServerPlayer player = handler.getPlayer();
+            if (player instanceof IRPGPlayerData rpgPlayer) {
+                UUID familiarId = rpgPlayer.caosarcana$getActiveFamiliarId();
+                if (familiarId != null) {
+                    for (ServerLevel level : server.getAllLevels()) {
+                        Entity entity = level.getEntity(familiarId);
+                        if (entity != null) {
+                            level.sendParticles(ParticleTypes.POOF, entity.getX(), entity.getY() + 0.5, entity.getZ(), 8, 0.2, 0.2, 0.2, 0.05);
+                            entity.discard();
+                            break;
+                        }
+                    }
+                    rpgPlayer.caosarcana$setActiveFamiliarId(null);
+                }
+            }
+        });
+
         // 2. Morte e Reaparecimento: Transfere dados persistentes e custódia segura
         ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
             if (oldPlayer instanceof IRPGPlayerData oldData && newPlayer instanceof IRPGPlayerData newData) {
@@ -173,8 +197,26 @@ public class ModMessages {
                 // Transfere permanentemente todo o conhecimento arcano aprendido
                 for (String spellId : oldData.caosarcana$getKnownSpells()) {
                     newData.caosarcana$learnSpell(spellId);
+                    long ready = oldData.caosarcana$getSpellReadyTick(spellId);
+                    if (ready > 0) {
+                        newData.caosarcana$setSpellCooldown(spellId, ready);
+                    }
                 }
                 newData.caosarcana$setSelectedSpell(oldData.caosarcana$getSelectedSpell());
+
+                // Dissipa com segurança qualquer familiar invocado ativo na morte do conjurador
+                UUID oldFamiliar = oldData.caosarcana$getActiveFamiliarId();
+                if (oldFamiliar != null && oldPlayer.server != null) {
+                    for (ServerLevel level : oldPlayer.server.getAllLevels()) {
+                        Entity entity = level.getEntity(oldFamiliar);
+                        if (entity != null) {
+                            level.sendParticles(ParticleTypes.POOF, entity.getX(), entity.getY() + 0.5, entity.getZ(), 8, 0.2, 0.2, 0.2, 0.05);
+                            entity.discard();
+                            break;
+                        }
+                    }
+                }
+                newData.caosarcana$setActiveFamiliarId(null);
 
                 if (newData.caosarcana$hasChosenRace()) {
                     newData.caosarcana$getRace().applyModifiers(newPlayer);
@@ -250,12 +292,7 @@ public class ModMessages {
                         Race race = rpg.caosarcana$getRace();
                         switch (race) {
                             case ARGONIANO -> {
-                                // Pulmões Anfíbios: fôlego dura 3x mais, regenerando bolhas gradualmente, sem anular risco abissal
-                                if (player.isUnderWater() && player.getAirSupply() < player.getMaxAirSupply()) {
-                                    if (server.getTickCount() % 2 == 0) {
-                                        player.setAirSupply(Math.min(player.getMaxAirSupply(), player.getAirSupply() + 1));
-                                    }
-                                }
+                                // O fôlego 3x mais longo é gerenciado continuadamente a 1/3 de consumo via LivingEntityRPGMixin
                                 // Impulso de nado apenas quando nadando ativamente (sem quebrar exploração marinha)
                                 if (player.isSwimming()) {
                                     player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DOLPHINS_GRACE, 40, 0, true, false, true));

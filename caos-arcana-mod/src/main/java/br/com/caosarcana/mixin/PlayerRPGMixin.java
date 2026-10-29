@@ -36,6 +36,10 @@ public class PlayerRPGMixin implements IRPGPlayerData {
     private final Set<String> caosarcana$knownSpells = new HashSet<>();
     @Unique
     private String caosarcana$selectedSpell = "";
+    @Unique
+    private final Map<String, Long> caosarcana$spellCooldowns = new HashMap<>();
+    @Unique
+    private UUID caosarcana$activeFamiliarId = null;
 
     @Override
     public Race caosarcana$getRace() {
@@ -177,6 +181,36 @@ public class PlayerRPGMixin implements IRPGPlayerData {
     }
 
     @Override
+    public boolean caosarcana$isSpellOnCooldown(String spellId, long currentTick) {
+        if (spellId == null || spellId.isEmpty()) return false;
+        Long ready = caosarcana$spellCooldowns.get(spellId.toLowerCase());
+        return ready != null && currentTick < ready;
+    }
+
+    @Override
+    public void caosarcana$setSpellCooldown(String spellId, long readyTick) {
+        if (spellId != null && !spellId.isEmpty()) {
+            caosarcana$spellCooldowns.put(spellId.toLowerCase(), readyTick);
+        }
+    }
+
+    @Override
+    public long caosarcana$getSpellReadyTick(String spellId) {
+        if (spellId == null) return 0L;
+        return caosarcana$spellCooldowns.getOrDefault(spellId.toLowerCase(), 0L);
+    }
+
+    @Override
+    public UUID caosarcana$getActiveFamiliarId() {
+        return caosarcana$activeFamiliarId;
+    }
+
+    @Override
+    public void caosarcana$setActiveFamiliarId(UUID id) {
+        this.caosarcana$activeFamiliarId = id;
+    }
+
+    @Override
     public List<ItemStack> caosarcana$getPendingDeliveries() {
         return caosarcana$pendingDeliveries;
     }
@@ -215,6 +249,18 @@ public class PlayerRPGMixin implements IRPGPlayerData {
         }
         rpgTag.put("KnownSpells", spellsList);
         rpgTag.putString("SelectedSpell", caosarcana$selectedSpell != null ? caosarcana$selectedSpell : "");
+
+        // Persistência de recargas de magias
+        CompoundTag cooldownsTag = new CompoundTag();
+        for (Map.Entry<String, Long> entry : caosarcana$spellCooldowns.entrySet()) {
+            cooldownsTag.putLong(entry.getKey(), entry.getValue());
+        }
+        rpgTag.put("SpellCooldowns", cooldownsTag);
+
+        // Identificação persistente do Familiar Espectral ativo
+        if (caosarcana$activeFamiliarId != null) {
+            rpgTag.putUUID("ActiveFamiliarUUID", caosarcana$activeFamiliarId);
+        }
 
         // Persistência segura da fila de devoluções pendentes
         ListTag pendingList = new ListTag();
@@ -272,6 +318,20 @@ public class PlayerRPGMixin implements IRPGPlayerData {
                 }
             } else {
                 this.caosarcana$selectedSpell = "";
+            }
+
+            caosarcana$spellCooldowns.clear();
+            if (rpgTag.contains("SpellCooldowns", 10)) {
+                CompoundTag cooldownsTag = rpgTag.getCompound("SpellCooldowns");
+                for (String key : cooldownsTag.getAllKeys()) {
+                    this.caosarcana$spellCooldowns.put(key, cooldownsTag.getLong(key));
+                }
+            }
+
+            if (rpgTag.hasUUID("ActiveFamiliarUUID")) {
+                this.caosarcana$activeFamiliarId = rpgTag.getUUID("ActiveFamiliarUUID");
+            } else {
+                this.caosarcana$activeFamiliarId = null;
             }
 
             caosarcana$pendingDeliveries.clear();

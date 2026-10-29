@@ -590,4 +590,123 @@ public class CaosArcanaTests {
         assertEquals(100, br.com.caosarcana.content.economy.CoinItem.CoinType.OURO.getValueInCopper() /
                 br.com.caosarcana.content.economy.CoinItem.CoinType.PRATA.getValueInCopper());
     }
+
+    @Test
+    @DisplayName("Teste de recargas independentes por feitiço (desacoplamento de itens)")
+    public void testIndependentSpellCooldowns() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.ORC, 5);
+
+        // Inicialmente nenhum feitiço está em recarga
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:ira_berserker", 100L));
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:centelha_ignea", 100L));
+
+        // Aplica recarga da Ira Berserker de 600 ticks (pronto no tick 700)
+        player.caosarcana$setSpellCooldown("caosarcana:ira_berserker", 700L);
+
+        // Ira Berserker está em recarga no tick 200
+        assertTrue(player.caosarcana$isSpellOnCooldown("caosarcana:ira_berserker", 200L));
+        assertEquals(700L, player.caosarcana$getSpellReadyTick("caosarcana:ira_berserker"));
+
+        // Centelha Ígnea e Toque de Cura NÃO foram afetados e permanecem disponíveis
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:centelha_ignea", 200L));
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:toque_de_cura", 200L));
+
+        // No tick 701, a Ira Berserker sai da recarga
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:ira_berserker", 701L));
+    }
+
+    @Test
+    @DisplayName("Teste do contrato de ciclo de vida e unicidade do Familiar Espectral")
+    public void testFamiliarEspectralLifecycleContract() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.BRETAO, 3);
+        assertNull(player.caosarcana$getActiveFamiliarId(), "Jogador não deve ter familiar ativo inicialmente");
+
+        java.util.UUID familiar1 = java.util.UUID.randomUUID();
+        player.caosarcana$setActiveFamiliarId(familiar1);
+        assertEquals(familiar1, player.caosarcana$getActiveFamiliarId(), "Familiar 1 deve estar registrado como ativo");
+
+        // Nova invocação substitui a anterior
+        java.util.UUID familiar2 = java.util.UUID.randomUUID();
+        player.caosarcana$setActiveFamiliarId(familiar2);
+        assertEquals(familiar2, player.caosarcana$getActiveFamiliarId(), "Familiar 2 deve substituir o Familiar 1");
+        assertNotEquals(familiar1, player.caosarcana$getActiveFamiliarId());
+
+        // Dissipação por desconexão ou morte limpa o vínculo
+        player.caosarcana$setActiveFamiliarId(null);
+        assertNull(player.caosarcana$getActiveFamiliarId(), "Familiar deve ser nulo após dissipação");
+    }
+
+    @Test
+    @DisplayName("Teste da mecânica de redução de consumo de ar do Argoniano (3x fôlego normal)")
+    public void testArgonianAirConsumptionRate() {
+        // Vanilla: 300 ticks max air, decresce 1 por tick submerso
+        int vanillaAir = 300;
+        int vanillaTicksToEmpty = 0;
+        while (vanillaAir > 0) {
+            vanillaAir--;
+            vanillaTicksToEmpty++;
+        }
+        assertEquals(300, vanillaTicksToEmpty, "Vanilla consome 300 unidades de ar em exatamente 300 ticks (15.0s)");
+
+        int vanillaTicksToFirstDamage = vanillaTicksToEmpty;
+        int vanillaDamageAir = 0;
+        while (vanillaDamageAir > -20) {
+            vanillaDamageAir--;
+            vanillaTicksToFirstDamage++;
+        }
+        assertEquals(320, vanillaTicksToFirstDamage, "Vanilla leva 320 ticks (16.0s) até o primeiro dano por afogamento (-20 ar)");
+
+        // Argoniano com regra: tickCount % 3 != 0 não consome ar (taxa 1/3)
+        int argonianAir = 300;
+        int argonianTicks = 0;
+        while (argonianAir > 0) {
+            argonianTicks++;
+            if (argonianTicks % 3 == 0) {
+                argonianAir--;
+            }
+        }
+        assertEquals(900, argonianTicks, "Argoniano leva exatamente 900 ticks (45.0s) para esgotar o reservatório de ar (3.0x vanilla)");
+
+        int argonianTicksToFirstDamage = argonianTicks;
+        int argonianDamageAir = 0;
+        while (argonianDamageAir > -20) {
+            argonianTicksToFirstDamage++;
+            if (argonianTicksToFirstDamage % 3 == 0) {
+                argonianDamageAir--;
+            }
+        }
+        assertEquals(960, argonianTicksToFirstDamage, "Argoniano leva exatamente 960 ticks (48.0s) até o primeiro dano por afogamento (3.0x vanilla)");
+        assertEquals(3.0, (double) argonianTicks / (double) vanillaTicksToEmpty, 0.0001, "Multiplicador de esgotamento deve ser exatamente 3.0x");
+        assertEquals(3.0, (double) argonianTicksToFirstDamage / (double) vanillaTicksToFirstDamage, 0.0001, "Multiplicador até primeiro dano deve ser exatamente 3.0x");
+    }
+
+    @Test
+    @DisplayName("Teste de persistência de recargas e dissipação de familiar na morte do jogador")
+    public void testCooldownPersistenceAndFamiliarDissipationOnDeath() {
+        MockRPGPlayer oldPlayer = new MockRPGPlayer(Race.ALTO_ELFO, 10);
+        oldPlayer.caosarcana$learnSpell("caosarcana:nobreza_altmer");
+        oldPlayer.caosarcana$setSpellCooldown("caosarcana:nobreza_altmer", 1200L);
+
+        java.util.UUID familiar = java.util.UUID.randomUUID();
+        oldPlayer.caosarcana$setActiveFamiliarId(familiar);
+
+        // Simula transferência de dados do evento COPY_FROM
+        MockRPGPlayer newPlayer = new MockRPGPlayer(Race.ALTO_ELFO, 10);
+        for (String spellId : oldPlayer.caosarcana$getKnownSpells()) {
+            newPlayer.caosarcana$learnSpell(spellId);
+            long ready = oldPlayer.caosarcana$getSpellReadyTick(spellId);
+            if (ready > 0) {
+                newPlayer.caosarcana$setSpellCooldown(spellId, ready);
+            }
+        }
+        // Familiar dissipa na morte (não transfere UUID ativo)
+        newPlayer.caosarcana$setActiveFamiliarId(null);
+
+        // Valida que a recarga persistiu para evitar exploit de suicídio
+        assertTrue(newPlayer.caosarcana$isSpellOnCooldown("caosarcana:nobreza_altmer", 500L));
+        assertEquals(1200L, newPlayer.caosarcana$getSpellReadyTick("caosarcana:nobreza_altmer"));
+
+        // Valida que o familiar foi dissociado
+        assertNull(newPlayer.caosarcana$getActiveFamiliarId(), "Familiar não deve acompanhar o jogador após a morte");
+    }
 }

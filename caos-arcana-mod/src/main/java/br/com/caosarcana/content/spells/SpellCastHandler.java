@@ -18,7 +18,9 @@ import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Centralizador de regras e validação no servidor para conjuração de magias.
@@ -26,6 +28,7 @@ import java.util.List;
  */
 public class SpellCastHandler {
     public static final String CENTELHA_IGNEA_ID = "caosarcana:centelha_ignea";
+    public static final String FAMILIAR_ESPECTRAL_ID = "caosarcana:familiar_espectral";
 
     public enum CastResult {
         SUCCESS,
@@ -96,13 +99,83 @@ public class SpellCastHandler {
             }
         }
 
-        // 7. Validação de Recarga (Cooldown)
-        if (player.getCooldowns().isOnCooldown(ModItems.CENTELHA_IGNEA)) {
-            player.displayClientMessage(Component.literal("§cEsta magia ainda está em recarga! Aguarde um instante."), true);
+        // 7. Validação de Recarga (Cooldown individual por feitiço no jogador)
+        long gameTime = player.level().getGameTime();
+        if (rpgPlayer.caosarcana$isSpellOnCooldown(spell.id(), gameTime)) {
+            long remainingTicks = rpgPlayer.caosarcana$getSpellReadyTick(spell.id()) - gameTime;
+            float seconds = remainingTicks / 20.0f;
+            player.displayClientMessage(Component.literal(String.format("§c%s ainda está em recarga! Aguarde %.1fs.", spell.name(), seconds)), true);
             return CastResult.ON_COOLDOWN;
         }
 
-        // 8. Validação e Consumo de Mana
+        // 8. Tratamento atômico para Familiar Espectral (valida criação e inserção antes de cobrar mana/recarga ou substituir familiar)
+        if (FAMILIAR_ESPECTRAL_ID.equalsIgnoreCase(spell.id())) {
+            ServerLevel level = (ServerLevel) player.level();
+            float cost = spell.manaCost();
+
+            // 8.1. Validação prévia de Mana (sem consumir antecipadamente)
+            if (rpgPlayer.caosarcana$getMana() < cost) {
+                player.displayClientMessage(
+                        Component.literal("§cMana insuficiente! §7(Requer: §b" + (int) cost + "§7 | Atual: §b" + (int) rpgPlayer.caosarcana$getMana() + "§7)"),
+                        true
+                );
+                player.playNotifySound(SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 0.9f, 1.5f);
+                ModMessages.syncPlayerData(player);
+                return CastResult.INSUFFICIENT_MANA;
+            }
+
+            // 8.2. Instanciação e configuração prévia da nova entidade
+            Wolf candidateWolf = EntityType.WOLF.create(level);
+            if (candidateWolf == null) {
+                player.displayClientMessage(Component.literal("§c[Conjuração] Falha ao manifestar o Familiar Espectral no plano físico."), true);
+                player.playNotifySound(SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 0.8f, 1.2f);
+                return CastResult.REQUIREMENT_NOT_MET;
+            }
+
+            candidateWolf.setPos(player.getX() + 1.0, player.getY(), player.getZ() + 1.0);
+            candidateWolf.tame(player);
+            candidateWolf.setCustomName(Component.literal("§bEspírito Familiar de " + player.getName().getString()));
+            candidateWolf.setCustomNameVisible(true);
+            candidateWolf.addTag("caosarcana:spectral_familiar");
+            candidateWolf.addEffect(new MobEffectInstance(MobEffects.GLOWING, 1200, 0));
+
+            // 8.3. Verificação estrita de sucesso na inserção no mundo antes de debitar ou substituir
+            boolean inserted = level.addFreshEntity(candidateWolf);
+            if (!inserted) {
+                candidateWolf.discard();
+                player.displayClientMessage(Component.literal("§c[Conjuração] Não foi possível materializar o Familiar Espectral neste local."), true);
+                player.playNotifySound(SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 0.8f, 1.2f);
+                return CastResult.REQUIREMENT_NOT_MET;
+            }
+
+            // 8.4. Inserção comprovadamente confirmada no mundo: efetiva a cobrança e substituição
+            rpgPlayer.caosarcana$consumeMana(cost);
+            rpgPlayer.caosarcana$setSpellCooldown(spell.id(), gameTime + spell.cooldownTicks());
+            ModMessages.syncPlayerData(player);
+
+            // Dissipa com segurança invocação anterior apenas após a confirmação da nova
+            UUID oldFamiliarId = rpgPlayer.caosarcana$getActiveFamiliarId();
+            if (oldFamiliarId != null) {
+                for (ServerLevel sl : player.server.getAllLevels()) {
+                    net.minecraft.world.entity.Entity oldEntity = sl.getEntity(oldFamiliarId);
+                    if (oldEntity != null) {
+                        sl.sendParticles(ParticleTypes.POOF, oldEntity.getX(), oldEntity.getY() + 0.5, oldEntity.getZ(), 8, 0.2, 0.2, 0.2, 0.05);
+                        oldEntity.discard();
+                        break;
+                    }
+                }
+            }
+
+            rpgPlayer.caosarcana$setActiveFamiliarId(candidateWolf.getUUID());
+
+            level.sendParticles(ParticleTypes.PORTAL, player.getX(), player.getY() + 1.0, player.getZ(), 30, 0.5, 0.5, 0.5, 0.1);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.WOLF_HOWL, SoundSource.PLAYERS, 1.0f, 1.1f);
+            player.displayClientMessage(Component.literal("§d[Conjuração] §5Familiar Espectral invocado ao seu comando (Duração: 60s)!"), true);
+            return CastResult.SUCCESS;
+        }
+
+        // 8. Validação e Consumo de Mana (demais magias)
         float cost = spell.manaCost();
         if (!rpgPlayer.caosarcana$consumeMana(cost)) {
             player.displayClientMessage(
@@ -114,8 +187,11 @@ public class SpellCastHandler {
             return CastResult.INSUFFICIENT_MANA;
         }
 
-        // 9. Aplica Recarga e Sincroniza Mana
-        player.getCooldowns().addCooldown(ModItems.CENTELHA_IGNEA, spell.cooldownTicks());
+        // 9. Aplica Recarga individual e Sincroniza Mana
+        rpgPlayer.caosarcana$setSpellCooldown(spell.id(), gameTime + spell.cooldownTicks());
+        if (CENTELHA_IGNEA_ID.equals(spell.id())) {
+            player.getCooldowns().addCooldown(ModItems.CENTELHA_IGNEA, spell.cooldownTicks());
+        }
         ModMessages.syncPlayerData(player);
 
         // 10. Executa o efeito ativo da magia
@@ -152,18 +228,41 @@ public class SpellCastHandler {
                 Vec3 look = player.getLookAngle();
                 Vec3 start = player.getEyePosition();
                 double maxDist = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 16.0;
+                Vec3 maxPoint = start.add(look.scale(maxDist));
 
-                // Raio congelante em linha de visão
-                for (double d = 1.0; d <= maxDist; d += 0.8) {
+                net.minecraft.world.phys.BlockHitResult blockHit = level.clip(new net.minecraft.world.level.ClipContext(
+                        start, maxPoint,
+                        net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                        net.minecraft.world.level.ClipContext.Fluid.NONE,
+                        player
+                ));
+
+                double effectiveDist = (blockHit.getType() != net.minecraft.world.phys.HitResult.Type.MISS)
+                        ? Math.max(0.5, start.distanceTo(blockHit.getLocation()))
+                        : maxDist;
+
+                java.util.Set<LivingEntity> hitEntities = new java.util.HashSet<>();
+                for (double d = 0.8; d <= effectiveDist; d += 0.8) {
                     Vec3 point = start.add(look.scale(d));
                     level.sendParticles(ParticleTypes.SNOWFLAKE, point.x, point.y, point.z, 4, 0.1, 0.1, 0.1, 0.02);
 
-                    AABB hitBox = new AABB(point.x - 0.7, point.y - 0.7, point.z - 0.7, point.x + 0.7, point.y + 0.7, point.z + 0.7);
-                    List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive());
+                    AABB hitBox = new AABB(point.x - 0.6, point.y - 0.6, point.z - 0.6, point.x + 0.6, point.y + 0.6, point.z + 0.6);
+                    List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive() && !hitEntities.contains(e));
                     for (LivingEntity target : targets) {
-                        target.hurt(player.damageSources().magic(), 5.0f);
-                        target.setTicksFrozen(140); // Congela
-                        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 1));
+                        // Verificação estrita de linha de visada (Line-of-Sight) contra superfícies sólidas para evitar atravessar portas/paredes
+                        net.minecraft.world.phys.BlockHitResult los = level.clip(new net.minecraft.world.level.ClipContext(
+                                start,
+                                target.getEyePosition(),
+                                net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                                net.minecraft.world.level.ClipContext.Fluid.NONE,
+                                player
+                        ));
+                        if (los.getType() == net.minecraft.world.phys.HitResult.Type.MISS) {
+                            hitEntities.add(target);
+                            target.hurt(player.damageSources().magic(), 5.0f);
+                            target.setTicksFrozen(140); // Congela
+                            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 120, 1));
+                        }
                     }
                 }
 
@@ -175,16 +274,48 @@ public class SpellCastHandler {
                 Vec3 look = player.getLookAngle();
                 Vec3 start = player.getEyePosition();
                 double maxDist = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 24.0;
+                Vec3 maxPoint = start.add(look.scale(maxDist));
 
-                for (double d = 1.0; d <= maxDist; d += 1.0) {
+                net.minecraft.world.phys.BlockHitResult blockHit = level.clip(new net.minecraft.world.level.ClipContext(
+                        start, maxPoint,
+                        net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                        net.minecraft.world.level.ClipContext.Fluid.NONE,
+                        player
+                ));
+
+                double effectiveDist = (blockHit.getType() != net.minecraft.world.phys.HitResult.Type.MISS)
+                        ? Math.max(0.5, start.distanceTo(blockHit.getLocation()))
+                        : maxDist;
+
+                boolean hitTarget = false;
+                for (double d = 1.0; d <= effectiveDist; d += 1.0) {
                     Vec3 point = start.add(look.scale(d));
                     level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 6, 0.15, 0.15, 0.15, 0.05);
 
-                    AABB hitBox = new AABB(point.x - 0.8, point.y - 0.8, point.z - 0.8, point.x + 0.8, point.y + 0.8, point.z + 0.8);
-                    List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive());
-                    for (LivingEntity target : targets) {
-                        target.hurt(player.damageSources().lightningBolt(), 8.0f);
-                        target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0));
+                    if (!hitTarget) {
+                        AABB hitBox = new AABB(point.x - 0.7, point.y - 0.7, point.z - 0.7, point.x + 0.7, point.y + 0.7, point.z + 0.7);
+                        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive());
+                        // Ordena pelo alvo estritamente mais próximo da origem do raio
+                        targets.sort(Comparator.comparingDouble(e -> start.distanceToSqr(e.getEyePosition())));
+                        for (LivingEntity target : targets) {
+                            net.minecraft.world.phys.BlockHitResult los = level.clip(new net.minecraft.world.level.ClipContext(
+                                    start,
+                                    target.getEyePosition(),
+                                    net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                                    net.minecraft.world.level.ClipContext.Fluid.NONE,
+                                    player
+                            ));
+                            if (los.getType() == net.minecraft.world.phys.HitResult.Type.MISS) {
+                                target.hurt(player.damageSources().lightningBolt(), 8.0f);
+                                target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 0));
+                                hitTarget = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (hitTarget) {
+                        // Relâmpago Arcano cessa percurso no primeiro alvo atingido
+                        break;
                     }
                 }
 
@@ -239,19 +370,7 @@ public class SpellCastHandler {
                 player.displayClientMessage(Component.literal("§9[Conjuração] §bLâmina Vinculada de Oblivion forjada em seu espírito (+Força II)!"), true);
             }
             case "caosarcana:familiar_espectral" -> {
-                Wolf familiar = EntityType.WOLF.create(level);
-                if (familiar != null) {
-                    familiar.setPos(player.getX() + 1.0, player.getY(), player.getZ() + 1.0);
-                    familiar.tame(player);
-                    familiar.setCustomName(Component.literal("§bEspírito Familiar de " + player.getName().getString()));
-                    familiar.setCustomNameVisible(true);
-                    familiar.addEffect(new MobEffectInstance(MobEffects.GLOWING, 1200, 0));
-                    level.addFreshEntity(familiar);
-                }
-                level.sendParticles(ParticleTypes.PORTAL, player.getX(), player.getY() + 1.0, player.getZ(), 30, 0.5, 0.5, 0.5, 0.1);
-                level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                        SoundEvents.WOLF_HOWL, SoundSource.PLAYERS, 1.0f, 1.1f);
-                player.displayClientMessage(Component.literal("§d[Conjuração] §5Familiar Espectral invocado ao seu comando!"), true);
+                // Invocação com ciclo atômico e validação prévia executada diretamente em castActiveSpell
             }
             case "caosarcana:manto_de_sombras" -> {
                 player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 400, 0)); // 20s

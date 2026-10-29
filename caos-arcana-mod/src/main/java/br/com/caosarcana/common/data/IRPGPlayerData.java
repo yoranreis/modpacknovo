@@ -37,6 +37,13 @@ public interface IRPGPlayerData {
     String caosarcana$getSelectedSpell();
     void caosarcana$setSelectedSpell(String spellId);
 
+    boolean caosarcana$isSpellOnCooldown(String spellId, long currentTick);
+    void caosarcana$setSpellCooldown(String spellId, long readyTick);
+    long caosarcana$getSpellReadyTick(String spellId);
+
+    java.util.UUID caosarcana$getActiveFamiliarId();
+    void caosarcana$setActiveFamiliarId(java.util.UUID id);
+
     List<ItemStack> caosarcana$getPendingDeliveries();
     void caosarcana$addPendingDelivery(ItemStack stack);
     void caosarcana$clearPendingDeliveries();

@@ -176,3 +176,63 @@ flowchart TD
    O manipulador [`GrimoireStudyHandler`](file:///c:/Users/Matt/Desktop/modpacknovo/caos-arcana-mod/src/main/java/br/com/caosarcana/content/spells/GrimoireStudyHandler.java) verifica `caosarcana$knowsSpell(id)` antes de qualquer ação. Se o personagem já conhece a magia, o livro não é consumido, nenhuma recompensa é duplicada e o sistema apenas emite som de folhear páginas com aviso amigável.
 3. **Persistência Após Morte:**  
    O evento `ServerPlayerEvents.COPY_FROM` preserva 100% da lista de magias aprendidas, nível de escolas, raça e mana máxima após o renascimento. Apenas os itens físicos do inventário caem no local do óbito.
+
+---
+
+## 8. Esclarecimentos de Engenharia e Status de Homologação
+
+Para manter a integridade documental e alinhar expectativas entre Game Design e Engenharia:
+
+### A. Registro de Provação vs. Provação Jogável no Mundo
+* **Implementado:** A camada lógica [`ArcaneTrialRegistry`](file:///c:/Users/Matt/Desktop/modpacknovo/caos-arcana-mod/src/main/java/br/com/caosarcana/content/trials/ArcaneTrialRegistry.java) estabelece as 10 provações, requisitos de escola, textos de missão e contratos de concessão no servidor.
+* **Pendente para Homologação:** A geração procedural de santuários no mundo físico e os gatilhos autônomos de vitória (sem intervenção de comando administrativo) pertencem ao marco seguinte de geração de estruturas e missões.
+
+### B. Poder Cadastrado vs. Poder Balanceado em Multiplayer
+* **Implementado:** As 10 raças possuem atributos reais vinculados à API de atributos vanilla e poderes com cooldowns e custos registrados no [`SpellRegistry`](file:///c:/Users/Matt/Desktop/modpacknovo/caos-arcana-mod/src/main/java/br/com/caosarcana/content/spells/SpellRegistry.java).
+* **Pendente para Homologação:** Os números atuais são valores de referência calibrados. O balanceamento definitivo requer sessões de combate PvP/PvE em servidor multiplayer dedicado com latência de rede e equipamentos empilhados.
+
+### C. Demonstração Matemática e Implementação do Fôlego do Argoniano
+* **Mecânica Vanilla:** Uma entidade submersa possui 300 ticks de ar (10 bolhas) e consome 1 tick de ar a cada tick de simulação (20 ticks por segundo, totalizando 15,0s para esgotar o reservatório de ar). Quando o reservatório chega a 0, decorrem mais 20 ticks (1,0s) em ar negativo até -20, momento em que o primeiro dano de afogamento (2.0F) é aplicado. Tempo total vanilla até primeiro dano: 320 ticks (16,0s).
+* **Diagnóstico da Implementação Anterior:** A reposição de +1 tick a cada 20 ticks no `END_SERVER_TICK` apenas reduzia o consumo de 20 para 19 ticks/s ($300 / 19 \approx 15,79s$), um ganho irrisório de 0,79s (5,26%). Além disso, a documentação prévia continha aproximações como uma alternância entre +13 e +14 que geraria média 13,5 pontos/s (e não 13,33 pontos/s), além de produzir saltos visuais descontínuos a cada segundo.
+* **Implementação Realizada (`LivingEntityRPGMixin`):** Em vez de saltos discretos a cada segundo, intercepta-se a chamada de consumo natural `LivingEntity.decreaseAirSupply(int air)` na thread de física do jogo. O consumo é suprimido quando `tickCount % 3 != 0`, consumindo ar apenas 1 vez a cada 3 ticks de simulação:
+  - **Tempo de esgotamento do reservatório:** $300 \times 3 = 900\text{ ticks}$ (**45,0 segundos**, exatamente $3,0\times$ o vanilla).
+  - **Tempo até o primeiro dano por afogamento:** $900 + (20 \times 3) = 960\text{ ticks}$ (**48,0 segundos**, exatamente $3,0\times$ o vanilla).
+  - **Preservação de mecânicas:** Recuperação fora d'água (`increaseAirSupply`) permanece 100% inalterada, poções de Respiração Aquática são respeitadas, e encantamentos de Respiração (Respiration) empilham de forma limpa e multiplicativa.
+
+### D. Política de Recargas Desacoplada e Persistente
+* **Desacoplamento Completo:** O cooldown não é mais vinculado ao item `ModItems.CENTELHA_IGNEA`. Cada feitiço e poder racial possui seu próprio registro em `caosarcana$spellCooldowns` indexado por ID textual.
+* **Global Cooldown (GCD):** Não foi implementado nenhum bloqueio global obrigatório, preservando fluidez tática entre conjurações independentes.
+* **Persistência Anti-Exploit:** As recargas ativas são serializadas em NBT (`CompoundTag SpellCooldowns`) e preservadas no evento `ServerPlayerEvents.COPY_FROM`. Jogadores não conseguem burlar tempos de recarga de habilidades de alto impacto cometendo suicídio tático.
+
+### E. Ciclo de Vida e Anti-Farm do Familiar Espectral
+* **Implementação Realizada (`SpellCastHandler`, `SpectralWolfMixin`, `LivingEntityRPGMixin`):**
+  - **Validação Atômica:** A entidade é instanciada e validada antes de debitar mana ou recarga. Se a instanciação falhar, o conjurador não é cobrado e o familiar prévio é mantido intacto.
+  - **Unicidade Estrita:** Cada conjurador possui no máximo 1 familiar ativo rastreado por UUID (`caosarcana$getActiveFamiliarId()`). Invocação subsequente dissipa com segurança a anterior com partículas de fumaça.
+  - **Ciclo Temporal:** Duração máxima de 1200 ticks de simulação (60 segundos). Ao expirar, a entidade é descartada (`discard()`) com efeito sonoro e visual.
+  - **Tratamento de Desconexão, Morte e Descarregamento de Chunk:** O vínculo é desfeito na desconexão (`ServerPlayConnectionEvents.DISCONNECT`) e na morte do conjurador (`ServerPlayerEvents.COPY_FROM`). Se um familiar estiver em chunk descarregado e acordar posteriormente, ao verificar que seu dono está offline ou que o UUID do familiar ativo mudou, executa auto-anulação imediata sem carregar chunks desnecessariamente.
+  - **Proteção Anti-Farm / Anti-Exploit:** Interceptação em `SpectralWolfMixin` e `LivingEntityRPGMixin` impede reprodução (`canMate` e `isFood` retornam falso), cancela geração de esferas de experiência (`shouldDropExperience` retorna falso) e anula qualquer drop de tabela de itens (`shouldDropLoot` retorna falso).
+
+### F. Salvaguardas de Linha de Visada (Geada e Relâmpago)
+* **Geada Congelante:** O cone cessa sua propagação ao colidir com o primeiro bloco sólido (`ClipContext.Block.COLLIDER`). Para impedir vazamento periférico por caixas de amostragem (AABB) através de portas ou paredes finas, cada alvo candidato passa por verificação estrita de linha de visada (`level.clip`) entre os olhos do conjurador e os olhos do alvo. Múltiplos alvos únicos podem ser atingidos ao longo do trajeto (máximo 1 acerto por entidade por conjuração).
+* **Relâmpago Arcano:** O raio linear focado ordena todos os alvos candidatos pela distância real à origem do conjurador, valida a linha de visada contra obstruções e atinge estritamente o primeiro alvo da linha, cessando o percurso imediatamente (`break;`). Dano (8.0F), alcance (24 blocos) e custo (28 Mana) foram rigorosamente preservados.
+
+---
+
+## 9. Consolidação dos Resultados da Homologação Prática (Rodada do Usuário)
+
+Resultados dos testes manuais in-game executados pelo usuário com o JAR de hash `A18188DA...`:
+
+| Subsistema / Cenário de Teste | Status Homologado | Evidência / Observações Registradas |
+| :--- | :---: | :--- |
+| **Recargas Independentes (Poder Racial vs. Universal)** | **APROVADO** | Aprovação manual informada pelo usuário. Disparo de feitiços universais não bloqueado por poder racial e persistência confirmada. |
+| **Persistência de Recargas Após Morte** | **APROVADO** | Aprovação manual informada pelo usuário. Recargas não são zeradas por suicídio tático (`/kill`). |
+| **Familiar: Invocação e Expiração (1200 ticks)** | **APROVADO** | Aprovação manual informada pelo usuário. Entidade surge com efeito visual e dissipa ao término da contagem de simulação. |
+| **Familiar: Substituição Após Fim da Recarga** | **APROVADO** | Aprovação manual informada pelo usuário. Nova invocação confirmada substitui a anterior no mundo sem duplicar entidades. |
+| **Familiar: Falta de Mana com Recarga Pronta** | **APROVADO** | Aprovação manual informada pelo usuário. Bloqueio correto por mana sem descartar nem prejudicar o familiar ativo prévio. |
+| **Familiar: Dissipação por Morte e Desconexão** | **APROVADO** | Aprovação manual informada pelo usuário. Entidade descartada no servidor sem deixar familiares órfãos. |
+| **Familiar: Anti-Farm (Reprodução, Loot e XP)** | **APROVADO** | Aprovação manual informada pelo usuário. Bloqueio de reprodução/comida e anulação total de drops e esferas de XP confirmados. |
+| **Raios: Bloqueio por Parede Sólida e Porta Fechada** | **APROVADO** | Aprovação manual informada pelo usuário. Partículas colidem e alvos atrás da barreira não sofrem dano ou efeitos. |
+| **Raios: Salvaguarda de Borda/Quina Externa** | **APROVADO** | Aprovação manual informada pelo usuário. Sem vazamento periférico por caixas de colisão volumétrica. |
+| **Raios: Múltiplos Alvos (Geada vs. Relâmpago)** | **APROVADO** | Aprovação manual informada pelo usuário. Geada atinge cada alvo uma única vez no cone; Relâmpago cessa no primeiro alvo válido. |
+| **Fôlego do Argoniano: Redução de Consumo a 1/3** | **APROVADO** | Aprovação manual informada pelo usuário. Consumo de ar contínuo mais lento comparado ao controle, recuperação normal fora d'água e compatibilidade com encantamentos/poções. *(Sem registro de números artificiais não medidos).* |
+| **Familiar: Descarregamento Real de Chunk e Retorno** | **PENDENTE** | **Mantido como pendente.** Requer comprovação específica de descarregamento efetivo de chunks no servidor dedicado/singleplayer e permanência física do familiar no local. |
