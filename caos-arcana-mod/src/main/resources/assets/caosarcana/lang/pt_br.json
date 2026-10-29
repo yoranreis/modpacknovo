@@ -9,5 +9,23 @@
   "entity.caosarcana.aranha_casca_solta": "Aranha de Casca Solta",
   "entity.caosarcana.teia_de_casca": "Teia de Casca",
   "entity.caosarcana.espirito_nevoa": "Espírito da Névoa",
-  "item.caosarcana.centelha_ignea": "Centelha Ígnea"
+
+  "item.caosarcana.centelha_ignea": "Grimório: Centelha Ígnea",
+  "item.caosarcana.grimorio_geada": "Grimório: Geada Congelante",
+  "item.caosarcana.grimorio_relampago": "Grimório: Relâmpago Arcano",
+  "item.caosarcana.grimorio_cura": "Grimório: Toque de Cura",
+  "item.caosarcana.grimorio_circulo_sagrado": "Grimório: Círculo Sagrado",
+  "item.caosarcana.grimorio_carvalho": "Grimório: Corpo de Carvalho",
+  "item.caosarcana.grimorio_luz": "Grimório: Luz de Vela",
+  "item.caosarcana.grimorio_espada": "Grimório: Espada Vinculada",
+  "item.caosarcana.grimorio_familiar": "Grimório: Familiar Espectral",
+  "item.caosarcana.grimorio_sombras": "Grimório: Manto de Sombras",
+
+  "item.caosarcana.moeda_cobre": "Moeda de Cobre",
+  "item.caosarcana.moeda_prata": "Moeda de Prata",
+  "item.caosarcana.moeda_ouro": "Septim de Ouro",
+
+  "category.caosarcana.spells": "Caos Arcana - Magias",
+  "key.caosarcana.cast_spell": "Conjurar Magia Ativa",
+  "key.caosarcana.open_spell_menu": "Abrir Seleção de Magias (Grimório)"
 }

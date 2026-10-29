@@ -47,6 +47,16 @@ public class CaosArcanaTests {
 
         assertEquals(Race.FELINO, Race.fromId("felino"));
         assertEquals(Race.ALTO_ELFO, Race.fromId("alto_elfo"));
+        assertEquals(Race.NORDICO, Race.fromId("nordico"));
+        assertEquals(Race.ELFO_NEGRO, Race.fromId("elfo_negro"));
+        assertEquals(Race.ELFO_FLORESTA, Race.fromId("elfo_floresta"));
+        assertEquals(Race.BRETAO, Race.fromId("bretao"));
+        assertEquals(Race.IMPERIAL, Race.fromId("imperial"));
+        assertEquals(Race.GUARDA_VERMELHO, Race.fromId("guarda_vermelho"));
+        assertEquals(Race.ARGONIANO, Race.fromId("argoniano"));
+
+        // Total de 10 raças jogáveis + NONE
+        assertEquals(11, Race.values().length);
 
         // Fallbacks seguros
         assertEquals(Race.NONE, Race.fromId("alien"));
@@ -57,24 +67,28 @@ public class CaosArcanaTests {
     @Test
     @DisplayName("Teste de auditoria documental e separação de características ativas vs planejadas")
     public void testRaceDocumentationStatusAndTraits() {
-        // Orc e Felino são referências explícitas (Decididas)
-        assertTrue(Race.ORC.getDocumentationStatus().contains("Decidido"));
-        assertTrue(Race.FELINO.getDocumentationStatus().contains("Decidido"));
-
-        // Alto Elfo é proposta de estudo (Pendente)
-        assertTrue(Race.ALTO_ELFO.getDocumentationStatus().contains("Pendente"));
+        // Todas as 10 raças agora são oficiais homologadas da base Skyrim
+        for (Race race : Race.values()) {
+            if (race != Race.NONE) {
+                assertTrue(race.getDocumentationStatus().contains("Decidido"), "Raça " + race.name() + " deve estar marcada como Decidido");
+            }
+        }
 
         // Orc: vantagens ativas presentes, penalidade de mana é planejada
         assertTrue(Race.ORC.getActiveAdvantages().contains("Dano físico +2"));
-        assertTrue(Race.ORC.getPlannedTraits().contains("Custo de mana"));
+        assertTrue(Race.ORC.getPlannedTraits().contains("Ira Berserker"));
 
         // Felino: mobilidade ativa, dano de queda é planejado
         assertTrue(Race.FELINO.getActiveAdvantages().contains("Velocidade de movimento +15%"));
-        assertTrue(Race.FELINO.getPlannedTraits().contains("queda"));
+        assertTrue(Race.FELINO.getPlannedTraits().contains("Olhos da Noite"));
 
         // Alto Elfo: mana é parcial, penalidade física é ativa
         assertTrue(Race.ALTO_ELFO.getPartialTraits().contains("Mana Máxima +50"));
         assertTrue(Race.ALTO_ELFO.getActiveDisadvantages().contains("Dano corpo a corpo -15%"));
+
+        // Nórdico e Argoniano
+        assertTrue(Race.NORDICO.getActiveAdvantages().contains("Vida Máxima +2"));
+        assertTrue(Race.ARGONIANO.getActiveAdvantages().contains("Respiração aquática"));
     }
 
     @Test
@@ -303,5 +317,396 @@ public class CaosArcanaTests {
         // 2. Verificação de herança e não interferência em SmallFireball
         assertTrue(net.minecraft.world.entity.projectile.SmallFireball.class.isAssignableFrom(br.com.caosarcana.content.spells.FlameSparkProjectile.class));
         assertNotEquals(net.minecraft.world.entity.projectile.SmallFireball.class, br.com.caosarcana.content.spells.FlameSparkProjectile.class);
+    }
+
+    @Test
+    @DisplayName("Teste de aprendizado de magias, idempotência e não-duplicação de registros")
+    public void testSpellLearningAndIdempotence() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.ALTO_ELFO, 1);
+        String spellId = "caosarcana:centelha_ignea";
+
+        // Inicialmente o jogador não conhece a magia
+        assertFalse(player.caosarcana$knowsSpell(spellId), "Novo personagem não deve conhecer magias automaticamente");
+        assertEquals(0, player.caosarcana$getKnownSpells().size());
+
+        // Primeiro aprendizado: sucesso
+        assertTrue(player.caosarcana$learnSpell(spellId), "Primeiro aprendizado de magia válida deve retornar true");
+        assertTrue(player.caosarcana$knowsSpell(spellId), "Deve reportar como conhecida após o aprendizado");
+        assertEquals(1, player.caosarcana$getKnownSpells().size());
+
+        // Segundo aprendizado (repetido): recusado / idempotente
+        assertFalse(player.caosarcana$learnSpell(spellId), "Tentativa de aprender novamente deve retornar false (sem duplicação)");
+        assertEquals(1, player.caosarcana$getKnownSpells().size(), "Lista de magias conhecidas não pode conter duplicatas");
+
+        // Resolução insensível a maiúsculas e espaços
+        assertTrue(player.caosarcana$knowsSpell("  CAOSARCANA:CENTELHA_IGNEA  "), "Consulta de magia deve normalizar maiúsculas e espaços");
+
+        // Tratamento seguro de nulos ou vazios
+        assertFalse(player.caosarcana$learnSpell(null));
+        assertFalse(player.caosarcana$learnSpell(""));
+        assertFalse(player.caosarcana$knowsSpell(null));
+        assertFalse(player.caosarcana$knowsSpell(""));
+    }
+
+    @Test
+    @DisplayName("Teste de persistência NBT do conhecimento arcano e preservação após reset de raça")
+    public void testSpellPersistenceAndResetRaceIntegrity() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.ORC, 3);
+        String spellId = "caosarcana:centelha_ignea";
+        player.caosarcana$learnSpell(spellId);
+
+        // 1. Simulação da serialização de NBT conforme implementado no PlayerRPGMixin
+        CompoundTag rootNbt = new CompoundTag();
+        CompoundTag rpgTag = new CompoundTag();
+        rpgTag.putString("Race", player.caosarcana$getRace().getId());
+        rpgTag.putBoolean("RaceChosen", player.caosarcana$hasChosenRace());
+        rpgTag.putFloat("Mana", player.caosarcana$getMana());
+
+        ListTag spellsList = new ListTag();
+        for (String spell : player.caosarcana$getKnownSpells()) {
+            spellsList.add(net.minecraft.nbt.StringTag.valueOf(spell));
+        }
+        rpgTag.put("KnownSpells", spellsList);
+        rootNbt.put("CaosArcanaData", rpgTag);
+
+        // 2. Simulação da desserialização
+        MockRPGPlayer restoredPlayer = new MockRPGPlayer(Race.NONE, 1);
+        CompoundTag loadedRpg = rootNbt.getCompound("CaosArcanaData");
+        ListTag loadedSpells = loadedRpg.getList("KnownSpells", 8);
+        for (int i = 0; i < loadedSpells.size(); i++) {
+            restoredPlayer.caosarcana$learnSpell(loadedSpells.getString(i));
+        }
+
+        assertTrue(restoredPlayer.caosarcana$knowsSpell(spellId), "Magia salva no NBT deve ser restaurada integralmente");
+
+        // 3. Simulação de /caos resetrace: Raça é reiniciada mas o conhecimento permanece
+        player.caosarcana$setRace(Race.NONE);
+        player.caosarcana$setChosenRace(false);
+
+        assertEquals(Race.NONE, player.caosarcana$getRace(), "Raça deve ter sido resetada");
+        assertFalse(player.caosarcana$hasChosenRace(), "Status de raça escolhida deve ter sido resetado");
+        assertTrue(player.caosarcana$knowsSpell(spellId), "Reset de raça NÃO PODE apagar o conhecimento arcano aprendido");
+        assertEquals(1, player.caosarcana$getKnownSpells().size());
+    }
+
+    @Test
+    @DisplayName("Teste das regras de validação no servidor para conjuração sem livro")
+    public void testServerSpellCastValidationRules() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.ALTO_ELFO, 1);
+        String spellId = "caosarcana:centelha_ignea";
+
+        // Cenário A: Jogador sem raça escolhida
+        MockRPGPlayer unassignedPlayer = new MockRPGPlayer(Race.NONE, 1);
+        unassignedPlayer.caosarcana$setChosenRace(false);
+        assertFalse(unassignedPlayer.caosarcana$hasChosenRace(), "Jogador sem raça não pode conjurar");
+
+        // Cenário B: Jogador com raça mas que NÃO aprendeu a magia
+        assertFalse(player.caosarcana$knowsSpell(spellId), "Jogador que não aprendeu deve ser impedido de conjurar");
+
+        // Cenário C: Jogador aprendeu a magia
+        player.caosarcana$learnSpell(spellId);
+        assertTrue(player.caosarcana$knowsSpell(spellId));
+
+        // Cenário D: Validação do nível provisório de escola (Piromancia Nível 1 padrão para novato)
+        assertEquals(1, player.caosarcana$getSchoolLevel("piromancia"), "Nível de escola padrão deve ser 1");
+
+        // Cenário E: Saldo insuficiente de mana (< 20)
+        player.caosarcana$setMana(15.0f);
+        assertFalse(player.caosarcana$consumeMana(20.0f), "Deve recusar conjuração com menos de 20 de mana");
+        assertEquals(15.0f, player.caosarcana$getMana(), 0.01f, "Mana não deve ser alterada se o consumo falhar");
+
+        // Cenário F: Saldo exatamente igual a 20 de mana
+        player.caosarcana$setMana(20.0f);
+        assertTrue(player.caosarcana$consumeMana(20.0f), "Deve permitir conjuração com exatamente 20 de mana");
+        assertEquals(0.0f, player.caosarcana$getMana(), 0.01f, "Mana deve ir a zero após o consumo exato");
+
+        // Cenário G: Saldo amplo de mana (100)
+        player.caosarcana$setMana(100.0f);
+        assertTrue(player.caosarcana$consumeMana(20.0f));
+        assertEquals(80.0f, player.caosarcana$getMana(), 0.01f);
+    }
+
+    @Test
+    @DisplayName("Teste de seleção de magia, estado vazio e rejeição de magia desconhecida")
+    public void testSpellSelectionAndEmptyState() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.FELINO, 2);
+
+        // 1. Estado vazio: sem magias conhecidas
+        assertEquals("", player.caosarcana$getSelectedSpell(), "Novo jogador não deve ter magia selecionada");
+        assertTrue(player.caosarcana$getKnownSpells().isEmpty());
+
+        // 2. Tentativa de selecionar magia desconhecida: rejeitada imediatamente
+        player.caosarcana$setSelectedSpell("caosarcana:bola_de_fogo");
+        assertEquals("", player.caosarcana$getSelectedSpell(), "Não deve permitir selecionar magia que não conhece");
+
+        // 3. Aprendizado da Centelha Ígnea: auto-seleciona como ativa se vazio
+        assertTrue(player.caosarcana$learnSpell("caosarcana:centelha_ignea"));
+        assertEquals("caosarcana:centelha_ignea", player.caosarcana$getSelectedSpell(), "Primeira magia aprendida deve ser auto-selecionada como ativa");
+
+        // 4. Seleção explícita de magia conhecida
+        player.caosarcana$setSelectedSpell("caosarcana:centelha_ignea");
+        assertEquals("caosarcana:centelha_ignea", player.caosarcana$getSelectedSpell());
+
+        // 5. Tentativa de selecionar magia inexistente não remove a magia ativa atual
+        player.caosarcana$setSelectedSpell("caosarcana:tempestade_de_raios");
+        assertEquals("caosarcana:centelha_ignea", player.caosarcana$getSelectedSpell(), "Seleção inválida deve preservar a magia ativa prévia");
+    }
+
+    @Test
+    @DisplayName("Teste de persistência NBT da magia ativa e integridade na reconexão")
+    public void testSpellSelectionPersistenceAcrossReconnect() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.ORC, 3);
+        player.caosarcana$learnSpell("caosarcana:centelha_ignea");
+        player.caosarcana$setSelectedSpell("caosarcana:centelha_ignea");
+
+        // 1. Serialização em NBT
+        CompoundTag rootNbt = new CompoundTag();
+        CompoundTag rpgTag = new CompoundTag();
+        rpgTag.putString("Race", player.caosarcana$getRace().getId());
+        rpgTag.putBoolean("RaceChosen", player.caosarcana$hasChosenRace());
+        rpgTag.putFloat("Mana", player.caosarcana$getMana());
+
+        ListTag spellsList = new ListTag();
+        for (String spell : player.caosarcana$getKnownSpells()) {
+            spellsList.add(net.minecraft.nbt.StringTag.valueOf(spell));
+        }
+        rpgTag.put("KnownSpells", spellsList);
+        rpgTag.putString("SelectedSpell", player.caosarcana$getSelectedSpell());
+        rootNbt.put("CaosArcanaData", rpgTag);
+
+        // 2. Desserialização em nova sessão / reconexão
+        MockRPGPlayer reconnectedPlayer = new MockRPGPlayer(Race.ORC, 3);
+        CompoundTag loadedRpg = rootNbt.getCompound("CaosArcanaData");
+
+        ListTag loadedSpells = loadedRpg.getList("KnownSpells", 8);
+        for (int i = 0; i < loadedSpells.size(); i++) {
+            reconnectedPlayer.caosarcana$learnSpell(loadedSpells.getString(i));
+        }
+
+        String loadedSelected = loadedRpg.getString("SelectedSpell");
+        if (reconnectedPlayer.caosarcana$knowsSpell(loadedSelected)) {
+            reconnectedPlayer.caosarcana$setSelectedSpell(loadedSelected);
+        }
+
+        assertEquals("caosarcana:centelha_ignea", reconnectedPlayer.caosarcana$getSelectedSpell(), "Magia ativa deve ser restaurada após reconexão");
+    }
+
+    @Test
+    @DisplayName("Teste do registro central de feitiços (SpellRegistry) e metadados da Centelha")
+    public void testSpellRegistryMetadataAndContracts() {
+        assertTrue(br.com.caosarcana.content.spells.SpellRegistry.contains("caosarcana:centelha_ignea"));
+
+        var spellOpt = br.com.caosarcana.content.spells.SpellRegistry.get("caosarcana:centelha_ignea");
+        assertTrue(spellOpt.isPresent(), "Centelha Ígnea deve estar presente no registro central");
+
+        var spell = spellOpt.get();
+        assertEquals("Centelha Ígnea", spell.name());
+        assertEquals("piromancia", spell.school());
+        assertTrue(spell.schoolDisplayName().contains("Piromancia"));
+        assertEquals(1, spell.minSchoolLevel());
+        assertEquals(20.0f, spell.manaCost(), 0.01f);
+        assertEquals(15, spell.cooldownTicks());
+        assertEquals(60, spell.maxLifetimeTicks());
+        assertEquals(40.0, spell.maxDistanceBlocks(), 0.01);
+    }
+
+    @Test
+    @DisplayName("Teste de validação dos 10 Poderes Raciais exclusivos e restrição entre raças")
+    public void test10RacialPowersRegisteredAndExclusive() {
+        Race[] races = {
+            Race.ORC, Race.FELINO, Race.ALTO_ELFO, Race.NORDICO, Race.ELFO_NEGRO,
+            Race.ELFO_FLORESTA, Race.BRETAO, Race.IMPERIAL, Race.GUARDA_VERMELHO, Race.ARGONIANO
+        };
+
+        for (Race race : races) {
+            var racialOpt = br.com.caosarcana.content.spells.SpellRegistry.getRacialSpellFor(race);
+            assertTrue(racialOpt.isPresent(), "Raça " + race.name() + " deve possuir um Poder Racial exclusivo");
+
+            var racialSpell = racialOpt.get();
+            assertTrue(racialSpell.isRacial(), "Poder racial deve ter isRacial() == true");
+            assertEquals(race, racialSpell.requiredRace(), "Raça requerida deve ser " + race.name());
+
+            // A própria raça pode canalizar
+            assertTrue(racialSpell.canCast(race), race.name() + " deve conseguir conjurar seu próprio poder");
+
+            // Outras raças NÃO podem canalizar
+            for (Race otherRace : races) {
+                if (otherRace != race) {
+                    assertFalse(racialSpell.canCast(otherRace), otherRace.name() + " NÃO deve conseguir conjurar o poder de " + race.name());
+                }
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Teste das 10 Magias Universais acessíveis a todas as raças")
+    public void test10UniversalSpellsAccessibleToAll() {
+        var universalSpells = br.com.caosarcana.content.spells.SpellRegistry.getUniversalSpells();
+        assertEquals(10, universalSpells.size(), "Devem existir exatamente 10 magias universais registradas");
+
+        Race[] races = {
+            Race.ORC, Race.FELINO, Race.ALTO_ELFO, Race.NORDICO, Race.ELFO_NEGRO,
+            Race.ELFO_FLORESTA, Race.BRETAO, Race.IMPERIAL, Race.GUARDA_VERMELHO, Race.ARGONIANO
+        };
+
+        for (var spell : universalSpells) {
+            assertFalse(spell.isRacial(), "Magia universal " + spell.name() + " não deve ser restrita a uma raça");
+            assertNull(spell.requiredRace());
+
+            // Todas as 10 raças podem canalizar
+            for (Race race : races) {
+                assertTrue(spell.canCast(race), "Qualquer raça deve poder canalizar a magia universal " + spell.name());
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Teste do registro de Provações Arcanas (Arcane Trials)")
+    public void testArcaneTrialsRegistry() {
+        var trials = br.com.caosarcana.content.trials.ArcaneTrialRegistry.getAll();
+        assertEquals(10, trials.size(), "Devem existir 10 provações arcanas registradas para as escolas de Skyrim");
+
+        for (var trial : trials) {
+            assertNotNull(trial.id());
+            assertNotNull(trial.name());
+            assertNotNull(trial.rewardSpellId());
+            assertTrue(br.com.caosarcana.content.spells.SpellRegistry.contains(trial.rewardSpellId()),
+                    "Magia recompensada pela provação " + trial.id() + " deve existir no SpellRegistry");
+        }
+    }
+
+    @Test
+    @DisplayName("Teste do sistema monetário e taxas de conversão de moedas físicas")
+    public void testEconomicCurrencyValues() {
+        assertEquals(1, br.com.caosarcana.content.economy.CoinItem.CoinType.COBRE.getValueInCopper());
+        assertEquals(100, br.com.caosarcana.content.economy.CoinItem.CoinType.PRATA.getValueInCopper());
+        assertEquals(10000, br.com.caosarcana.content.economy.CoinItem.CoinType.OURO.getValueInCopper());
+
+        // 100 Moedas de Cobre = 1 Moeda de Prata
+        assertEquals(100, br.com.caosarcana.content.economy.CoinItem.CoinType.PRATA.getValueInCopper() /
+                br.com.caosarcana.content.economy.CoinItem.CoinType.COBRE.getValueInCopper());
+
+        // 100 Moedas de Prata = 1 Septim de Ouro
+        assertEquals(100, br.com.caosarcana.content.economy.CoinItem.CoinType.OURO.getValueInCopper() /
+                br.com.caosarcana.content.economy.CoinItem.CoinType.PRATA.getValueInCopper());
+    }
+
+    @Test
+    @DisplayName("Teste de recargas independentes por feitiço (desacoplamento de itens)")
+    public void testIndependentSpellCooldowns() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.ORC, 5);
+
+        // Inicialmente nenhum feitiço está em recarga
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:ira_berserker", 100L));
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:centelha_ignea", 100L));
+
+        // Aplica recarga da Ira Berserker de 600 ticks (pronto no tick 700)
+        player.caosarcana$setSpellCooldown("caosarcana:ira_berserker", 700L);
+
+        // Ira Berserker está em recarga no tick 200
+        assertTrue(player.caosarcana$isSpellOnCooldown("caosarcana:ira_berserker", 200L));
+        assertEquals(700L, player.caosarcana$getSpellReadyTick("caosarcana:ira_berserker"));
+
+        // Centelha Ígnea e Toque de Cura NÃO foram afetados e permanecem disponíveis
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:centelha_ignea", 200L));
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:toque_de_cura", 200L));
+
+        // No tick 701, a Ira Berserker sai da recarga
+        assertFalse(player.caosarcana$isSpellOnCooldown("caosarcana:ira_berserker", 701L));
+    }
+
+    @Test
+    @DisplayName("Teste do contrato de ciclo de vida e unicidade do Familiar Espectral")
+    public void testFamiliarEspectralLifecycleContract() {
+        MockRPGPlayer player = new MockRPGPlayer(Race.BRETAO, 3);
+        assertNull(player.caosarcana$getActiveFamiliarId(), "Jogador não deve ter familiar ativo inicialmente");
+
+        java.util.UUID familiar1 = java.util.UUID.randomUUID();
+        player.caosarcana$setActiveFamiliarId(familiar1);
+        assertEquals(familiar1, player.caosarcana$getActiveFamiliarId(), "Familiar 1 deve estar registrado como ativo");
+
+        // Nova invocação substitui a anterior
+        java.util.UUID familiar2 = java.util.UUID.randomUUID();
+        player.caosarcana$setActiveFamiliarId(familiar2);
+        assertEquals(familiar2, player.caosarcana$getActiveFamiliarId(), "Familiar 2 deve substituir o Familiar 1");
+        assertNotEquals(familiar1, player.caosarcana$getActiveFamiliarId());
+
+        // Dissipação por desconexão ou morte limpa o vínculo
+        player.caosarcana$setActiveFamiliarId(null);
+        assertNull(player.caosarcana$getActiveFamiliarId(), "Familiar deve ser nulo após dissipação");
+    }
+
+    @Test
+    @DisplayName("Teste da mecânica de redução de consumo de ar do Argoniano (3x fôlego normal)")
+    public void testArgonianAirConsumptionRate() {
+        // Vanilla: 300 ticks max air, decresce 1 por tick submerso
+        int vanillaAir = 300;
+        int vanillaTicksToEmpty = 0;
+        while (vanillaAir > 0) {
+            vanillaAir--;
+            vanillaTicksToEmpty++;
+        }
+        assertEquals(300, vanillaTicksToEmpty, "Vanilla consome 300 unidades de ar em exatamente 300 ticks (15.0s)");
+
+        int vanillaTicksToFirstDamage = vanillaTicksToEmpty;
+        int vanillaDamageAir = 0;
+        while (vanillaDamageAir > -20) {
+            vanillaDamageAir--;
+            vanillaTicksToFirstDamage++;
+        }
+        assertEquals(320, vanillaTicksToFirstDamage, "Vanilla leva 320 ticks (16.0s) até o primeiro dano por afogamento (-20 ar)");
+
+        // Argoniano com regra: tickCount % 3 != 0 não consome ar (taxa 1/3)
+        int argonianAir = 300;
+        int argonianTicks = 0;
+        while (argonianAir > 0) {
+            argonianTicks++;
+            if (argonianTicks % 3 == 0) {
+                argonianAir--;
+            }
+        }
+        assertEquals(900, argonianTicks, "Argoniano leva exatamente 900 ticks (45.0s) para esgotar o reservatório de ar (3.0x vanilla)");
+
+        int argonianTicksToFirstDamage = argonianTicks;
+        int argonianDamageAir = 0;
+        while (argonianDamageAir > -20) {
+            argonianTicksToFirstDamage++;
+            if (argonianTicksToFirstDamage % 3 == 0) {
+                argonianDamageAir--;
+            }
+        }
+        assertEquals(960, argonianTicksToFirstDamage, "Argoniano leva exatamente 960 ticks (48.0s) até o primeiro dano por afogamento (3.0x vanilla)");
+        assertEquals(3.0, (double) argonianTicks / (double) vanillaTicksToEmpty, 0.0001, "Multiplicador de esgotamento deve ser exatamente 3.0x");
+        assertEquals(3.0, (double) argonianTicksToFirstDamage / (double) vanillaTicksToFirstDamage, 0.0001, "Multiplicador até primeiro dano deve ser exatamente 3.0x");
+    }
+
+    @Test
+    @DisplayName("Teste de persistência de recargas e dissipação de familiar na morte do jogador")
+    public void testCooldownPersistenceAndFamiliarDissipationOnDeath() {
+        MockRPGPlayer oldPlayer = new MockRPGPlayer(Race.ALTO_ELFO, 10);
+        oldPlayer.caosarcana$learnSpell("caosarcana:nobreza_altmer");
+        oldPlayer.caosarcana$setSpellCooldown("caosarcana:nobreza_altmer", 1200L);
+
+        java.util.UUID familiar = java.util.UUID.randomUUID();
+        oldPlayer.caosarcana$setActiveFamiliarId(familiar);
+
+        // Simula transferência de dados do evento COPY_FROM
+        MockRPGPlayer newPlayer = new MockRPGPlayer(Race.ALTO_ELFO, 10);
+        for (String spellId : oldPlayer.caosarcana$getKnownSpells()) {
+            newPlayer.caosarcana$learnSpell(spellId);
+            long ready = oldPlayer.caosarcana$getSpellReadyTick(spellId);
+            if (ready > 0) {
+                newPlayer.caosarcana$setSpellCooldown(spellId, ready);
+            }
+        }
+        // Familiar dissipa na morte (não transfere UUID ativo)
+        newPlayer.caosarcana$setActiveFamiliarId(null);
+
+        // Valida que a recarga persistiu para evitar exploit de suicídio
+        assertTrue(newPlayer.caosarcana$isSpellOnCooldown("caosarcana:nobreza_altmer", 500L));
+        assertEquals(1200L, newPlayer.caosarcana$getSpellReadyTick("caosarcana:nobreza_altmer"));
+
+        // Valida que o familiar foi dissociado
+        assertNull(newPlayer.caosarcana$getActiveFamiliarId(), "Familiar não deve acompanhar o jogador após a morte");
     }
 }

@@ -6,7 +6,9 @@
 		"ArmorItemDispenserMixin",
 		"CaosArcanaMixin",
 		"InventoryArmorSlotMixin",
-		"PlayerRPGMixin"
+		"LivingEntityRPGMixin",
+		"PlayerRPGMixin",
+		"SpectralWolfMixin"
 	],
 	"client": [
 		"client.GuiHealthOverlayMixin"
