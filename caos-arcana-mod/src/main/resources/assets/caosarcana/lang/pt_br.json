@@ -33,6 +33,23 @@
   "item.caosarcana.moeda_prata": "Moeda de Prata",
   "item.caosarcana.moeda_ouro": "Septim de Ouro",
 
+  "item.caosarcana.rastejante_de_cinza_spawn_egg": "Ovo de Invocação de Rastejante de Cinza",
+  "item.caosarcana.cao_fumegante_spawn_egg": "Ovo de Invocação de Cão Fumegante",
+  "item.caosarcana.mineiro_oco_spawn_egg": "Ovo de Invocação de Mineiro Oco",
+  "item.caosarcana.vigia_das_brasas_spawn_egg": "Ovo de Invocação de Vigia das Brasas",
+  "item.caosarcana.carapaca_basaltica_spawn_egg": "Ovo de Invocação de Carapaça Basáltica",
+  "item.caosarcana.colosso_basaltico_spawn_egg": "Ovo de Invocação de Colosso Basáltico",
+  "item.caosarcana.guardiao_madeira_negra_spawn_egg": "Ovo de Invocação de Guardião de Madeira Negra",
+  "item.caosarcana.aranha_casca_solta_spawn_egg": "Ovo de Invocação de Aranha de Casca Solta",
+  "item.caosarcana.espirito_nevoa_spawn_egg": "Ovo de Invocação de Espírito da Névoa",
+  "item.caosarcana.cultista_oculto_spawn_egg": "Ovo de Invocação de Cultista Oculto",
+  "item.caosarcana.anciao_das_sombras_spawn_egg": "Ovo de Invocação de O Ancião das Sombras",
+  "item.caosarcana.escaravelho_solar_spawn_egg": "Ovo de Invocação de Escaravelho Solar",
+  "item.caosarcana.vibora_das_arenas_spawn_egg": "Ovo de Invocação de Víbora das Arenas",
+  "item.caosarcana.golem_de_areia_spawn_egg": "Ovo de Invocação de Golem de Areia",
+  "item.caosarcana.mumia_esqueletica_spawn_egg": "Ovo de Invocação de Múmia Esquelética",
+  "item.caosarcana.farao_do_sol_eterno_spawn_egg": "Ovo de Invocação de Faraó do Sol Eterno",
+
   "category.caosarcana.spells": "Caos Arcana - Magias",
   "key.caosarcana.cast_spell": "Conjurar Magia Ativa",
   "key.caosarcana.open_spell_menu": "Abrir Seleção de Magias (Grimório)"

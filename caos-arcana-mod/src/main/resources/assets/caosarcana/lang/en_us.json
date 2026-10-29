@@ -33,6 +33,23 @@
   "item.caosarcana.moeda_prata": "Silver Coin",
   "item.caosarcana.moeda_ouro": "Gold Septim",
 
+  "item.caosarcana.rastejante_de_cinza_spawn_egg": "Ash Crawler Spawn Egg",
+  "item.caosarcana.cao_fumegante_spawn_egg": "Smoldering Hound Spawn Egg",
+  "item.caosarcana.mineiro_oco_spawn_egg": "Hollow Miner Spawn Egg",
+  "item.caosarcana.vigia_das_brasas_spawn_egg": "Ember Warden Spawn Egg",
+  "item.caosarcana.carapaca_basaltica_spawn_egg": "Basalt Shellback Spawn Egg",
+  "item.caosarcana.colosso_basaltico_spawn_egg": "Basalt Colossus Spawn Egg",
+  "item.caosarcana.guardiao_madeira_negra_spawn_egg": "Darkwood Guardian Spawn Egg",
+  "item.caosarcana.aranha_casca_solta_spawn_egg": "Loosebark Spider Spawn Egg",
+  "item.caosarcana.espirito_nevoa_spawn_egg": "Mist Spirit Spawn Egg",
+  "item.caosarcana.cultista_oculto_spawn_egg": "Occult Cultist Spawn Egg",
+  "item.caosarcana.anciao_das_sombras_spawn_egg": "The Shadow Ancient Spawn Egg",
+  "item.caosarcana.escaravelho_solar_spawn_egg": "Solar Scarab Spawn Egg",
+  "item.caosarcana.vibora_das_arenas_spawn_egg": "Dune Viper Spawn Egg",
+  "item.caosarcana.golem_de_areia_spawn_egg": "Sand Golem Spawn Egg",
+  "item.caosarcana.mumia_esqueletica_spawn_egg": "Skeletal Mummy Spawn Egg",
+  "item.caosarcana.farao_do_sol_eterno_spawn_egg": "Pharaoh of the Eternal Sun Spawn Egg",
+
   "category.caosarcana.spells": "Caos Arcana - Spells",
   "key.caosarcana.cast_spell": "Cast Active Spell",
   "key.caosarcana.open_spell_menu": "Open Spell Grimoire"

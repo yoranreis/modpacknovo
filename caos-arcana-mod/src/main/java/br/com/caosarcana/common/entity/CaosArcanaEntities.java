@@ -269,6 +269,7 @@ public final class CaosArcanaEntities {
                 FARAO_DO_SOL_ETERNO,
                 FaraoDoSolEternoEntity.createAttributes()
         );
+        CaosArcanaSpawnEggs.register();
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos e entidades registrados com sucesso.");
     }
 }
