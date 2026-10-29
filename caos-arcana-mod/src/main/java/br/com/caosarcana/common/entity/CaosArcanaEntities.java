@@ -97,6 +97,7 @@ public final class CaosArcanaEntities {
                 ColossoBasalticoEntity.createAttributes()
         );
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos das Terras da Cinza registrados.");
+        CaosArcanaSpawnEggs.register();
     }
 }
 

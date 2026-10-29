@@ -17,6 +17,7 @@ import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
 import br.com.caosarcana.client.renderer.VigiaDasBrasasRenderer;
 import br.com.caosarcana.common.data.IRPGPlayerData;
 import br.com.caosarcana.common.entity.CaosArcanaEntities;
+import br.com.caosarcana.common.entity.CaosArcanaSpawnEggs;
 import br.com.caosarcana.common.network.ModMessages;
 import br.com.caosarcana.common.race.Race;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -26,12 +27,14 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.SpawnEggItem;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +106,10 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(CarapacaBasalticaModel.LAYER_LOCATION, CarapacaBasalticaModel::createBodyLayer);
         EntityRendererRegistry.register(CaosArcanaEntities.CARAPACA_BASALTICA, CarapacaBasalticaRenderer::new);
         EntityRendererRegistry.register(CaosArcanaEntities.COLOSSO_BASALTICO, ColossoBasalticoRenderer::new);
+        ColorProviderRegistry.ITEM.register(
+                (stack, tintIndex) -> ((SpawnEggItem) stack.getItem()).getColor(tintIndex),
+                CaosArcanaSpawnEggs.ALL_EGGS
+        );
     }
 
     private void registerClientPackets() {
