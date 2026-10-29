@@ -232,7 +232,7 @@ public final class FaraoDoSolEternoEntity extends PathfinderMob {
             this.whirlwindWindup = 20;
             this.setCastState(CAST_SAND_WHIRLWIND);
             serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
-                    SoundEvents.BREEZE_IDLE_GROUND, SoundSource.HOSTILE, 1.4F, 0.65F);
+                    SoundEvents.PHANTOM_FLAP, SoundSource.HOSTILE, 1.4F, 0.65F);
             return;
         }
 
@@ -390,7 +390,7 @@ public final class FaraoDoSolEternoEntity extends PathfinderMob {
             if (this.whirlwindWindup == 0) {
                 this.whirlwindActiveTicks = 50; // 2.5s de vórtice puxando o jogador
                 serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
-                        SoundEvents.BREEZE_WIND_CHARGE_BURST, SoundSource.HOSTILE, 1.5F, 0.7F);
+                        SoundEvents.ENDER_DRAGON_FLAP, SoundSource.HOSTILE, 1.5F, 0.7F);
             }
             return;
         }
