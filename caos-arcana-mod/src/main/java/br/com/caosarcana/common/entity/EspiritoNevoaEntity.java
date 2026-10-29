@@ -22,31 +22,31 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 public final class EspiritoNevoaEntity extends PathfinderMob implements RangedAttackMob {
-    private static final int ATTACK_COOLDOWN_TICKS = 200; // 10 segundos
-    private int attackCooldown = 40;
-    private int windupTicks = 0;
+    private static final int ATTACK_COOLDOWN_TICKS = 140; // 7 segundos
+    private int attackCooldown = 20;
 
     public EspiritoNevoaEntity(EntityType<? extends EspiritoNevoaEntity> type, Level level) {
         super(type, level);
-        this.noPhysics = false; // Tem física, mas não gravidade (flutua)
+        this.noPhysics = false;
         this.setNoGravity(true);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 18.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.26D)
+                .add(Attributes.MAX_HEALTH, 16.0D)
+                .add(Attributes.MOVEMENT_SPEED, 0.25D)
                 .add(Attributes.ATTACK_DAMAGE, 2.0D)
-                .add(Attributes.FOLLOW_RANGE, 24.0D)
+                .add(Attributes.FOLLOW_RANGE, 12.0D) // Alcance de visão restrito a 12 blocos
                 .add(Attributes.ARMOR, 1.0D);
     }
 
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(2, new RangedAttackGoal(this, 1.0D, 60, 16.0F));
-        this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.6D));
-        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 10.0F));
+        // Ranged attack mantendo-se a curta distância (maxRange = 6.0F)
+        this.goalSelector.addGoal(2, new RangedAttackGoal(this, 1.0D, 40, 6.0F));
+        this.goalSelector.addGoal(7, new RandomStrollGoal(this, 0.5D));
+        this.goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -69,34 +69,33 @@ public final class EspiritoNevoaEntity extends PathfinderMob implements RangedAt
     @Override
     public void aiStep() {
         super.aiStep();
-        this.setNoGravity(true); // Garante que flutue sempre no ar
+        this.setNoGravity(true);
 
-        // Movimento de flutuação vertical suave
-        Vec3 velocity = this.getDeltaMovement();
-        if (!this.onGround() && velocity.y < 0.0D) {
-            this.setDeltaMovement(velocity.x, velocity.y * 0.6D, velocity.z);
+        // Mantém-se voando a no máximo 2 a 4 blocos de altura do chão/alvo
+        LivingEntity target = this.getTarget();
+        if (target != null && target.isAlive()) {
+            double desiredY = target.getY() + 2.0D; // 2 blocos acima do jogador
+            double currentY = this.getY();
+            if (currentY < desiredY) {
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.04D, 0.0D));
+            } else if (currentY > desiredY + 1.5D) {
+                this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.03D, 0.0D));
+            }
+
+            // Se estiver muito longe (> 5 blocos horizontalmente), aproxima-se
+            double distSqr = this.distanceToSqr(target.getX(), this.getY(), target.getZ());
+            if (distSqr > 25.0D) {
+                this.getNavigation().moveTo(target, 1.1D);
+            }
         }
 
         if (this.level().isClientSide) {
-            // Partículas de fumaça e brilho verde espectral ao redor
             if (this.random.nextInt(3) == 0) {
                 this.level().addParticle(ParticleTypes.HAPPY_VILLAGER,
-                        this.getX() + (this.random.nextDouble() - 0.5D) * 0.8D,
-                        this.getY() + 0.5D + this.random.nextDouble() * 0.8D,
-                        this.getZ() + (this.random.nextDouble() - 0.5D) * 0.8D,
+                        this.getX() + (this.random.nextDouble() - 0.5D) * 0.6D,
+                        this.getY() + 0.3D + this.random.nextDouble() * 0.6D,
+                        this.getZ() + (this.random.nextDouble() - 0.5D) * 0.6D,
                         0.0D, 0.01D, 0.0D);
-            }
-            return;
-        }
-
-        if (this.attackCooldown > 0) this.attackCooldown--;
-
-        LivingEntity target = this.getTarget();
-        if (target != null && target.isAlive()) {
-            // Mantém-se pairando um pouco acima do alvo / altura moderada
-            double targetHoverY = target.getY() + 1.5D;
-            if (this.getY() < targetHoverY) {
-                this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.03D, 0.0D));
             }
         }
     }
@@ -106,15 +105,15 @@ public final class EspiritoNevoaEntity extends PathfinderMob implements RangedAt
         if (!(this.level() instanceof ServerLevel serverLevel)) return;
 
         double dx = target.getX() - this.getX();
-        double dy = target.getY(0.5D) - this.getY(0.65D);
+        double dy = target.getY(0.5D) - this.getY(0.5D);
         double dz = target.getZ() - this.getZ();
 
         EspiritoNevoaProjectile projectile = new EspiritoNevoaProjectile(this.level(), this);
-        projectile.setPos(this.getX(), this.getY(0.65D), this.getZ());
-        projectile.shoot(dx, dy, dz, 1.15F, 1.0F);
+        projectile.setPos(this.getX(), this.getY(0.5D), this.getZ());
+        projectile.shoot(dx, dy, dz, 1.0F, 0.5F);
         serverLevel.addFreshEntity(projectile);
 
         serverLevel.playSound(null, this.getX(), this.getY(), this.getZ(),
-                SoundEvents.EVOKER_PREPARE_ATTACK, SoundSource.HOSTILE, 1.0F, 0.9F);
+                SoundEvents.EVOKER_PREPARE_ATTACK, SoundSource.HOSTILE, 0.9F, 1.1F);
     }
 }

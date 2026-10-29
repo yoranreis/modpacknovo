@@ -104,7 +104,7 @@ public final class CaosArcanaEntities {
                     BuiltInRegistries.ENTITY_TYPE,
                     CaosArcana.id("espirito_nevoa"),
                     EntityType.Builder.of(EspiritoNevoaEntity::new, MobCategory.MONSTER)
-                            .sized(0.7F, 1.8F)
+                            .sized(0.8F, 1.2F)
                             .clientTrackingRange(8)
                             .build("espirito_nevoa")
             );

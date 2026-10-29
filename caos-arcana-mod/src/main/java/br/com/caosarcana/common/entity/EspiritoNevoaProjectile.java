@@ -4,6 +4,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -37,19 +39,36 @@ public class EspiritoNevoaProjectile extends ThrowableItemProjectile {
         }
     }
 
+    private void createMistCloud(double x, double y, double z) {
+        if (!this.level().isClientSide && this.level() instanceof ServerLevel serverLevel) {
+            // Cria área de efeito no chão estilo baforada do Ender Dragon
+            AreaEffectCloud cloud = new AreaEffectCloud(this.level(), x, y, z);
+            cloud.setRadius(3.0F);
+            cloud.setRadiusOnUse(-0.4F);
+            cloud.setWaitTime(5);
+            cloud.setDuration(80); // 4 segundos de duração no chão
+            cloud.setRadiusPerTick(-cloud.getRadius() / (float)cloud.getDuration());
+            cloud.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0)); // 3s cegueira
+            cloud.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1)); // 3s lentidão II
+
+            Entity owner = this.getOwner();
+            if (owner instanceof LivingEntity livingOwner) {
+                cloud.setOwner(livingOwner);
+            }
+
+            this.level().addFreshEntity(cloud);
+
+            serverLevel.sendParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+                    x, y + 0.2D, z, 15, 0.4D, 0.2D, 0.4D, 0.03D);
+        }
+    }
+
     @Override
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
         if (!this.level().isClientSide && result.getEntity() instanceof LivingEntity target) {
             target.hurt(this.damageSources().thrown(this, this.getOwner()), 2.0F);
-            target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 60, 0), this.getOwner()); // 3s cegueira
-            target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 1), this.getOwner()); // 3s lentidão II
-
-            if (this.level() instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
-                        target.getX(), target.getY() + 1.0D, target.getZ(),
-                        12, 0.3D, 0.3D, 0.3D, 0.05D);
-            }
+            createMistCloud(target.getX(), target.getY(), target.getZ());
         }
         if (!this.level().isClientSide) {
             this.discard();
@@ -60,11 +79,7 @@ public class EspiritoNevoaProjectile extends ThrowableItemProjectile {
     protected void onHitBlock(BlockHitResult result) {
         super.onHitBlock(result);
         if (!this.level().isClientSide) {
-            if (this.level() instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(ParticleTypes.SMOKE,
-                        result.getLocation().x, result.getLocation().y, result.getLocation().z,
-                        8, 0.2D, 0.2D, 0.2D, 0.02D);
-            }
+            createMistCloud(result.getLocation().x, result.getLocation().y, result.getLocation().z);
             this.discard();
         }
     }
