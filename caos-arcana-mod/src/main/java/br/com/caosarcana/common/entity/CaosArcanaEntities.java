@@ -171,6 +171,36 @@ public final class CaosArcanaEntities {
                             .build("vibora_das_arenas")
             );
 
+    public static final EntityType<GolemDeAreiaEntity> GOLEM_DE_AREIA =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("golem_de_areia"),
+                    EntityType.Builder.of(GolemDeAreiaEntity::new, MobCategory.MONSTER)
+                            .sized(1.45F, 2.75F)
+                            .clientTrackingRange(10)
+                            .build("golem_de_areia")
+            );
+
+    public static final EntityType<MumiaEsqueleticaEntity> MUMIA_ESQUELETICA =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("mumia_esqueletica"),
+                    EntityType.Builder.of(MumiaEsqueleticaEntity::new, MobCategory.MONSTER)
+                            .sized(0.65F, 1.95F)
+                            .clientTrackingRange(8)
+                            .build("mumia_esqueletica")
+            );
+
+    public static final EntityType<FaraoDoSolEternoEntity> FARAO_DO_SOL_ETERNO =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("farao_do_sol_eterno"),
+                    EntityType.Builder.of(FaraoDoSolEternoEntity::new, MobCategory.MONSTER)
+                            .sized(1.15F, 2.75F)
+                            .clientTrackingRange(12)
+                            .build("farao_do_sol_eterno")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -226,6 +256,18 @@ public final class CaosArcanaEntities {
         FabricDefaultAttributeRegistry.register(
                 VIBORA_DAS_ARENAS,
                 ViboraDasArenasEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                GOLEM_DE_AREIA,
+                GolemDeAreiaEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                MUMIA_ESQUELETICA,
+                MumiaEsqueleticaEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                FARAO_DO_SOL_ETERNO,
+                FaraoDoSolEternoEntity.createAttributes()
         );
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos e entidades registrados com sucesso.");
     }

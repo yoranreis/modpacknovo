@@ -11,8 +11,11 @@ import br.com.caosarcana.client.model.CarapacaBasalticaModel;
 import br.com.caosarcana.client.model.CultistaOcultoModel;
 import br.com.caosarcana.client.model.EscaravelhoSolarModel;
 import br.com.caosarcana.client.model.EspiritoNevoaModel;
+import br.com.caosarcana.client.model.FaraoDoSolEternoModel;
+import br.com.caosarcana.client.model.GolemDeAreiaModel;
 import br.com.caosarcana.client.model.GuardiaoMadeiraNegraModel;
 import br.com.caosarcana.client.model.MineiroOcoModel;
+import br.com.caosarcana.client.model.MumiaEsqueleticaModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
 import br.com.caosarcana.client.model.ViboraDasArenasModel;
 import br.com.caosarcana.client.model.VigiaDasBrasasModel;
@@ -24,8 +27,11 @@ import br.com.caosarcana.client.renderer.ColossoBasalticoRenderer;
 import br.com.caosarcana.client.renderer.CultistaOcultoRenderer;
 import br.com.caosarcana.client.renderer.EscaravelhoSolarRenderer;
 import br.com.caosarcana.client.renderer.EspiritoNevoaRenderer;
+import br.com.caosarcana.client.renderer.FaraoDoSolEternoRenderer;
+import br.com.caosarcana.client.renderer.GolemDeAreiaRenderer;
 import br.com.caosarcana.client.renderer.GuardiaoMadeiraNegraRenderer;
 import br.com.caosarcana.client.renderer.MineiroOcoRenderer;
+import br.com.caosarcana.client.renderer.MumiaEsqueleticaRenderer;
 import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
 import br.com.caosarcana.client.renderer.ViboraDasArenasRenderer;
 import br.com.caosarcana.client.renderer.VigiaDasBrasasRenderer;
@@ -218,6 +224,30 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.VIBORA_DAS_ARENAS,
                 ViboraDasArenasRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                GolemDeAreiaModel.LAYER_LOCATION,
+                GolemDeAreiaModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.GOLEM_DE_AREIA,
+                GolemDeAreiaRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                MumiaEsqueleticaModel.LAYER_LOCATION,
+                MumiaEsqueleticaModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.MUMIA_ESQUELETICA,
+                MumiaEsqueleticaRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                FaraoDoSolEternoModel.LAYER_LOCATION,
+                FaraoDoSolEternoModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.FARAO_DO_SOL_ETERNO,
+                FaraoDoSolEternoRenderer::new
         );
     }
 
