@@ -64,6 +64,18 @@ public final class CaosArcanaSpawnEggs {
     public static final SpawnEggItem LORDE_DAS_MARES_ABISSAIS_SPAWN_EGG = registerEgg(
             "lorde_das_mares_abissais_spawn_egg", CaosArcanaEntities.LORDE_DAS_MARES_ABISSAIS, 0x164460, 0xEEBE3E);
 
+    // 5. Muralha de Gelo
+    public static final SpawnEggItem CACADOR_DE_GELO_SPAWN_EGG = registerEgg(
+            "cacador_de_gelo_spawn_egg", CaosArcanaEntities.CACADOR_DE_GELO, 0xE0ECF5, 0x00F0FF);
+    public static final SpawnEggItem GOLEM_DE_GELO_SPAWN_EGG = registerEgg(
+            "golem_de_gelo_spawn_egg", CaosArcanaEntities.GOLEM_DE_GELO, 0xC3DEF2, 0x41D7FF);
+    public static final SpawnEggItem ARANHA_DO_GELO_SPAWN_EGG = registerEgg(
+            "aranha_do_gelo_spawn_egg", CaosArcanaEntities.ARANHA_DO_GELO, 0x849CB2, 0x58D7FF);
+    public static final SpawnEggItem FANTASMA_DO_GELO_SPAWN_EGG = registerEgg(
+            "fantasma_do_gelo_spawn_egg", CaosArcanaEntities.FANTASMA_DO_GELO, 0x91DEF8, 0xD7FAFF);
+    public static final SpawnEggItem REI_DO_GELO_SPAWN_EGG = registerEgg(
+            "rei_do_gelo_spawn_egg", CaosArcanaEntities.REI_DO_GELO, 0x6C94B9, 0xEB55F5);
+
     public static final SpawnEggItem[] ALL_EGGS = new SpawnEggItem[]{
             RASTEJANTE_DE_CINZA_SPAWN_EGG,
             CAO_FUMEGANTE_SPAWN_EGG,
@@ -85,7 +97,12 @@ public final class CaosArcanaSpawnEggs {
             GUARDIAO_DE_OBSIDIANA_SPAWN_EGG,
             MEDUSA_BIOLUMINESCENTE_SPAWN_EGG,
             SEREIA_DAS_PROFUNDEZAS_SPAWN_EGG,
-            LORDE_DAS_MARES_ABISSAIS_SPAWN_EGG
+            LORDE_DAS_MARES_ABISSAIS_SPAWN_EGG,
+            CACADOR_DE_GELO_SPAWN_EGG,
+            GOLEM_DE_GELO_SPAWN_EGG,
+            ARANHA_DO_GELO_SPAWN_EGG,
+            FANTASMA_DO_GELO_SPAWN_EGG,
+            REI_DO_GELO_SPAWN_EGG
     };
 
     private CaosArcanaSpawnEggs() {

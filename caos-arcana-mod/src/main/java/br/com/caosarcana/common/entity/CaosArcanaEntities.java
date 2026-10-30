@@ -251,6 +251,56 @@ public final class CaosArcanaEntities {
                             .build("lorde_das_mares_abissais")
             );
 
+    public static final EntityType<CacadorDeGeloEntity> CACADOR_DE_GELO =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("cacador_de_gelo"),
+                    EntityType.Builder.of(CacadorDeGeloEntity::new, MobCategory.MONSTER)
+                            .sized(0.75F, 1.95F)
+                            .clientTrackingRange(8)
+                            .build("cacador_de_gelo")
+            );
+
+    public static final EntityType<GolemDeGeloEntity> GOLEM_DE_GELO =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("golem_de_gelo"),
+                    EntityType.Builder.of(GolemDeGeloEntity::new, MobCategory.MONSTER)
+                            .sized(1.3F, 2.55F)
+                            .clientTrackingRange(8)
+                            .build("golem_de_gelo")
+            );
+
+    public static final EntityType<AranhaDoGeloEntity> ARANHA_DO_GELO =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("aranha_do_gelo"),
+                    EntityType.Builder.of(AranhaDoGeloEntity::new, MobCategory.MONSTER)
+                            .sized(1.3F, 0.9F)
+                            .clientTrackingRange(8)
+                            .build("aranha_do_gelo")
+            );
+
+    public static final EntityType<FantasmaDoGeloEntity> FANTASMA_DO_GELO =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("fantasma_do_gelo"),
+                    EntityType.Builder.of(FantasmaDoGeloEntity::new, MobCategory.MONSTER)
+                            .sized(0.8F, 1.85F)
+                            .clientTrackingRange(8)
+                            .build("fantasma_do_gelo")
+            );
+
+    public static final EntityType<ReiDoGeloEntity> REI_DO_GELO =
+            Registry.register(
+                    BuiltInRegistries.ENTITY_TYPE,
+                    CaosArcana.id("rei_do_gelo"),
+                    EntityType.Builder.of(ReiDoGeloEntity::new, MobCategory.MONSTER)
+                            .sized(1.65F, 3.15F)
+                            .clientTrackingRange(12)
+                            .build("rei_do_gelo")
+            );
+
     private CaosArcanaEntities() {
     }
 
@@ -338,6 +388,26 @@ public final class CaosArcanaEntities {
         FabricDefaultAttributeRegistry.register(
                 LORDE_DAS_MARES_ABISSAIS,
                 LordeDasMaresAbissaisEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                CACADOR_DE_GELO,
+                CacadorDeGeloEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                GOLEM_DE_GELO,
+                GolemDeGeloEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                ARANHA_DO_GELO,
+                AranhaDoGeloEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                FANTASMA_DO_GELO,
+                FantasmaDoGeloEntity.createAttributes()
+        );
+        FabricDefaultAttributeRegistry.register(
+                REI_DO_GELO,
+                ReiDoGeloEntity.createAttributes()
         );
         CaosArcanaSpawnEggs.register();
         CaosArcana.LOGGER.info("[Caos Arcana] Inimigos e entidades registrados com sucesso.");

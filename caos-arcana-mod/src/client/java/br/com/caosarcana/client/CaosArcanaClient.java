@@ -6,13 +6,17 @@ import br.com.caosarcana.client.gui.RaceSelectionScreen;
 import br.com.caosarcana.client.gui.SpellSelectionScreen;
 import br.com.caosarcana.client.model.AnciaoDasSombrasModel;
 import br.com.caosarcana.client.model.AranhaCascaSoltaModel;
+import br.com.caosarcana.client.model.AranhaDoGeloModel;
+import br.com.caosarcana.client.model.CacadorDeGeloModel;
 import br.com.caosarcana.client.model.CaoFumeganteModel;
 import br.com.caosarcana.client.model.CarapacaBasalticaModel;
 import br.com.caosarcana.client.model.CultistaOcultoModel;
 import br.com.caosarcana.client.model.EscaravelhoSolarModel;
 import br.com.caosarcana.client.model.EspiritoNevoaModel;
+import br.com.caosarcana.client.model.FantasmaDoGeloModel;
 import br.com.caosarcana.client.model.FaraoDoSolEternoModel;
 import br.com.caosarcana.client.model.GolemDeAreiaModel;
+import br.com.caosarcana.client.model.GolemDeGeloModel;
 import br.com.caosarcana.client.model.GuardiaoDeObsidianaModel;
 import br.com.caosarcana.client.model.GuardiaoMadeiraNegraModel;
 import br.com.caosarcana.client.model.LordeDasMaresAbissaisModel;
@@ -20,20 +24,25 @@ import br.com.caosarcana.client.model.MedusaBioluminescenteModel;
 import br.com.caosarcana.client.model.MineiroOcoModel;
 import br.com.caosarcana.client.model.MumiaEsqueleticaModel;
 import br.com.caosarcana.client.model.RastejanteDeCinzaModel;
+import br.com.caosarcana.client.model.ReiDoGeloModel;
 import br.com.caosarcana.client.model.SereiaDasProfundezasModel;
 import br.com.caosarcana.client.model.TragadorDoAbismoModel;
 import br.com.caosarcana.client.model.ViboraDasArenasModel;
 import br.com.caosarcana.client.model.VigiaDasBrasasModel;
 import br.com.caosarcana.client.renderer.AnciaoDasSombrasRenderer;
 import br.com.caosarcana.client.renderer.AranhaCascaSoltaRenderer;
+import br.com.caosarcana.client.renderer.AranhaDoGeloRenderer;
+import br.com.caosarcana.client.renderer.CacadorDeGeloRenderer;
 import br.com.caosarcana.client.renderer.CaoFumeganteRenderer;
 import br.com.caosarcana.client.renderer.CarapacaBasalticaRenderer;
 import br.com.caosarcana.client.renderer.ColossoBasalticoRenderer;
 import br.com.caosarcana.client.renderer.CultistaOcultoRenderer;
 import br.com.caosarcana.client.renderer.EscaravelhoSolarRenderer;
 import br.com.caosarcana.client.renderer.EspiritoNevoaRenderer;
+import br.com.caosarcana.client.renderer.FantasmaDoGeloRenderer;
 import br.com.caosarcana.client.renderer.FaraoDoSolEternoRenderer;
 import br.com.caosarcana.client.renderer.GolemDeAreiaRenderer;
+import br.com.caosarcana.client.renderer.GolemDeGeloRenderer;
 import br.com.caosarcana.client.renderer.GuardiaoDeObsidianaRenderer;
 import br.com.caosarcana.client.renderer.GuardiaoMadeiraNegraRenderer;
 import br.com.caosarcana.client.renderer.LordeDasMaresAbissaisRenderer;
@@ -41,6 +50,7 @@ import br.com.caosarcana.client.renderer.MedusaBioluminescenteRenderer;
 import br.com.caosarcana.client.renderer.MineiroOcoRenderer;
 import br.com.caosarcana.client.renderer.MumiaEsqueleticaRenderer;
 import br.com.caosarcana.client.renderer.RastejanteDeCinzaRenderer;
+import br.com.caosarcana.client.renderer.ReiDoGeloRenderer;
 import br.com.caosarcana.client.renderer.SereiaDasProfundezasRenderer;
 import br.com.caosarcana.client.renderer.TragadorDoAbismoRenderer;
 import br.com.caosarcana.client.renderer.ViboraDasArenasRenderer;
@@ -301,6 +311,46 @@ public class CaosArcanaClient implements ClientModInitializer {
         EntityRendererRegistry.register(
                 CaosArcanaEntities.LORDE_DAS_MARES_ABISSAIS,
                 LordeDasMaresAbissaisRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                CacadorDeGeloModel.LAYER_LOCATION,
+                CacadorDeGeloModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.CACADOR_DE_GELO,
+                CacadorDeGeloRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                GolemDeGeloModel.LAYER_LOCATION,
+                GolemDeGeloModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.GOLEM_DE_GELO,
+                GolemDeGeloRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                AranhaDoGeloModel.LAYER_LOCATION,
+                AranhaDoGeloModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.ARANHA_DO_GELO,
+                AranhaDoGeloRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                FantasmaDoGeloModel.LAYER_LOCATION,
+                FantasmaDoGeloModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.FANTASMA_DO_GELO,
+                FantasmaDoGeloRenderer::new
+        );
+        EntityModelLayerRegistry.registerModelLayer(
+                ReiDoGeloModel.LAYER_LOCATION,
+                ReiDoGeloModel::createBodyLayer
+        );
+        EntityRendererRegistry.register(
+                CaosArcanaEntities.REI_DO_GELO,
+                ReiDoGeloRenderer::new
         );
         ColorProviderRegistry.ITEM.register(
                 (stack, tintIndex) -> ((SpawnEggItem) stack.getItem()).getColor(tintIndex),

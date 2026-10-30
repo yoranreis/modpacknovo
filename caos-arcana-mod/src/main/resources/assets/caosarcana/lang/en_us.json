@@ -22,6 +22,11 @@
   "entity.caosarcana.medusa_bioluminescente": "Bioluminescent Jellyfish",
   "entity.caosarcana.sereia_das_profundezas": "Deep-Sea Siren",
   "entity.caosarcana.lorde_das_mares_abissais": "Lord of the Abyssal Tides",
+  "entity.caosarcana.cacador_de_gelo": "Frost Hunter",
+  "entity.caosarcana.golem_de_gelo": "Ice Golem",
+  "entity.caosarcana.aranha_do_gelo": "Frost Spider",
+  "entity.caosarcana.fantasma_do_gelo": "Frost Wraith",
+  "entity.caosarcana.rei_do_gelo": "The Ice King",
 
   "item.caosarcana.centelha_ignea": "Grimoire: Flame Spark",
   "item.caosarcana.grimorio_geada": "Grimoire: Frostbite",
@@ -59,6 +64,11 @@
   "item.caosarcana.medusa_bioluminescente_spawn_egg": "Bioluminescent Jellyfish Spawn Egg",
   "item.caosarcana.sereia_das_profundezas_spawn_egg": "Deep-Sea Siren Spawn Egg",
   "item.caosarcana.lorde_das_mares_abissais_spawn_egg": "Lord of the Abyssal Tides Spawn Egg",
+  "item.caosarcana.cacador_de_gelo_spawn_egg": "Frost Hunter Spawn Egg",
+  "item.caosarcana.golem_de_gelo_spawn_egg": "Ice Golem Spawn Egg",
+  "item.caosarcana.aranha_do_gelo_spawn_egg": "Frost Spider Spawn Egg",
+  "item.caosarcana.fantasma_do_gelo_spawn_egg": "Frost Wraith Spawn Egg",
+  "item.caosarcana.rei_do_gelo_spawn_egg": "The Ice King Spawn Egg",
 
   "category.caosarcana.spells": "Caos Arcana - Spells",
   "key.caosarcana.cast_spell": "Cast Active Spell",
