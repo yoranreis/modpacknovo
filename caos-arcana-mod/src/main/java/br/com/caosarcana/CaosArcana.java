@@ -1,6 +1,7 @@
 package br.com.caosarcana;
 
 import br.com.caosarcana.common.command.CaosArcanaCommands;
+import br.com.caosarcana.common.entity.CaosArcanaEntities;
 import br.com.caosarcana.common.equipment.EquipmentRequirementRegistry;
 import br.com.caosarcana.common.equipment.EquipmentValidationHandler;
 import br.com.caosarcana.common.network.ModMessages;
@@ -20,6 +21,7 @@ public class CaosArcana implements ModInitializer {
         ModMessages.registerC2SPackets();
         ModMessages.registerServerEvents();
         CaosArcanaCommands.register();
+        CaosArcanaEntities.register();
 
         EquipmentRequirementRegistry.registerProvisionalTestItems();
         EquipmentValidationHandler.register();

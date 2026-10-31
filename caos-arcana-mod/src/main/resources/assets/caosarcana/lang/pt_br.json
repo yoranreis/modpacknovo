@@ -16,5 +16,12 @@
 
   "category.caosarcana.spells": "Caos Arcana - Magias",
   "key.caosarcana.cast_spell": "Conjurar Magia Ativa",
-  "key.caosarcana.open_spell_menu": "Abrir Seleção de Magias (Grimório)"
+  "key.caosarcana.open_spell_menu": "Abrir Seleção de Magias (Grimório)",
+
+  "entity.caosarcana.rastejante_de_cinza": "Rastejante de Cinza",
+  "entity.caosarcana.cao_fumegante": "Cão Fumegante",
+  "entity.caosarcana.mineiro_oco": "Mineiro Oco",
+  "entity.caosarcana.vigia_das_brasas": "Vigia das Brasas",
+  "entity.caosarcana.carapaca_basaltica": "Carapaça Basáltica",
+  "entity.caosarcana.colosso_basaltico": "Colosso Basáltico"
 }
