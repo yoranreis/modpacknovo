@@ -255,3 +255,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - `/caos status` confirmou Centelha Ígnea ativa. Uma pressão de `V` lançou a Centelha, mas a mira estava acima do pig. Leitura imediata no servidor: `Health=50.0`, `Fire=0`, `Motion=[0.0d,0.0d,0.0d]`. Resultado: **não atingiu**, sem evidência de dano/fogo/recuo.
 - Ao iniciar o ajuste visual da mira, a automação detectou entrada do usuário e foi interrompida conforme governança. Nenhuma ação adicional foi enviada ao cliente. Não marcar qualquer foco como homologado.
 - Próxima ação exata: repetir somente o disparo com mira alinhada ao pig, capturar imediatamente `Health`, `Fire` e `Motion` pelo console interativo e encerrar o smoke após a leitura. O servidor/cliente desta tentativa foram iniciados pelo agente; verificar processos antes de qualquer novo uso.
+
+### Leitura após disparo informado pelo usuário — 31/10/2026
+- Após o usuário informar que alinhou e disparou, o servidor leu o pig `ca_capture`: `Health=23.0`, `Fire=0`, `Motion=[0.0d,0.0d,0.003199573479039736d]`. O baseline documentado imediatamente antes era `Health=50.0`, `Fire=0`, `Motion=[0,0,0]`.
+- O alvo foi atingido e perdeu 27 pontos de vida no intervalo, mas a leitura ocorreu depois do impacto e com fogo já expirado; ela combina dano inicial e dano de combustão. Não comprova isoladamente os valores configurados de 5 de dano, 10 s de fogo ou força 1.5. O pequeno movimento observado não é evidência suficiente de recuo numérico.
+- Estado do jogador confirmou `SelectedSpell=caosarcana:centelha_ignea`, Piromancia 25, marcos 10/25 e cooldown ativo. Foco selecionado não é exposto pelo NBT consultado.
+- Resultado: **impacto e caminho de combustão confirmados qualitativamente; medição numérica dos focos ainda pendente**. Próxima ação: para números isolados, preparar um alvo novo com leitura no mesmo tick/primeira captura, ou manter a pendência explicitamente registrada; não alterar valores por inferência.
