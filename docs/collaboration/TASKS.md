@@ -278,3 +278,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Nenhuma alteração foi feita em `CaosArcana.java`, `CaosArcanaClient.java`, `ModMessages`, persistência, magias, árvore de talentos, loot ou documentos de decisão. Texturas, idioma, spawn e registros de inicialização ainda não foram integrados.
 - `gradlew.bat test build --offline --no-daemon --console=plain` passou na branch isolada com JDK 25.0.2/alvo Java 17; 43 testes, zero falhas/erros/ignorados. O código está compilável, mas as entidades ainda não são registradas no runtime até o próximo patch de integração.
 - A branch foi enviada ao GitHub sem merge. Próxima ação: integrar registros e recursos mínimos em um patch separado, revisar spawn/loot e repetir build; somente depois avaliar PR/merge.
+
+### Registro isolado de entidades e renderizadores — 31/10/2026
+- Commit `c86df32` na branch `feat/ash-mobs-isolated` registrou `CaosArcanaEntities.register()` no inicializador, renderizadores/model layers no cliente e seis nomes em `pt_br`/`en_us`.
+- Build/teste repetido após a integração: **SUCESSO**, 43 testes, zero falhas/erros/ignorados, Java 25.0.2 no build e Java 17 como alvo.
+- Texturas binárias, modelos JSON de item/spawn eggs, tabelas de spawn e loot ainda não foram adicionados. Sem esses recursos, não copiar JAR nem homologar gameplay. A branch continua sem merge na base de Piromancia.
+- Próxima ação exata: incorporar as texturas da branch remota por operação controlada de recurso, validar referências de textura no renderer e iniciar um servidor descartável somente depois de confirmar que todos os assets existem.
