@@ -289,3 +289,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Commit `76cf435` adicionou as cinco texturas referenciadas pelos modelos: Cão Fumegante, Carapaça Basáltica, Mineiro Oco, Rastejante de Cinza e Vigia das Brasas. O Colosso reutiliza a textura da Carapaça conforme o renderer da branch auditada.
 - Referências `ResourceLocation` dos cinco modelos conferidas contra os caminhos reais dos PNGs. Build/teste após os assets: **SUCESSO**, 43 testes, zero falhas/erros/ignorados. JAR isolado SHA-256 `64A953CC47CA84FE630AAC33823B2305487B9F68A8C057DAB42C355BB003C89A`.
 - Spawn eggs, tabelas de spawn/loot e homologação de runtime ainda não foram feitos. Não copiar para Lote B e não fazer merge na branch de Piromancia nesta etapa.
+
+### Spawn eggs coordenados com branch do auxiliar — 31/10/2026
+- O commit remoto `01eb0bf` foi aplicado na branch `feat/ash-mobs-isolated` e resolvido como `1ffb824`. Mantive somente os seis ovos das entidades já presentes nas Terras da Cinza; referências aos outros dez mobs foram removidas para evitar classes ausentes e conflitos futuros.
+- Modelos JSON dos seis ovos, registro no grupo criativo e color provider foram integrados. Não houve alteração na branch `feat/races-spells-balance-v1`.
+- Build/teste após a resolução: **SUCESSO**, 43 testes, zero falhas/erros/ignorados. Nenhuma referência residual aos dez mobs ausentes foi encontrada nos registros isolados.
+- Próxima ação: validar os seis ovos e entidades em servidor descartável da branch isolada; loot/spawn natural continuam fora deste patch e exigem decisão de balanceamento.
