@@ -1,0 +1,18 @@
+{
+  "caosarcana:piro_raiz_afinidade": {
+    "x": 0,
+    "y": 0,
+    "definition": "caosarcana:piro_raiz_afinidade",
+    "root": true
+  },
+  "caosarcana:piro_foco_combustao": {
+    "x": -80,
+    "y": 80,
+    "definition": "caosarcana:piro_foco_combustao"
+  },
+  "caosarcana:piro_foco_cinetico": {
+    "x": 80,
+    "y": 80,
+    "definition": "caosarcana:piro_foco_cinetico"
+  }
+}

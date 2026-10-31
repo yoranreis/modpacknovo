@@ -20,8 +20,17 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class RaceSelectionScreen extends Screen {
+    private static Race currentPreviewRace = null;
     private Race selectedRace = Race.ORC;
     private Button confirmButton;
+
+    public static Race getCurrentPreviewRace() {
+        return currentPreviewRace;
+    }
+
+    public Race getSelectedRace() {
+        return selectedRace;
+    }
 
     public RaceSelectionScreen() {
         super(Component.literal("Escolha de Raça - Caos Arcana"));
@@ -32,23 +41,35 @@ public class RaceSelectionScreen extends Screen {
         super.init();
 
         int centerX = this.width / 2;
-        int listX = centerX - 240;
-        int startY = 65;
-        int buttonWidth = 95;
-        int buttonHeight = 24;
+        int listX = centerX - 250;
+        int startY = 46;
+        int buttonWidth = 110;
+        int buttonHeight = 18;
+        int spacing = 3;
 
-        Race[] availableRaces = new Race[]{Race.ORC, Race.FELINO, Race.ALTO_ELFO};
+        Race[] availableRaces = new Race[]{
+                Race.HUMANO,
+                Race.ELFO_FLORESTA,
+                Race.ALTO_ELFO,
+                Race.ORC,
+                Race.FELINO,
+                Race.NORDICO,
+                Race.SANGUE_DAEDRA,
+                Race.REDGUARD,
+                Race.ARGONIANO,
+                Race.VOIDMER
+        };
 
         for (int i = 0; i < availableRaces.length; i++) {
             Race race = availableRaces[i];
-            int y = startY + (i * (buttonHeight + 10));
+            int y = startY + (i * (buttonHeight + spacing));
 
             this.addRenderableWidget(Button.builder(Component.literal(race.getDisplayName()), btn -> {
                 this.selectedRace = race;
             }).bounds(listX, y, buttonWidth, buttonHeight).build());
         }
 
-        int confirmY = this.height - 36;
+        int confirmY = this.height - 34;
         this.confirmButton = this.addRenderableWidget(Button.builder(
                 Component.literal("CONFIRMAR ESCOLHA").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD),
                 btn -> confirmSelection()
@@ -70,7 +91,14 @@ public class RaceSelectionScreen extends Screen {
     }
 
     @Override
+    public void removed() {
+        super.removed();
+        currentPreviewRace = null;
+    }
+
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        currentPreviewRace = this.selectedRace;
         this.renderBackground(graphics);
 
         int centerX = this.width / 2;

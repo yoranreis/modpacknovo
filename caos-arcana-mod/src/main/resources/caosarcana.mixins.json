@@ -2,14 +2,20 @@
 	"required": true,
 	"package": "br.com.caosarcana.mixin",
 	"compatibilityLevel": "JAVA_17",
+	"plugin": "br.com.caosarcana.mixin.CaosArcanaMixinPlugin",
 	"mixins": [
 		"ArmorItemDispenserMixin",
 		"CaosArcanaMixin",
 		"InventoryArmorSlotMixin",
-		"PlayerRPGMixin"
+		"LivingEntityRPGMixin",
+		"MobRPGMixin",
+		"PlayerRPGMixin",
+		"PuffishSkillsModMixin",
+		"SpectralWolfMixin"
 	],
 	"client": [
-		"client.GuiHealthOverlayMixin"
+		"client.GuiHealthOverlayMixin",
+		"client.PlayerScaleRenderMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
