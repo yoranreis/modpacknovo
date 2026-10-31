@@ -284,3 +284,8 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Build/teste repetido após a integração: **SUCESSO**, 43 testes, zero falhas/erros/ignorados, Java 25.0.2 no build e Java 17 como alvo.
 - Texturas binárias, modelos JSON de item/spawn eggs, tabelas de spawn e loot ainda não foram adicionados. Sem esses recursos, não copiar JAR nem homologar gameplay. A branch continua sem merge na base de Piromancia.
 - Próxima ação exata: incorporar as texturas da branch remota por operação controlada de recurso, validar referências de textura no renderer e iniciar um servidor descartável somente depois de confirmar que todos os assets existem.
+
+### Texturas das Terras da Cinza adicionadas — 31/10/2026
+- Commit `76cf435` adicionou as cinco texturas referenciadas pelos modelos: Cão Fumegante, Carapaça Basáltica, Mineiro Oco, Rastejante de Cinza e Vigia das Brasas. O Colosso reutiliza a textura da Carapaça conforme o renderer da branch auditada.
+- Referências `ResourceLocation` dos cinco modelos conferidas contra os caminhos reais dos PNGs. Build/teste após os assets: **SUCESSO**, 43 testes, zero falhas/erros/ignorados. JAR isolado SHA-256 `64A953CC47CA84FE630AAC33823B2305487B9F68A8C057DAB42C355BB003C89A`.
+- Spawn eggs, tabelas de spawn/loot e homologação de runtime ainda não foram feitos. Não copiar para Lote B e não fazer merge na branch de Piromancia nesta etapa.
