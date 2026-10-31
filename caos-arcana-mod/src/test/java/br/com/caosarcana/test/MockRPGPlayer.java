@@ -16,6 +16,8 @@ public class MockRPGPlayer implements IRPGPlayerData {
     private float baseMaxMana = 100.0f;
     private int generalLevel = 1;
     private final Map<String, Integer> schools = new HashMap<>();
+    private final Map<String, Integer> schoolsXp = new HashMap<>();
+    private final java.util.Set<String> claimedMilestones = new java.util.HashSet<>();
     private final List<ItemStack> pendingDeliveries = new ArrayList<>();
     private final java.util.Set<String> knownSpells = new java.util.HashSet<>();
     private String selectedSpell = "";
@@ -128,6 +130,31 @@ public class MockRPGPlayer implements IRPGPlayerData {
     }
 
     @Override
+    public int caosarcana$getSchoolXp(String school) {
+        return schoolsXp.getOrDefault(school.toLowerCase(), 0);
+    }
+
+    @Override
+    public void caosarcana$setSchoolXp(String school, int xp) {
+        schoolsXp.put(school.toLowerCase(), Math.max(0, xp));
+    }
+
+    @Override
+    public java.util.Set<String> caosarcana$getClaimedMilestones() {
+        return java.util.Collections.unmodifiableSet(claimedMilestones);
+    }
+
+    @Override
+    public boolean caosarcana$hasClaimedMilestone(String milestoneId) {
+        return claimedMilestones.contains(milestoneId.toLowerCase());
+    }
+
+    @Override
+    public void caosarcana$claimMilestone(String milestoneId) {
+        claimedMilestones.add(milestoneId.toLowerCase());
+    }
+
+    @Override
     public boolean caosarcana$knowsSpell(String spellId) {
         if (spellId == null || spellId.trim().isEmpty()) return false;
         return knownSpells.contains(spellId.trim().toLowerCase());
@@ -142,6 +169,17 @@ public class MockRPGPlayer implements IRPGPlayerData {
             selectedSpell = normalized;
         }
         return added;
+    }
+
+    @Override
+    public boolean caosarcana$unlearnSpell(String spellId) {
+        if (spellId == null || spellId.trim().isEmpty()) return false;
+        String normalized = spellId.trim().toLowerCase();
+        boolean removed = knownSpells.remove(normalized);
+        if (removed && normalized.equalsIgnoreCase(selectedSpell)) {
+            selectedSpell = "";
+        }
+        return removed;
     }
 
     @Override

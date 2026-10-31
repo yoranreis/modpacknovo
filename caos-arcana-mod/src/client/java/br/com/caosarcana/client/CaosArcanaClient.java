@@ -80,7 +80,10 @@ public class CaosArcanaClient implements ClientModInitializer {
         // Recebe ordem para abrir tela de seleção de raça
         ClientPlayNetworking.registerGlobalReceiver(ModMessages.OPEN_RACE_SELECT_ID, (client, handler, buf, responseSender) -> {
             client.execute(() -> {
-                client.setScreen(new RaceSelectionScreen());
+                // O lembrete periódico não pode apagar a escolha em andamento.
+                if (!(client.screen instanceof RaceSelectionScreen)) {
+                    client.setScreen(new RaceSelectionScreen());
+                }
             });
         });
 
@@ -107,9 +110,11 @@ public class CaosArcanaClient implements ClientModInitializer {
             }
 
             String selectedSpell = buf.readUtf();
+            float sparkManaCost = buf.readFloat();
 
             client.execute(() -> {
                 ClientRPGData.update(raceId, chosen, mana, maxMana, level, spells, selectedSpell);
+                ClientRPGData.setSparkManaCost(sparkManaCost);
                 if (client.player instanceof IRPGPlayerData rpgPlayer) {
                     rpgPlayer.caosarcana$setRace(Race.fromId(raceId));
                     rpgPlayer.caosarcana$setChosenRace(chosen);

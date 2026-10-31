@@ -1,18 +1,33 @@
 package br.com.caosarcana.mixin;
 
 import br.com.caosarcana.common.data.IRPGPlayerData;
+import br.com.caosarcana.common.equipment.EquipmentRequirementRegistry;
+import br.com.caosarcana.common.equipment.EquipmentValidationHandler;
+import br.com.caosarcana.common.equipment.RequirementResult;
 import br.com.caosarcana.common.race.Race;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.monster.MagmaCube;
+import net.minecraft.world.entity.monster.WitherSkeleton;
+import net.minecraft.world.entity.monster.ZombifiedPiglin;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
+import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
@@ -30,6 +45,10 @@ public class PlayerRPGMixin implements IRPGPlayerData {
     private int caosarcana$generalLevel = 1;
     @Unique
     private final Map<String, Integer> caosarcana$schools = new HashMap<>();
+    @Unique
+    private final Map<String, Integer> caosarcana$schoolsXp = new HashMap<>();
+    @Unique
+    private final Set<String> caosarcana$claimedMilestones = new HashSet<>();
     @Unique
     private final List<ItemStack> caosarcana$pendingDeliveries = new ArrayList<>();
     @Unique
@@ -142,6 +161,35 @@ public class PlayerRPGMixin implements IRPGPlayerData {
     }
 
     @Override
+    public int caosarcana$getSchoolXp(String school) {
+        if (school == null) return 0;
+        return caosarcana$schoolsXp.getOrDefault(school.toLowerCase(), 0);
+    }
+
+    @Override
+    public void caosarcana$setSchoolXp(String school, int xp) {
+        if (school == null) return;
+        caosarcana$schoolsXp.put(school.toLowerCase(), Math.max(0, xp));
+    }
+
+    @Override
+    public Set<String> caosarcana$getClaimedMilestones() {
+        return Collections.unmodifiableSet(caosarcana$claimedMilestones);
+    }
+
+    @Override
+    public boolean caosarcana$hasClaimedMilestone(String milestoneId) {
+        if (milestoneId == null) return false;
+        return caosarcana$claimedMilestones.contains(milestoneId.toLowerCase());
+    }
+
+    @Override
+    public void caosarcana$claimMilestone(String milestoneId) {
+        if (milestoneId == null) return;
+        caosarcana$claimedMilestones.add(milestoneId.toLowerCase());
+    }
+
+    @Override
     public boolean caosarcana$knowsSpell(String spellId) {
         if (spellId == null || spellId.trim().isEmpty()) return false;
         return caosarcana$knownSpells.contains(spellId.trim().toLowerCase());
@@ -156,6 +204,17 @@ public class PlayerRPGMixin implements IRPGPlayerData {
             caosarcana$selectedSpell = normalized;
         }
         return added;
+    }
+
+    @Override
+    public boolean caosarcana$unlearnSpell(String spellId) {
+        if (spellId == null || spellId.trim().isEmpty()) return false;
+        String normalized = spellId.trim().toLowerCase();
+        boolean removed = caosarcana$knownSpells.remove(normalized);
+        if (removed && normalized.equalsIgnoreCase(caosarcana$selectedSpell)) {
+            caosarcana$selectedSpell = "";
+        }
+        return removed;
     }
 
     @Override
@@ -227,6 +286,61 @@ public class PlayerRPGMixin implements IRPGPlayerData {
         caosarcana$pendingDeliveries.clear();
     }
 
+    @Unique
+    private static boolean caosarcana$isNetherNativeEntity(Entity entity) {
+        if (entity == null) return false;
+        return entity instanceof Blaze ||
+               entity instanceof Ghast ||
+               entity instanceof MagmaCube ||
+               entity instanceof WitherSkeleton ||
+               entity instanceof AbstractPiglin ||
+               entity instanceof ZombifiedPiglin ||
+               entity instanceof Hoglin;
+    }
+
+    /**
+     * Imunidade Ambiental Permanente e Neutralidade Absoluta com Mobs do Nether
+     * Exclusiva da raça Sangue-Daedra:
+     * - Imunidade total permanente a fogo, lava, chamas e magma (DamageTypeTags.IS_FIRE).
+     * - Imunidade total a qualquer ataque ou dano de contato físico originado por mobs nativos do Nether.
+     * - Danos físicos de outras fontes (esqueletos do overworld, zumbis, aranhas, creepers, PvP e quedas) continuam normais.
+     * - Não concedida ao Voidmer ou outras raças.
+     */
+    @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
+    private void caosarcana$onPlayerHurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (caosarcana$hasChosenRace && caosarcana$race == Race.SANGUE_DAEDRA) {
+            if (source.is(DamageTypeTags.IS_FIRE)) {
+                cir.setReturnValue(false);
+                return;
+            }
+            Entity attacker = source.getEntity();
+            Entity direct = source.getDirectEntity();
+            if (caosarcana$isNetherNativeEntity(attacker) || caosarcana$isNetherNativeEntity(direct)) {
+                cir.setReturnValue(false);
+                return;
+            }
+        }
+    }
+
+    @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
+    private void caosarcana$isInvulnerableTo(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+        if (caosarcana$hasChosenRace && caosarcana$race == Race.SANGUE_DAEDRA) {
+            if (source.is(DamageTypeTags.IS_FIRE)) {
+                cir.setReturnValue(true);
+            }
+        }
+    }
+
+    @ModifyVariable(method = "actuallyHurt", at = @At("HEAD"), argsOnly = true)
+    private float caosarcana$reduceFireAndLavaForPlayer(float amount, DamageSource source) {
+        if (caosarcana$hasChosenRace && source.is(DamageTypeTags.IS_FIRE)) {
+            if (caosarcana$race == Race.SANGUE_DAEDRA) {
+                return 0.0f; // Imunidade total permanente
+            }
+        }
+        return amount;
+    }
+
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void caosarcana$saveNbt(CompoundTag compound, CallbackInfo ci) {
         CompoundTag rpgTag = new CompoundTag();
@@ -241,6 +355,18 @@ public class PlayerRPGMixin implements IRPGPlayerData {
             schoolsTag.putInt(entry.getKey(), entry.getValue());
         }
         rpgTag.put("Schools", schoolsTag);
+
+        CompoundTag schoolsXpTag = new CompoundTag();
+        for (Map.Entry<String, Integer> entry : caosarcana$schoolsXp.entrySet()) {
+            schoolsXpTag.putInt(entry.getKey(), entry.getValue());
+        }
+        rpgTag.put("SchoolsXp", schoolsXpTag);
+
+        ListTag milestonesList = new ListTag();
+        for (String m : caosarcana$claimedMilestones) {
+            milestonesList.add(StringTag.valueOf(m));
+        }
+        rpgTag.put("ClaimedMilestones", milestonesList);
 
         // Persistência segura das magias aprendidas permanentemente
         ListTag spellsList = new ListTag();
@@ -280,8 +406,23 @@ public class PlayerRPGMixin implements IRPGPlayerData {
     private void caosarcana$readNbt(CompoundTag compound, CallbackInfo ci) {
         if (compound.contains("CaosArcanaData", 10)) {
             CompoundTag rpgTag = compound.getCompound("CaosArcanaData");
-            this.caosarcana$race = Race.fromId(rpgTag.getString("Race"));
-            this.caosarcana$hasChosenRace = rpgTag.getBoolean("RaceChosen");
+            String rawRace = rpgTag.getString("Race");
+
+            if (rawRace.equalsIgnoreCase("bretao") || rawRace.equalsIgnoreCase("elfo_negro")) {
+                // Legados substituídos: oferecer nova seleção racial sem conversão compulsória
+                this.caosarcana$race = Race.NONE;
+                this.caosarcana$hasChosenRace = false;
+            } else if (rawRace.equalsIgnoreCase("imperial")) {
+                this.caosarcana$race = Race.HUMANO;
+                this.caosarcana$hasChosenRace = rpgTag.getBoolean("RaceChosen");
+            } else if (rawRace.equalsIgnoreCase("guarda_vermelho")) {
+                this.caosarcana$race = Race.REDGUARD;
+                this.caosarcana$hasChosenRace = rpgTag.getBoolean("RaceChosen");
+            } else {
+                this.caosarcana$race = Race.fromId(rawRace);
+                this.caosarcana$hasChosenRace = rpgTag.getBoolean("RaceChosen");
+            }
+
             this.caosarcana$mana = rpgTag.getFloat("Mana");
 
             if (rpgTag.contains("BaseMaxMana")) {
@@ -301,12 +442,37 @@ public class PlayerRPGMixin implements IRPGPlayerData {
                 }
             }
 
+            caosarcana$schoolsXp.clear();
+            if (rpgTag.contains("SchoolsXp", 10)) {
+                CompoundTag schoolsXpTag = rpgTag.getCompound("SchoolsXp");
+                for (String key : schoolsXpTag.getAllKeys()) {
+                    caosarcana$schoolsXp.put(key, schoolsXpTag.getInt(key));
+                }
+            }
+
+            caosarcana$claimedMilestones.clear();
+            if (rpgTag.contains("ClaimedMilestones", 9)) {
+                ListTag milestonesList = rpgTag.getList("ClaimedMilestones", 8);
+                for (int i = 0; i < milestonesList.size(); i++) {
+                    caosarcana$claimedMilestones.add(milestonesList.getString(i));
+                }
+            }
+
             caosarcana$knownSpells.clear();
             if (rpgTag.contains("KnownSpells", 9)) {
                 ListTag spellsList = rpgTag.getList("KnownSpells", 8);
                 for (int i = 0; i < spellsList.size(); i++) {
                     caosarcana$knownSpells.add(spellsList.getString(i));
                 }
+            }
+
+            if (!this.caosarcana$hasChosenRace) {
+                // Bloqueio de poderes antigos durante seleção pendente:
+                // Remove magias raciais antigas da lista de conhecidas
+                this.caosarcana$knownSpells.remove("caosarcana:ira_ancestral");
+                this.caosarcana$knownSpells.remove("caosarcana:pele_de_dragao");
+                this.caosarcana$knownSpells.remove("caosarcana:voz_do_imperador");
+                this.caosarcana$knownSpells.remove("caosarcana:impeto_de_adrenalina");
             }
 
             if (rpgTag.contains("SelectedSpell", 8)) {
@@ -344,6 +510,19 @@ public class PlayerRPGMixin implements IRPGPlayerData {
                         caosarcana$pendingDeliveries.add(stack);
                     }
                 }
+            }
+        }
+    }
+
+    @Inject(method = "attack", at = @At("HEAD"), cancellable = true)
+    private void caosarcana$onAttack(Entity target, CallbackInfo ci) {
+        Player player = (Player) (Object) this;
+        ItemStack attackingWeapon = EquipmentValidationHandler.resolveAttackingWeapon(player);
+        if (attackingWeapon != null && !attackingWeapon.isEmpty()) {
+            RequirementResult result = EquipmentRequirementRegistry.canEquip(player, attackingWeapon);
+            if (!result.isAllowed()) {
+                ci.cancel();
+                EquipmentValidationHandler.notifyAttackDenied(player, result);
             }
         }
     }

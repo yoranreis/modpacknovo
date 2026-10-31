@@ -37,13 +37,25 @@ public class SpellSelectionScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        br.com.caosarcana.client.ClientRPGData.requestEffectiveCosts();
 
         int centerX = this.width / 2;
         int centerY = this.height / 2;
         int left = centerX - (boxWidth / 2);
         int top = centerY - (boxHeight / 2);
 
-        List<String> learnedSpells = new ArrayList<>(ClientRPGData.getKnownSpells());
+        br.com.caosarcana.common.race.Race currentRace = ClientRPGData.getCurrentRace();
+        List<String> learnedSpells = new ArrayList<>();
+        for (String sp : ClientRPGData.getKnownSpells()) {
+            Optional<SpellDefinition> defOpt = SpellRegistry.get(sp);
+            if (defOpt.isPresent()) {
+                SpellDefinition def = defOpt.get();
+                if (def.isRacial() && def.requiredRace() != currentRace) {
+                    continue; // Não exibe magias de outras linhagens
+                }
+            }
+            learnedSpells.add(sp);
+        }
         String currentActive = ClientRPGData.getSelectedSpell();
 
         // Se houver magias e nenhuma inspecionada, define a ativa (ou a primeira)
@@ -173,7 +185,7 @@ public class SpellSelectionScreen extends Screen {
             graphics.drawString(this.font, titleText, detailsX, top + 34, 0xFFFFFF, false);
 
             graphics.drawString(this.font, "§6Escola: §e" + spell.schoolDisplayName() + " §7(Nível " + spell.minSchoolLevel() + ")", detailsX, top + 48, 0xFFFFFF, false);
-            graphics.drawString(this.font, "§bCusto: §f" + (int) spell.manaCost() + " Mana", detailsX, top + 62, 0xFFFFFF, false);
+            graphics.drawString(this.font, "§bCusto: §f" + br.com.caosarcana.client.ClientRPGData.manaCostText(spell) + " Mana", detailsX, top + 62, 0xFFFFFF, false);
             graphics.drawString(this.font, "§7Recarga: §f" + spell.cooldownTicks() + " ticks §7(" + String.format("%.1fs", spell.cooldownTicks() / 20.0f) + ")", detailsX, top + 76, 0xFFFFFF, false);
             String distStr = spell.maxDistanceBlocks() > 0 ? (int) spell.maxDistanceBlocks() + " blocos" : "Pessoal / Instantâneo";
             graphics.drawString(this.font, "§7Alcance: §f" + distStr, detailsX, top + 90, 0xFFFFFF, false);

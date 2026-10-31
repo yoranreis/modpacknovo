@@ -44,7 +44,7 @@ public enum Race {
         3.0f),
 
     NORDICO("nordico", "Nórdico", "Filhos de Skyrim com incrível resistência ao frio cortante e maestria em armas de duas mãos.",
-        "Decidido (Oficial Skyrim)",
+        "Decidido (Oficial)",
         "Vida Máxima +2 (1 coração), resistência severa a gelo/criomancia",
         "Afinidade reduzida com piromancia",
         "Nenhuma",
@@ -52,17 +52,8 @@ public enum Race {
         0.0f,
         2.0f),
 
-    ELFO_NEGRO("elfo_negro", "Elfo Negro (Dunmer)", "Guerreiros e magos versáteis de Morrowind, forjados nas cinzas e abençoados pelo fogo.",
-        "Decidido (Oficial Skyrim)",
-        "Resistência a fogo +50%, dano de magias de fogo +10%",
-        "Vulnerabilidade aumentada contra dano de gelo",
-        "Nenhuma",
-        "Ira Ancestral: aura protetora de cinzas incandescentes",
-        20.0f,
-        2.2f),
-
     ELFO_FLORESTA("elfo_floresta", "Elfo da Floresta (Bosmer)", "Mestres do tiro com arco e rastreamento em Valenwood. Ágeis e resistentes a toxinas.",
-        "Decidido (Oficial Skyrim)",
+        "Decidido (Oficial)",
         "Velocidade de movimento +10%, resistência a veneno/fome +50%",
         "Vida Máxima -2 (1 coração), menor tenacidade corpo a corpo",
         "Nenhuma",
@@ -70,27 +61,18 @@ public enum Race {
         10.0f,
         2.0f),
 
-    BRETAO("bretao", "Bretão", "Humanos com sangue feérico de High Rock. Possuem forte defesa mágica natural e facilidade em Conjuração.",
-        "Decidido (Oficial Skyrim)",
-        "Resistência mágica natural a todas as escolas, custo de Conjuração -15%",
-        "Dano físico corpo a corpo levemente reduzido (-5%)",
-        "Nenhuma",
-        "Pele de Dragão: absorve feitiços recebidos convertendo em mana",
-        25.0f,
-        2.5f),
-
-    IMPERIAL("imperial", "Imperial", "Nativos de Cyrodiil cosmopolitas, disciplinados no combate com escudo e negociantes natos.",
-        "Decidido (Oficial Skyrim)",
-        "Armadura Natural +1, maior encontro de moedas em baús de tesouro",
+    HUMANO("humano", "Humano", "Versáteis e adaptáveis em qualquer ambiente e ofício, capazes de manejar equipamentos ancestrais.",
+        "Decidido (Oficial)",
+        "Armadura Natural +1, versatilidade com equipamentos T1-T3 de outras raças",
         "Sem especialização elemental extrema",
         "Nenhuma",
-        "Voz do Imperador: pacifica multidões e acalma agressões",
+        "Voz do Imperador: pacifica multidões e desarma agressões",
         10.0f,
         2.0f),
 
-    GUARDA_VERMELHO("guarda_vermelho", "Guarda Vermelho", "Os mais habilidosos guerreiros espadachins de Tamriel, dotados de estamina implacável.",
-        "Decidido (Oficial Skyrim)",
-        "Velocidade de ataque físico +10%, resistência a venenos",
+    REDGUARD("redguard", "Redguard", "Os mais habilidosos guerreiros espadachins de Tamriel, dotados de estamina implacável.",
+        "Decidido (Oficial)",
+        "Velocidade de ataque físico +10%, resistência e mobilidade marcial",
         "Afinidade arcana inicial mais lenta (regeneração 1.8/s)",
         "Nenhuma",
         "Ímpeto de Adrenalina: restaura estamina e acelera velocidade de combate",
@@ -98,11 +80,29 @@ public enum Race {
         1.8f),
 
     ARGONIANO("argoniano", "Argoniano", "Povo réptil das profundezas de Black Marsh, mestres em emboscadas aquáticas e resistência.",
-        "Decidido (Oficial Skyrim)",
+        "Decidido (Oficial)",
         "Respiração aquática permanente, velocidade de nado dobrada, imunidade a afogamento",
         "Vulnerabilidade aumentada a temperaturas geladas e feitiços de gelo",
         "Nenhuma",
         "Pele de Hist: regeneração emergencial acelerada de vida",
+        0.0f,
+        2.0f),
+
+    SANGUE_DAEDRA("sangue_daedra", "Sangue-Daedra", "Linhagem tocada pelos planos de Oblivion. Imunes às chamas e reverenciados pelos habitantes do Nether.",
+        "Decidido (Oficial)",
+        "Imunidade permanente a dano de fogo, lava e magma; neutralidade absoluta de mobs nativos do Nether",
+        "Pendente de definição formal de atributos e desvantagens",
+        "Imunidade ambiental e neutralidade do Nether",
+        "Pendente de definição formal de poder ativo",
+        0.0f,
+        2.0f),
+
+    VOIDMER("voidmer", "Voidmer", "Povo misterioso sintonizado com o Vazio e distorções do éter.",
+        "Decidido (Oficial)",
+        "Pendente de definição formal de atributos e vantagens",
+        "Pendente de definição formal de desvantagens",
+        "Nenhuma",
+        "Pendente de definição formal de poder ativo",
         0.0f,
         2.0f);
 
@@ -180,10 +180,33 @@ public enum Race {
         return manaRegenPerSecond;
     }
 
+    public float getVisualScale() {
+        return switch (this) {
+            case ORC -> 1.055f;             // 1,90 m
+            case ALTO_ELFO -> 1.100f;       // 1,98 m
+            case NORDICO -> 1.044f;         // 1,88 m
+            case SANGUE_DAEDRA -> 1.033f;   // 1,86 m
+            case REDGUARD -> 1.011f;        // 1,82 m
+            case VOIDMER -> 1.011f;         // 1,82 m
+            case ARGONIANO -> 1.000f;       // 1,80 m
+            case HUMANO -> 1.000f;          // 1,80 m
+            case NONE -> 1.000f;            // 1,80 m
+            case FELINO -> 0.988f;          // 1,78 m
+            case ELFO_FLORESTA -> 0.944f;   // 1,70 m
+        };
+    }
+
     public static Race fromId(String id) {
         if (id == null) return NONE;
+        String clean = id.trim().toLowerCase();
+        // Compatibilidade com IDs antigos renomeados
+        if (clean.equals("imperial")) return HUMANO;
+        if (clean.equals("guarda_vermelho")) return REDGUARD;
+        // IDs legados substituídos (oferecer nova seleção, sem conversão compulsória)
+        if (clean.equals("bretao") || clean.equals("elfo_negro")) return NONE;
+
         for (Race race : values()) {
-            if (race.id.equalsIgnoreCase(id.trim())) {
+            if (race.id.equalsIgnoreCase(clean) || race.name().equalsIgnoreCase(clean)) {
                 return race;
             }
         }
@@ -213,27 +236,21 @@ public enum Race {
                 applyModifier(player, Attributes.MAX_HEALTH, HEALTH_MOD_ID, "Nord Health", 2.0, AttributeModifier.Operation.ADDITION);
                 applyModifier(player, Attributes.ATTACK_DAMAGE, DAMAGE_MOD_ID, "Nord Strength", 1.0, AttributeModifier.Operation.ADDITION);
             }
-            case ELFO_NEGRO -> {
-                applyModifier(player, Attributes.ARMOR, ARMOR_MOD_ID, "Dunmer Fire Skin", 1.0, AttributeModifier.Operation.ADDITION);
-            }
             case ELFO_FLORESTA -> {
                 applyModifier(player, Attributes.MOVEMENT_SPEED, SPEED_MOD_ID, "Bosmer Swiftness", 0.10, AttributeModifier.Operation.MULTIPLY_BASE);
                 applyModifier(player, Attributes.MAX_HEALTH, HEALTH_MOD_ID, "Bosmer Fragility", -2.0, AttributeModifier.Operation.ADDITION);
             }
-            case BRETAO -> {
-                applyModifier(player, Attributes.ARMOR, ARMOR_MOD_ID, "Breton Warding", 1.0, AttributeModifier.Operation.ADDITION);
+            case HUMANO -> {
+                applyModifier(player, Attributes.ARMOR, ARMOR_MOD_ID, "Human Tenacity", 1.0, AttributeModifier.Operation.ADDITION);
             }
-            case IMPERIAL -> {
-                applyModifier(player, Attributes.ARMOR, ARMOR_MOD_ID, "Imperial Armor", 1.0, AttributeModifier.Operation.ADDITION);
-            }
-            case GUARDA_VERMELHO -> {
+            case REDGUARD -> {
                 applyModifier(player, Attributes.ATTACK_DAMAGE, DAMAGE_MOD_ID, "Redguard Finesse", 1.0, AttributeModifier.Operation.ADDITION);
                 applyModifier(player, Attributes.MOVEMENT_SPEED, SPEED_MOD_ID, "Redguard Footwork", 0.05, AttributeModifier.Operation.MULTIPLY_BASE);
             }
             case ARGONIANO -> {
                 applyModifier(player, Attributes.ARMOR, ARMOR_MOD_ID, "Argonian Scales", 2.0, AttributeModifier.Operation.ADDITION);
             }
-            default -> {}
+            case SANGUE_DAEDRA, VOIDMER, NONE -> {}
         }
 
         if (player.getHealth() > player.getMaxHealth()) {

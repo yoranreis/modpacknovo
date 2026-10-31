@@ -36,6 +36,7 @@ public class GrimoireStudyScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        br.com.caosarcana.client.ClientRPGData.requestEffectiveCosts();
 
         int centerX = this.width / 2;
         int centerY = this.height / 2;
@@ -93,7 +94,7 @@ public class GrimoireStudyScreen extends Screen {
         String spellName = spellOpt.map(SpellDefinition::name).orElse(this.spellId);
         String schoolName = spellOpt.map(SpellDefinition::schoolDisplayName).orElse("Arcano");
         int reqLevel = spellOpt.map(SpellDefinition::minSchoolLevel).orElse(1);
-        int manaCost = spellOpt.map(s -> (int) s.manaCost()).orElse(20);
+        String manaCost = spellOpt.map(br.com.caosarcana.client.ClientRPGData::manaCostText).orElse("...");
         int cooldown = spellOpt.map(SpellDefinition::cooldownTicks).orElse(20);
         double maxDist = spellOpt.map(SpellDefinition::maxDistanceBlocks).orElse(0.0);
         String desc = spellOpt.map(SpellDefinition::description).orElse("Escrituras arcanas antigas.");

@@ -1,0 +1,22 @@
+{
+  "normal": {
+    "bidirectional": [
+      [
+        "caosarcana:piro_raiz_afinidade",
+        "caosarcana:piro_foco_combustao"
+      ],
+      [
+        "caosarcana:piro_raiz_afinidade",
+        "caosarcana:piro_foco_cinetico"
+      ]
+    ]
+  },
+  "exclusive": {
+    "bidirectional": [
+      [
+        "caosarcana:piro_foco_combustao",
+        "caosarcana:piro_foco_cinetico"
+      ]
+    ]
+  }
+}

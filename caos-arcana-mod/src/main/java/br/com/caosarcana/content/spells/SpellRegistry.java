@@ -66,11 +66,11 @@ public class SpellRegistry {
             "restauracao",
             "Restauração",
             1,
-            25.0f,
-            40,
+            30.0f,
+            240, // 12 segundos de recarga (evita spam contínuo)
             0,
             0,
-            "Converte energia arcana pura em vitalidade regenerativa, restaurando imediatamente 6 pontos de vida (3 corações) do conjurador."
+            "Converte energia arcana pura em vitalidade regenerativa, restaurando 6 pontos de vida (3 corações) do conjurador. Recarga: 12 segundos."
     ));
 
     public static final SpellDefinition CIRCULO_SAGRADO = register(new SpellDefinition(
@@ -214,20 +214,6 @@ public class SpellRegistry {
             Race.NORDICO
     ));
 
-    public static final SpellDefinition IRA_ANCESTRAL = register(new SpellDefinition(
-            "caosarcana:ira_ancestral",
-            "Ira Ancestral",
-            "racas",
-            "Poder Racial",
-            1,
-            30.0f,
-            600,
-            0,
-            5.0,
-            "Envolve o Elfo Negro em uma tempestade protetora de cinzas e chamas que queima e incendeia inimigos próximos.",
-            Race.ELFO_NEGRO
-    ));
-
     public static final SpellDefinition COMUNHAO_SELVAGEM = register(new SpellDefinition(
             "caosarcana:comunhao_selvagem",
             "Comunhão Selvagem",
@@ -242,20 +228,6 @@ public class SpellRegistry {
             Race.ELFO_FLORESTA
     ));
 
-    public static final SpellDefinition PELE_DE_DRAGAO = register(new SpellDefinition(
-            "caosarcana:pele_de_dragao",
-            "Pele de Dragão",
-            "racas",
-            "Poder Racial",
-            1,
-            40.0f,
-            700,
-            0,
-            0,
-            "Barreira arcana dos Bretões inspirada na linhagem dos dragões, absorvendo impactos e convertendo energia mágica recebida.",
-            Race.BRETAO
-    ));
-
     public static final SpellDefinition VOZ_DO_IMPERADOR = register(new SpellDefinition(
             "caosarcana:voz_do_imperador",
             "Voz do Imperador",
@@ -266,8 +238,8 @@ public class SpellRegistry {
             500,
             0,
             10.0,
-            "Comando diplomático inquestionável dos Imperiais que desarma agressões, acalma multidões e traz respeito comercial.",
-            Race.IMPERIAL
+            "Comando diplomático e autoridade versátil dos Humanos que desarma agressões, acalma multidões e traz respeito.",
+            Race.HUMANO
     ));
 
     public static final SpellDefinition IMPETO_DE_ADRENALINA = register(new SpellDefinition(
@@ -280,8 +252,8 @@ public class SpellRegistry {
             500,
             0,
             0,
-            "Explosão marcial dos Guardas Vermelhos que restaura o fôlego e acelera o ritmo de combate e movimentação.",
-            Race.GUARDA_VERMELHO
+            "Explosão marcial dos Redguards que restaura o fôlego e acelera o ritmo de combate e movimentação.",
+            Race.REDGUARD
     ));
 
     public static final SpellDefinition PELE_DE_HIST = register(new SpellDefinition(

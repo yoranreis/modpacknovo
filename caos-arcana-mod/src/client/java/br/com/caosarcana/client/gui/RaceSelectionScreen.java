@@ -20,8 +20,17 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class RaceSelectionScreen extends Screen {
+    private static Race currentPreviewRace = null;
     private Race selectedRace = Race.ORC;
     private Button confirmButton;
+
+    public static Race getCurrentPreviewRace() {
+        return currentPreviewRace;
+    }
+
+    public Race getSelectedRace() {
+        return selectedRace;
+    }
 
     public RaceSelectionScreen() {
         super(Component.literal("Escolha de Raça - Caos Arcana"));
@@ -39,16 +48,16 @@ public class RaceSelectionScreen extends Screen {
         int spacing = 3;
 
         Race[] availableRaces = new Race[]{
+                Race.HUMANO,
+                Race.ELFO_FLORESTA,
+                Race.ALTO_ELFO,
                 Race.ORC,
                 Race.FELINO,
-                Race.ALTO_ELFO,
                 Race.NORDICO,
-                Race.ELFO_NEGRO,
-                Race.ELFO_FLORESTA,
-                Race.BRETAO,
-                Race.IMPERIAL,
-                Race.GUARDA_VERMELHO,
-                Race.ARGONIANO
+                Race.SANGUE_DAEDRA,
+                Race.REDGUARD,
+                Race.ARGONIANO,
+                Race.VOIDMER
         };
 
         for (int i = 0; i < availableRaces.length; i++) {
@@ -82,7 +91,14 @@ public class RaceSelectionScreen extends Screen {
     }
 
     @Override
+    public void removed() {
+        super.removed();
+        currentPreviewRace = null;
+    }
+
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        currentPreviewRace = this.selectedRace;
         this.renderBackground(graphics);
 
         int centerX = this.width / 2;

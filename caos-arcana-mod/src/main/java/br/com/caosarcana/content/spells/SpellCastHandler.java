@@ -20,6 +20,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -28,6 +29,12 @@ import java.util.UUID;
  */
 public class SpellCastHandler {
     public static final String CENTELHA_IGNEA_ID = "caosarcana:centelha_ignea";
+
+    public static String formatManaAmount(float amount) {
+        return new java.math.BigDecimal(Float.toString(amount))
+                .stripTrailingZeros()
+                .toPlainString();
+    }
     public static final String FAMILIAR_ESPECTRAL_ID = "caosarcana:familiar_espectral";
 
     public enum CastResult {
@@ -177,9 +184,12 @@ public class SpellCastHandler {
 
         // 8. Validação e Consumo de Mana (demais magias)
         float cost = spell.manaCost();
+        if (CENTELHA_IGNEA_ID.equals(spell.id()) && br.com.caosarcana.common.talent.CaosArcanaTalentBridge.hasRootUnlocked(player)) {
+            cost = br.com.caosarcana.common.talent.TalentConfig.getRootManaCost();
+        }
         if (!rpgPlayer.caosarcana$consumeMana(cost)) {
             player.displayClientMessage(
-                    Component.literal("§cMana insuficiente! §7(Requer: §b" + (int) cost + "§7 | Atual: §b" + (int) rpgPlayer.caosarcana$getMana() + "§7)"),
+                    Component.literal("§cMana insuficiente! §7(Requer: §b" + formatManaAmount(cost) + "§7 | Atual: §b" + formatManaAmount(rpgPlayer.caosarcana$getMana()) + "§7)"),
                     true
             );
             player.playNotifySound(SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 0.9f, 1.5f);
@@ -210,19 +220,86 @@ public class SpellCastHandler {
             // ==========================================
             case "caosarcana:centelha_ignea" -> {
                 Vec3 look = player.getLookAngle();
-                double spawnX = player.getX() + look.x * 0.8;
-                double spawnY = player.getEyeY() - 0.1 + look.y * 0.8;
-                double spawnZ = player.getZ() + look.z * 0.8;
+                Vec3 eyePos = player.getEyePosition();
 
+                // Trecho exato entre a origem dos olhos e o ponto de nascimento (0.35 blocos)
+                double spawnDist = 0.35;
+                Vec3 spawnPos = eyePos.add(look.scale(spawnDist));
+
+                // 1. Respeita o primeiro obstáculo sólido no trecho inicial
+                net.minecraft.world.phys.BlockHitResult blockHit = level.clip(new net.minecraft.world.level.ClipContext(
+                        eyePos, spawnPos,
+                        net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                        net.minecraft.world.level.ClipContext.Fluid.NONE,
+                        player
+                ));
+
+                Vec3 rayEnd = (blockHit.getType() != net.minecraft.world.phys.HitResult.Type.MISS) ? blockHit.getLocation() : spawnPos;
+                double maxDistSqr = eyePos.distanceToSqr(rayEnd);
+
+                // 2. Seleciona o primeiro alvo válido considerando interseção, contenção ou sobreposição da hitbox
+                AABB sweepBox = new AABB(eyePos, rayEnd).inflate(0.5);
+                List<LivingEntity> candidates = level.getEntitiesOfClass(LivingEntity.class, sweepBox,
+                        e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+
+                LivingEntity closestEntity = null;
+                double closestIntersectionDistSqr = maxDistSqr;
+
+                for (LivingEntity candidate : candidates) {
+                    AABB targetBox = candidate.getBoundingBox().inflate(0.15);
+                    boolean hit = false;
+                    double distSqr = Double.MAX_VALUE;
+
+                    if (targetBox.contains(eyePos)) {
+                        hit = true;
+                        distSqr = 0.0;
+                    } else if (targetBox.contains(rayEnd)) {
+                        hit = true;
+                        distSqr = 0.0;
+                    } else {
+                        Optional<Vec3> clip = targetBox.clip(eyePos, rayEnd);
+                        if (clip.isPresent()) {
+                            hit = true;
+                            distSqr = eyePos.distanceToSqr(clip.get());
+                        } else if (targetBox.intersects(new AABB(eyePos, rayEnd))) {
+                            hit = true;
+                            distSqr = eyePos.distanceToSqr(candidate.position());
+                        }
+                    }
+
+                    if (hit && distSqr <= closestIntersectionDistSqr) {
+                        closestIntersectionDistSqr = distSqr;
+                        closestEntity = candidate;
+                    }
+                }
+
+                // Instancia o projétil para compartilhamento integral da lógica de dano e autoria
                 FlameSparkProjectile projectile = new FlameSparkProjectile(level, player, look.x, look.y, look.z);
-                projectile.setPos(spawnX, spawnY, spawnZ);
-                level.addFreshEntity(projectile);
+                projectile.setPos(spawnPos.x, spawnPos.y, spawnPos.z);
+
+                if (closestEntity != null) {
+                    // Impacto no trecho imediato: aplica exatamente a mesma lógica (5 dano, 5s fogo, fireball) e descarta o projétil
+                    projectile.applySpellImpact(closestEntity);
+                    projectile.discard();
+
+                    level.sendParticles(ParticleTypes.FLAME, closestEntity.getX(), closestEntity.getY() + closestEntity.getBbHeight() * 0.5, closestEntity.getZ(), 10, 0.1, 0.1, 0.1, 0.05);
+                    level.playSound(null, closestEntity.getX(), closestEntity.getY(), closestEntity.getZ(),
+                            SoundEvents.BLAZE_HURT, SoundSource.PLAYERS, 0.9f, 1.2f);
+                } else if (blockHit.getType() != net.minecraft.world.phys.HitResult.Type.MISS) {
+                    // Colisão com obstáculo sólido no trecho inicial: encerra sem atravessar parede
+                    projectile.discard();
+                    level.sendParticles(ParticleTypes.SMOKE, blockHit.getLocation().x, blockHit.getLocation().y, blockHit.getLocation().z, 6, 0.05, 0.05, 0.05, 0.02);
+                } else {
+                    // Trajetória desimpedida: dispara o projétil físico
+                    level.addFreshEntity(projectile);
+                    level.sendParticles(ParticleTypes.FLAME, spawnPos.x, spawnPos.y, spawnPos.z, 8, 0.04, 0.04, 0.04, 0.02);
+                }
 
                 level.playSound(null, player.getX(), player.getY(), player.getZ(),
                         SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 0.9f, 1.3f);
-                level.sendParticles(ParticleTypes.FLAME, spawnX, spawnY, spawnZ, 10, 0.1, 0.1, 0.1, 0.05);
 
-                player.displayClientMessage(Component.literal("§6[Piromancia] §cCentelha Ígnea conjurada! §b(-" + (int) spell.manaCost() + " Mana)"), true);
+                float effectiveCost = br.com.caosarcana.common.talent.CaosArcanaTalentBridge.hasRootUnlocked(player) ? br.com.caosarcana.common.talent.TalentConfig.getRootManaCost() : spell.manaCost();
+                player.displayClientMessage(Component.literal("§6[Piromancia] §cCentelha Ígnea conjurada! §b(-" + formatManaAmount(effectiveCost) + " Mana)"), true);
             }
             case "caosarcana:geada_congelante" -> {
                 Vec3 look = player.getLookAngle();

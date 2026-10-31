@@ -38,7 +38,11 @@ public class ModMessages {
     public static final ResourceLocation SELECT_SPELL_C2S_ID = CaosArcana.id("select_spell");
     public static final ResourceLocation OPEN_GRIMOIRE_STUDY_S2C_ID = CaosArcana.id("open_grimoire_study");
 
+    public static final ResourceLocation REQUEST_RPG_DATA_C2S_ID = CaosArcana.id("request_rpg_data");
+
     public static void registerC2SPackets() {
+        ServerPlayNetworking.registerGlobalReceiver(REQUEST_RPG_DATA_C2S_ID, (server, player, handler, buf, responseSender) ->
+                server.execute(() -> syncPlayerData(player)));
         // Manipulador estrito executado na Server Thread
         ServerPlayNetworking.registerGlobalReceiver(SELECT_RACE_C2S_ID, (server, player, handler, buf, responseSender) -> {
             String raceId = buf.readUtf(64); // Limita tamanho para evitar flood/buffer overflow
@@ -62,10 +66,23 @@ public class ModMessages {
                     rpgPlayer.caosarcana$setChosenRace(true);
                     race.applyModifiers(player);
 
-                    // Concede automaticamente o poder racial exclusivo da linhagem
+                    // Expurgar magias raciais antigas de outras linhagens
+                    java.util.List<String> oldRacialSpells = new java.util.ArrayList<>();
+                    for (String known : rpgPlayer.caosarcana$getKnownSpells()) {
+                        br.com.caosarcana.content.spells.SpellRegistry.get(known).ifPresent(def -> {
+                            if (def.isRacial() && def.requiredRace() != race) {
+                                oldRacialSpells.add(known);
+                            }
+                        });
+                    }
+                    for (String rm : oldRacialSpells) {
+                        rpgPlayer.caosarcana$unlearnSpell(rm);
+                    }
+
+                    // Concede automaticamente o poder racial exclusivo da nova linhagem
                     br.com.caosarcana.content.spells.SpellRegistry.getRacialSpellFor(race).ifPresent(racialSpell -> {
                         rpgPlayer.caosarcana$learnSpell(racialSpell.id());
-                        if (rpgPlayer.caosarcana$getSelectedSpell().isEmpty()) {
+                        if (rpgPlayer.caosarcana$getSelectedSpell().isEmpty() || oldRacialSpells.contains(rpgPlayer.caosarcana$getSelectedSpell())) {
                             rpgPlayer.caosarcana$setSelectedSpell(racialSpell.id());
                         }
                     });
@@ -150,6 +167,9 @@ public class ModMessages {
                 EquipmentValidationHandler.validateAndEnforce(player);
                 EquipmentValidationHandler.processPendingDeliveries(player);
 
+                // Confere e entrega marcos pendentes de talentos (retroativo e idempotente)
+                br.com.caosarcana.content.spells.PyromancyProgressionHandler.checkAndGrantMilestones(player);
+
                 // Se ainda não escolheu a raça, força abertura da tela
                 if (!rpgPlayer.caosarcana$hasChosenRace()) {
                     server.execute(() -> {
@@ -187,6 +207,18 @@ public class ModMessages {
                 newData.caosarcana$setMana(oldData.caosarcana$getMana());
                 newData.caosarcana$setBaseMaxMana(oldData.caosarcana$getBaseMaxMana());
                 newData.caosarcana$setGeneralLevel(oldData.caosarcana$getGeneralLevel());
+
+                // Transfere proficiências de escolas, experiência acumulada e marcos
+                for (String school : java.util.List.of("piromancia", "criomancia", "geada", "eletromancia",
+                        "restauracao", "alteracao", "conjuracao", "ilusao")) {
+                    int lvl = oldData.caosarcana$getSchoolLevel(school);
+                    if (lvl > 1) newData.caosarcana$setSchoolLevel(school, lvl);
+                    int xp = oldData.caosarcana$getSchoolXp(school);
+                    if (xp > 0) newData.caosarcana$setSchoolXp(school, xp);
+                }
+                for (String milestone : oldData.caosarcana$getClaimedMilestones()) {
+                    newData.caosarcana$claimMilestone(milestone);
+                }
 
                 // Transfere integralmente a fila de custódia segura sem perder nenhum item
                 newData.caosarcana$clearPendingDeliveries();
@@ -298,8 +330,8 @@ public class ModMessages {
                                     player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DOLPHINS_GRACE, 40, 0, true, false, true));
                                 }
                             }
-                            case ELFO_NEGRO -> {
-                                // Sangue das Cinzas: extingue chamas o dobro da velocidade sem conceder imunidade total à lava do Nether
+                            case SANGUE_DAEDRA -> {
+                                // Sangue-Daedra: extingue chamas rapidamente se sair do fogo/lava
                                 if (player.isOnFire() && player.getRemainingFireTicks() > 20) {
                                     player.setRemainingFireTicks(player.getRemainingFireTicks() - 20);
                                 }
@@ -325,7 +357,7 @@ public class ModMessages {
                                     }
                                 }
                             }
-                            case GUARDA_VERMELHO -> {
+                            case REDGUARD -> {
                                 // Fôlego Marcial: desacelera a perda de saturação em combate
                                 if (player.getFoodData().needsFood() && server.getTickCount() % 120 == 0) {
                                     player.getFoodData().eat(1, 0.2f);
@@ -368,6 +400,9 @@ public class ModMessages {
             }
             buf.writeUtf(rpgPlayer.caosarcana$getSelectedSpell() != null ? rpgPlayer.caosarcana$getSelectedSpell() : "");
 
+            buf.writeFloat(br.com.caosarcana.common.talent.CaosArcanaTalentBridge.hasRootUnlocked(player)
+                    ? br.com.caosarcana.common.talent.TalentConfig.getRootManaCost()
+                    : br.com.caosarcana.content.spells.SpellRegistry.CENTELHA_IGNEA.manaCost());
             ServerPlayNetworking.send(player, SYNC_RPG_DATA_S2C_ID, buf);
         }
     }

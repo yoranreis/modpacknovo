@@ -17,6 +17,24 @@ public class ClientRPGData {
     private static int generalLevel = 1;
     private static final Set<String> knownSpells = new HashSet<>();
     private static String selectedSpell = "";
+    private static Float sparkManaCost;
+
+    public static void requestEffectiveCosts() {
+        sparkManaCost = null;
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(
+                br.com.caosarcana.common.network.ModMessages.REQUEST_RPG_DATA_C2S_ID,
+                net.fabricmc.fabric.api.networking.v1.PacketByteBufs.create());
+    }
+
+    public static void setSparkManaCost(float value) {
+        sparkManaCost = Float.isFinite(value) && value > 0 ? value : null;
+    }
+
+    public static String manaCostText(br.com.caosarcana.content.spells.SpellDefinition spell) {
+        Float cost = "caosarcana:centelha_ignea".equals(spell.id()) ? sparkManaCost : Float.valueOf(spell.manaCost());
+        return cost == null ? "..." : new java.math.BigDecimal(Float.toString(cost)).stripTrailingZeros().toPlainString();
+    }
+
 
     public static void update(String raceId, boolean chosen, float currentMana, float maximumMana, int level, Set<String> spells, String activeSpell) {
         currentRace = Race.fromId(raceId);

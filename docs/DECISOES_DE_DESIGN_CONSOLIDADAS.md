@@ -112,3 +112,136 @@ Implementado e validado em código e testes unitários:
      * *Provação do Espírito Familiar* -> `caosarcana:familiar_espectral` (Conjuração)
      * *Provação do Véu das Sombras* -> `caosarcana:manto_de_sombras` (Ilusão)
    * Comandos de auditoria e mestres: `/caos provacao listar`, `/caos provacao concluir <id>`, `/caos learn <spell_id>`, `/caos spells`.
+
+
+---
+
+## 7. Decisão Oficial: Aprovação Exclusiva do Novo Elenco de 10 Raças (28/10/2026)
+
+Em 28/10/2026, o usuário formalizou a **aprovação exclusiva do novo elenco de 10 raças jogáveis** para o Caos Arcana:
+
+1. **Humano** (anteriormente Imperial)
+2. **Elfo da Floresta** (Bosmer)
+3. **Alto Elfo** (Altmer)
+4. **Orc** (Orsimer)
+5. **Felino** (Khajiit)
+6. **Nórdico** (Nord)
+7. **Sangue-Daedra** (Dremora — substitui o Bretão)
+8. **Redguard** (anteriormente Guarda Vermelho)
+9. **Argoniano**
+10. **Voidmer** (Elfo do Vazio — substitui o Elfo Negro / Dunmer)
+
+### 7.1 Delimitação Estrita do Escopo Aprovado
+Esta aprovação restringe-se **estritamente à composição e nomenclatura das 10 raças**. Ficam explicitamente **fora desta aprovação e pendentes de decisões futuras independentes**:
+* Novos atributos e modificadores numéricos de atributos;
+* Conjunto de 3 habilidades ativas por raça;
+* Exceção de bypass do Humano (*Versatilidade* para Tiers 1–3);
+* Escala física de entidades, dimensões de hitbox e altura de câmera;
+* Neutralidade pacífica com mobs planares (Nether / The End);
+* Vulnerabilidades elementais ou ambientais (água, calor, frio);
+* Estrutura de 4 Tiers de equipamentos e bônus de conjunto;
+* Sistema de vinculação Soulbound.
+
+### 7.2 Planejamento de Compatibilidade e Migração de Saves
+Nenhuma alteração de código ou modificação de arquivos de save foi executada nesta etapa. O planejamento arquitetural estabelece:
+
+1. **Renomeações Transparentes (`imperial` → `humano` e `guarda_vermelho` → `redguard`):**
+   * Os métodos de desserialização de NBT (`PlayerRPGMixin.readCustomDataFromTag`) e os comandos administrativos aceitarão os IDs antigos como sinônimos permanentes.
+   * O personagem mantém todos os seus dados sem qualquer interrupção, migrando silenciosamente para a nova chave.
+2. **Substituições Temáticas (`bretao` e `elfo_negro`):**
+   * **Proibição de Conversão Compulsória:** Um jogador previamente registrado como Bretão não será forçado a se tornar Sangue-Daedra; um jogador registrado como Dunmer não será forçado a se tornar Voidmer.
+   * **Mecanismo de Re-escolha Livre:** No primeiro carregamento pós-migração, o jogador com `bretao` ou `elfo_negro` terá o status de raça marcada como pendente de confirmação (`caosarcana$hasChosenRace = false`), abrindo automaticamente a interface oficial de seleção (`OPEN_RACE_SELECT_ID`) para que escolha livremente qualquer uma das 10 raças do novo elenco.
+3. **Preservação de Dados do Personagem:**
+   * **Conhecimento de Magias:** Todas as magias universais aprendidas através de Grimórios ou Provações Arcanas permanecem intocadas em `caosarcana$knownSpells`.
+   * **Níveis e Proficiências:** O Nível Geral e as proficiências nas Escolas de Magia (escala oficial de 1 a 100) permanecem 100% inalterados.
+   * **Inventário e Recargas:** O conteúdo dos inventários e os tempos de recarga ativos de feitiços são preservados.
+4. **Tratamento de Poderes Raciais Antigos e Bloqueio Preventivo:**
+   * **Bloqueio Imediato de Poderes:** Personagens aguardando nova seleção racial (`hasChosenRace == false` / `Race.NONE`) ficam **terminantemente impedidos de ativar poderes da raça antiga** enquanto a nova escolha não for formalizada. O vínculo ao feitiço racial anterior é neutralizado imediatamente no carregamento da migração, sem conceder nenhum poder provisório ou indevido.
+   * **Preservação Integral de Dados:** O sistema preserva todos os dados necessários para concluir a migração sem qualquer perda (Nível Geral, proficiências em todas as Escolas de Magia, magias universais em `caosarcana$knownSpells`, inventários, tempos de recarga e itens na fila de custódia segura).
+   * **Atribuição da Nova Linhagem:** No momento em que o jogador confirma sua nova raça na tela de seleção, o feitiço racial correspondente à nova linhagem é então atribuído de forma definitiva.
+5. **Tratamento de Equipamentos com Requisitos Violados:**
+   * Caso a mudança de raça faça com que peças de armadura atualmente equipadas violem os requisitos raciais de uso, o sistema utilizará a infraestrutura existente de **Custódia Segura** (`EquipmentValidationHandler.validateAndEnforce` / `caosarcana$addPendingDelivery`).
+   * A peça é desequipada de forma segura para o inventário; se o inventário estiver lotado, é enviada para a lista de custódia protegida do jogador. Nenhum item é dropado no chão, deletado ou transferido para terceiros.
+
+---
+
+## 8. Planejamento Arquitetural de Soulbound (Decisão Desacoplada e Identificação de Termos)
+
+O conceito de Soulbound permanece em fase de planejamento conceitual e **não está aprovado nem implementado**. A pedido da governança do projeto, seus quatro eixos ortogonais e termos técnicos são explicitamente diferenciados entre **propostas conceituais** e **elementos comprovados no código atual**:
+
+1. **Vínculo ao Jogador (*Proposta Conceitual: `PlayerBinding`*):**
+   * *Status:* **Proposta de design** (não existe classe ou interface `PlayerBinding` no código Java atual).
+   * *Conceito:* Registro do UUID do proprietário legítimo na tag NBT do item (`SoulboundOwnerUUID`). Determina a titularidade pessoal do item (ex: forjado pelo jogador ou recebido como recompensa mística).
+2. **Restrição Racial (`RaceRequirement`):**
+   * *Status:* Mecânica já existente e ativa no `EquipmentRequirementRegistry` (suporte a requisitos de raça via `Set<Race> allowedRaces`).
+   * *Conceito:* Requisito genérico de linhagem biológica ou cultural gerenciado pelo `EquipmentRequirementRegistry` (ex: espada forjada para a fisiologia de um Orc). Independe da titularidade pessoal.
+3. **Possibilidade de Comércio e Transferência (*Proposta: `Tradeability`* / *Comprovado: `RequirementType.TRADE`*):**
+   * *Status:* O termo conceitual `Tradeability` é uma **proposta de design**. No entanto, a constante **`RequirementType.TRADE` está comprovada no código atual**, declarada formalmente no enum [`br.com.caosarcana.common.equipment.RequirementType`](file:///c:/Users/Matt/Desktop/modpacknovo/caos-arcana-mod/src/main/java/br/com/caosarcana/common/equipment/RequirementType.java#L6).
+   * *Conceito:* Avaliado via `RequirementType.TRADE`. Um item com restrição de comércio não pode ser vendido em mercados de vilas, transferido para baús públicos de guildas ou negociado em janelas de troca direta entre jogadores.
+4. **Comportamento na Morte (*Proposta Conceitual: `DeathBehavior`*):**
+   * *Status:* **Proposta de design** (não existe enum ou classe `DeathBehavior` no código Java atual).
+   * *Conceito:* Define o destino do item quando o proprietário morre. O comportamento é dissociado do inventário comum (que dropa no chão):
+     * *Retenção no Inventário:* O item Soulbound permanece nos slots do jogador ao ressuscitar; ou
+     * *Custódia Segura:* O item é recolhido para a fila de entregas pendentes (`PendingDeliveries`) do jogador até que haja espaço para reavê-lo.
+
+---
+
+## 9. Decisão Oficial: Versatilidade do Humano e Restrições de Equipamento (28/10/2026)
+
+Em 28/10/2026, o usuário formalizou a **decisão de design para a Versatilidade do Humano**:
+
+1. **Escopo Estrito do Bypass Racial (T1–T3):**
+   * O Humano pode ignorar **exclusivamente** o requisito racial de equipamentos formalmente classificados como Tier 1 (T1), Tier 2 (T2) ou Tier 3 (T3).
+2. **Inviolabilidade de Outros Requisitos:**
+   * A Versatilidade **não ignora** requisito de Nível Geral, requisito de Proficiência por Escola de Magia, vínculo ao proprietário (Soulbound/Owner UUID), nem quaisquer outros requisitos (ex: tipo de armadura, proficiência em armas ou futuras restrições de classe).
+3. **Não Concessão de Poderes ou Conjuntos:**
+   * O Humano que equipar uma peça pertencente a outra raça (T1–T3) **não recebe** os poderes raciais intrínsecos nem bônus de conjunto exclusivos daquela raça. A peça fornece unicamente seus atributos materiais básicos e propriedades de proteção/dano genéricas.
+4. **Vedação Absoluta ao Tier 4 (T4):**
+   * O Humano **não pode usar equipamentos Tier 4 (T4) exclusivos de outras raças** sob nenhuma circunstância. O Tier 4 representa a expressão máxima cultural/sagrada da raça de origem e é estritamente reservado aos membros legítimos daquela linhagem.
+5. **Itens Sem Tier Explícito:**
+   * Equipamentos que não possuam um Tier explicitamente cadastrado no registro de requisitos **não recebem bypass automático**. Para tais itens, a restrição racial permanece 100% mandatória e inegociável.
+
+### 9.1 Delimitação Estrita do Escopo Aprovado
+Esta decisão aprova unicamente a regra de design de *Versatilidade do Humano*. Permanecem **explicitamente não aprovados**:
+* Os números, valores de proteção, dano e atributos dos equipamentos;
+* O catálogo completo de tiers de equipamentos e listas de peças;
+* O sistema de vinculação Soulbound e suas regras definitivas de ciclo de vida.
+
+---
+
+## 10. Planejamento Futuro: Sistema de Dificuldade de Mobs e Interface de Identificação (29/10/2026)
+
+Este tópico registra as diretrizes estratégicas e pontos de decisão futura para a evolução do combate no Caos Arcana. **Nenhuma funcionalidade ou mod desta seção está implementado ou instalado no lote atual**.
+
+### 10.1 Escopo das Novas Mecânicas
+1. **Níveis e Variação de Dificuldade:**
+   - Aplicável exclusivamente a **mobs hostis**.
+   - Fica **terminantemente vedada a aplicação automática em animais, aldeões e criaturas pacíficas**.
+2. **Interface de Identificação Visual:**
+   - Exibição de HUD/overlay contendo nome, nível e barra/quantidade de vida do mob.
+   - Preferencialmente renderizada de forma contextual ao mirar no alvo (crosshair raycast).
+
+### 10.2 Direção Proposta (Sujeita a Balanceamento Futuro)
+- **Zoneamento por Bioma/Estrutura:**
+  - Superfície inicial delimitada com faixa baixa e teto rígido de dificuldade.
+  - Regiões perigosas, dimensões e dungeons com faixas próprias de nível, comunicadas claramente ao jogador ao adentrar a área.
+- **Isolamento de Veteranos vs. Iniciantes:**
+  - Influência limitada da progressão/nível do jogador na escalada de inimigos da superfície, impedindo que a presença de um veterano torne os arredores do spawn inviáveis para novatos.
+- **Tratamento Especial:**
+  - Chefes (bosses) e criaturas especiais com tratamento e balanceamento individualizados.
+- **Qualidade da Dificuldade:**
+  - O aumento de desafio **não dependerá exclusivamente de inflar vida/esponja de dano**; incluirá variações táticas (velocidade, dano, armadura, resistências elementais).
+- **Escalonamento Econômico:**
+  - Recompensas de loot (moedas, materiais) e ganho de XP devem acompanhar o risco real, contendo farm repetitivo em criaturas triviais.
+
+### 10.3 Decisões Futuras Pendentes de Definição
+- **Métrica de Força do Jogador:** Definição de como calcular a força (apenas nível geral, soma de proficiências, média de equipamentos equipados ou combinação ponderada).
+- **Grupos Múltiplos:** Regras de escalonamento para grupos cooperativos compostos por jogadores com disparidade de níveis.
+- **Atributos Afetados e Limites:** Matriz formal de atributos modificáveis (HP, ataque, armadura, knockback resistance) e seus tetos absolutos.
+- **Compatibilidade e Preservação:** Tratamento de entidades pré-existentes no mundo e preservação integral de mecânicas de mobs de outros mods.
+- **Integração Sistêmica:** Fórmulas de integração entre nível do mob, rendimento de XP de escolas arcanas, pools de moedas e bosses de mods externos.
+
+### 10.4 Diretriz Metodológica Obrigatória para a Frente
+Quando o desenvolvimento deste sistema for formalmente autorizado:
+- **Prioridade a Mods Existentes:** Conduzir estudo preliminar de mods consolidados e compatíveis com Minecraft 1.20.1 e Fabric (tanto para escalonamento de dificuldade quanto para HUD/identificação de alvos).
+- **Não Reinvenção:** Evitar sistemas caseiros duplicados quando houver solução estável, performática e configurável, garantindo interoperabilidade com o ecossistema Fabric e preservando a IA nativa dos mobs de outros mods.
