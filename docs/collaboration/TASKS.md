@@ -368,3 +368,10 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Adicionados registro, grimórios, traduções, modelos temporários e efeitos server-side. As duas armas vinculadas aplicam aprimoramentos temporários; Reanimar cria um zumbi persistente nomeado como servo temporário da sessão.
 - O catálogo universal chegou a 31 magias. `gradlew test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR atualizado no Lote B com SHA-256 `DC441B0E60B2152558F8AD7E8810B42E633509FAAF935D367375D278A1F34784`. Homologação prática de Conjuração será agrupada com Alteração e as demais escolas utilitárias.
+
+### Lote maior de Ilusão — 01/11/2026
+- Implementadas três magias universais de Ilusão: `Clarividência` (nível 1), `Silêncio` (nível 15) e `Fúria` (nível 30).
+- Adicionados registros, grimórios, traduções, modelos temporários e efeitos server-side. Clarividência concede visão noturna/brilho por 30s; Silêncio concede invisibilidade/velocidade por 15s; Fúria provoca mobs próximos e aplica força breve.
+- O catálogo universal chegou a 34 magias. A primeira compilação detectou comparação inválida entre `Mob` e `ServerPlayer` no filtro de Fúria; o filtro foi corrigido para aceitar apenas mobs vivos antes da execução final.
+- `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR atualizado exclusivamente nos ambientes do Lote B com SHA-256 `698DC0013E2057EAA380421D2A0CA0E2A6F54C5F21DF5E9F689466B46A7CE229`. Homologação manual de Ilusão ainda pendente; os efeitos permanecem provisórios e configuráveis apenas quando já cobertos pela configuração existente.

@@ -730,6 +730,28 @@ public class SpellCastHandler {
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ZOMBIE_AMBIENT, SoundSource.PLAYERS, 0.9f, 0.7f);
                 player.displayClientMessage(Component.literal("§9[Conjuração] §fUm Servo Reanimado surgiu ao seu lado!"), true);
             }
+            case "caosarcana:clarividencia" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 600, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 600, 0));
+                level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1.5, player.getZ(), 30, 1.5, 1.0, 1.5, 0.05);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 0.8f, 1.5f);
+                player.displayClientMessage(Component.literal("§5[Ilusão] §dClarividência revelou o caminho por 30s!"), true);
+            }
+            case "caosarcana:silencio" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 300, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 300, 0));
+                level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, player.getX(), player.getY() + 1.0, player.getZ(), 22, 0.4, 0.5, 0.4, 0.03);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.6f, 1.3f);
+                player.displayClientMessage(Component.literal("§5[Ilusão] §dSilêncio encobriu sua presença por 15s!"), true);
+            }
+            case "caosarcana:furia" -> {
+                AABB area = player.getBoundingBox().inflate(spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 10.0);
+                List<Mob> mobs = level.getEntitiesOfClass(Mob.class, area, Mob::isAlive);
+                for (Mob mob : mobs) { mob.setTarget(player); mob.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 160, 0)); }
+                level.sendParticles(ParticleTypes.ANGRY_VILLAGER, player.getX(), player.getY() + 1.2, player.getZ(), 25, 2.5, 0.8, 2.5, 0.04);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.PLAYERS, 0.8f, 1.4f);
+                player.displayClientMessage(Component.literal("§5[Ilusão] §dFúria provocou " + mobs.size() + " criatura(s) próximas!"), true);
+            }
 
             // ==========================================
             // PODERES RACIAIS ESPECÍFICOS (10 RAÇAS)

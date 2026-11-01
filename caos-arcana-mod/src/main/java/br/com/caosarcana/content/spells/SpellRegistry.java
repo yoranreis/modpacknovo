@@ -164,6 +164,19 @@ public class SpellRegistry {
             "Levanta um servo morto-vivo temporário para lutar ao lado do conjurador."
     ));
 
+    public static final SpellDefinition CLARIVIDENCIA = register(new SpellDefinition(
+            "caosarcana:clarividencia", "Clarividência", "ilusao", "Ilusão", 1, 16.0f, 120, 0, 0,
+            "Revela o caminho e destaca pontos de interesse próximos ao conjurador."
+    ));
+    public static final SpellDefinition SILENCIO = register(new SpellDefinition(
+            "caosarcana:silencio", "Silêncio", "ilusao", "Ilusão", 15, 24.0f, 240, 0, 0,
+            "Abafa a presença do conjurador, dificultando que criaturas o percebam."
+    ));
+    public static final SpellDefinition FURIA = register(new SpellDefinition(
+            "caosarcana:furia", "Fúria", "ilusao", "Ilusão", 30, 35.0f, 300, 0, 10.0,
+            "Instiga criaturas próximas a entrarem em combate contra o conjurador."
+    ));
+
     // --- DESTRUIÇÃO: CRIOMANCIA ---
     public static final SpellDefinition GEADA_CONGELANTE = register(new SpellDefinition(
             "caosarcana:geada_congelante",
