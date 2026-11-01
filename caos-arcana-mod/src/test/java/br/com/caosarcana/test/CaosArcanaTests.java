@@ -553,10 +553,10 @@ public class CaosArcanaTests {
     }
 
     @Test
-    @DisplayName("Teste das 10 Magias Universais acessíveis a todas as 10 raças oficiais")
-    public void test10UniversalSpellsAccessibleToAll() {
+    @DisplayName("Teste das 13 Magias Universais acessíveis a todas as 10 raças oficiais")
+    public void testUniversalSpellsAccessibleToAll() {
         var universalSpells = br.com.caosarcana.content.spells.SpellRegistry.getUniversalSpells();
-        assertEquals(10, universalSpells.size(), "Devem existir exatamente 10 magias universais registradas");
+        assertEquals(13, universalSpells.size(), "Devem existir exatamente 13 magias universais registradas neste lote");
 
         Race[] races = {
             Race.HUMANO, Race.ELFO_FLORESTA, Race.ALTO_ELFO, Race.ORC, Race.FELINO,

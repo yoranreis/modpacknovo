@@ -301,6 +301,76 @@ public class SpellCastHandler {
                 float effectiveCost = br.com.caosarcana.common.talent.CaosArcanaTalentBridge.hasRootUnlocked(player) ? br.com.caosarcana.common.talent.TalentConfig.getRootManaCost() : spell.manaCost();
                 player.displayClientMessage(Component.literal("§6[Piromancia] §cCentelha Ígnea conjurada! §b(-" + formatManaAmount(effectiveCost) + " Mana)"), true);
             }
+            case "caosarcana:bola_de_fogo" -> {
+                Vec3 start = player.getEyePosition();
+                Vec3 look = player.getLookAngle();
+                double maxDist = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 24.0;
+                Vec3 end = start.add(look.scale(maxDist));
+                var blockHit = level.clip(new net.minecraft.world.level.ClipContext(start, end,
+                        net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                        net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+                double effectiveDist = blockHit.getType() != net.minecraft.world.phys.HitResult.Type.MISS
+                        ? start.distanceTo(blockHit.getLocation()) : maxDist;
+                LivingEntity primary = null;
+                double best = effectiveDist * effectiveDist;
+                for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class,
+                        new AABB(start, start.add(look.scale(effectiveDist))).inflate(1.0),
+                        e -> e != player && e.isAlive() && !e.isAlliedTo(player))) {
+                    var hit = target.getBoundingBox().inflate(0.2).clip(start, start.add(look.scale(effectiveDist)));
+                    if (hit.isPresent()) {
+                        double distance = start.distanceToSqr(hit.get());
+                        if (distance < best) { best = distance; primary = target; }
+                    }
+                }
+                Vec3 impact = primary != null ? primary.position() : start.add(look.scale(effectiveDist));
+                for (double d = 0.8; d <= Math.max(0.8, start.distanceTo(impact)); d += 0.8) {
+                    Vec3 p = start.add(look.scale(d));
+                    level.sendParticles(ParticleTypes.FLAME, p.x, p.y, p.z, 5, 0.12, 0.12, 0.12, 0.02);
+                }
+                if (primary != null) {
+                    final LivingEntity impactTarget = primary;
+                    impactTarget.hurt(player.damageSources().inFire(), 8.0f);
+                    impactTarget.setSecondsOnFire(4);
+                    for (LivingEntity nearby : level.getEntitiesOfClass(LivingEntity.class,
+                            impactTarget.getBoundingBox().inflate(2.0), e -> e != player && e != impactTarget && e.isAlive() && !e.isAlliedTo(player))) {
+                        nearby.hurt(player.damageSources().inFire(), 4.0f);
+                        nearby.setSecondsOnFire(2);
+                    }
+                }
+                level.sendParticles(ParticleTypes.FLAME, impact.x, impact.y + 0.5, impact.z, 30, 0.6, 0.5, 0.6, 0.08);
+                level.playSound(null, impact.x, impact.y, impact.z, SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 0.8f, 1.2f);
+                player.displayClientMessage(Component.literal("§6[Piromancia] §cBola de Fogo explodiu! §b(-" + formatManaAmount(spell.manaCost()) + " Mana)"), true);
+            }
+            case "caosarcana:manto_de_chamas" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 0));
+                AABB area = player.getBoundingBox().inflate(4.0);
+                for (LivingEntity enemy : level.getEntitiesOfClass(LivingEntity.class, area,
+                        e -> e != player && e.isAlive() && !e.isAlliedTo(player))) {
+                    enemy.hurt(player.damageSources().inFire(), 5.0f);
+                    enemy.setSecondsOnFire(5);
+                }
+                level.sendParticles(ParticleTypes.FLAME, player.getX(), player.getY() + 1.0, player.getZ(), 40, 2.0, 1.0, 2.0, 0.08);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLAZE_AMBIENT, SoundSource.PLAYERS, 1.0f, 0.8f);
+                player.displayClientMessage(Component.literal("§6[Piromancia] §cManto de Chamas ativo por 10s!"), true);
+            }
+            case "caosarcana:muralha_de_chamas" -> {
+                Vec3 start = player.getEyePosition();
+                Vec3 look = player.getLookAngle();
+                double length = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 12.0;
+                java.util.Set<LivingEntity> affected = new java.util.HashSet<>();
+                for (double d = 1.0; d <= length; d += 1.0) {
+                    Vec3 center = start.add(look.scale(d));
+                    level.sendParticles(ParticleTypes.FLAME, center.x, center.y, center.z, 12, 0.9, 0.7, 0.9, 0.03);
+                    for (LivingEntity enemy : level.getEntitiesOfClass(LivingEntity.class, new AABB(center, center).inflate(1.3),
+                            e -> e != player && e.isAlive() && !e.isAlliedTo(player) && !affected.contains(e))) {
+                        affected.add(enemy);
+                        enemy.hurt(player.damageSources().inFire(), 6.0f);
+                        enemy.setSecondsOnFire(6);
+                    }
+                }
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 1.0f, 0.7f);
+                player.displayClientMessage(Component.literal("§6[Piromancia] §cMuralha de Chamas projetada!"), true);
+            }
             case "caosarcana:geada_congelante" -> {
                 Vec3 look = player.getLookAngle();
                 Vec3 start = player.getEyePosition();

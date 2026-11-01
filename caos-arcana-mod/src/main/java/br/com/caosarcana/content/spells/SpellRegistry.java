@@ -31,6 +31,46 @@ public class SpellRegistry {
             "Dispara uma centelha de chamas arcanas que incendeia o alvo atingido e causa dano de fogo contínuo."
     ));
 
+    /** Valores provisórios do primeiro lote jogável de Piromancia. */
+    public static final SpellDefinition BOLA_DE_FOGO = register(new SpellDefinition(
+            "caosarcana:bola_de_fogo",
+            "Bola de Fogo",
+            "piromancia",
+            "Piromancia (Destruição)",
+            10,
+            30.0f,
+            80,
+            0,
+            24.0,
+            "Projétil explosivo de fogo que atinge um alvo e incendeia criaturas próximas."
+    ));
+
+    public static final SpellDefinition MANTO_DE_CHAMAS = register(new SpellDefinition(
+            "caosarcana:manto_de_chamas",
+            "Manto de Chamas",
+            "piromancia",
+            "Piromancia (Destruição)",
+            20,
+            40.0f,
+            300,
+            200,
+            4.0,
+            "Envolve o conjurador em chamas, protegendo-o do fogo e queimando inimigos próximos."
+    ));
+
+    public static final SpellDefinition MURALHA_DE_CHAMAS = register(new SpellDefinition(
+            "caosarcana:muralha_de_chamas",
+            "Muralha de Chamas",
+            "piromancia",
+            "Piromancia (Destruição)",
+            25,
+            50.0f,
+            400,
+            100,
+            12.0,
+            "Projeta uma faixa de fogo à frente do conjurador, queimando inimigos que a atravessam."
+    ));
+
     // --- DESTRUIÇÃO: CRIOMANCIA ---
     public static final SpellDefinition GEADA_CONGELANTE = register(new SpellDefinition(
             "caosarcana:geada_congelante",
