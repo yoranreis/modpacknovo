@@ -291,3 +291,12 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - A árvore permanece deliberadamente com a raiz e os dois focos mutuamente exclusivos. A proposta aprovada restringe o protótipo aos modificadores da Centelha e exclui novos feitiços ativos como nós; portanto não foram inventados nós para Bola de Fogo, Manto ou Muralha.
 - Os três novos grimórios integram a camada de estudo/conhecimento, enquanto a especialização continua sendo concedida pelos marcos 10/25 e apresentada pelo Pufferfish. Essa separação preserva a ponte opcional e evita duplicar a fonte de verdade.
 - Nenhuma alteração adicional de árvore foi necessária neste lote. A próxima validação é prática no cliente Lote B, não mais uma microedição de JSON.
+
+### Homologação prática dos grimórios e conjuração — 01/11/2026
+- Servidor e cliente isolados do Lote B iniciados com o JAR `443B1E24E0CA5CF3136C97D6F2863821BC553740E810CFBFE7196E2818A10D49`; o servidor carregou o registro dos novos grimórios e o datapack da árvore sem erro de mod.
+- **PASSOU:** `grimorio_bola_de_fogo` abriu a tela de estudo mostrando Piromancia, requisito 10, custo 30, recarga 80 ticks e alcance 24; o conhecimento foi gravado permanentemente. A tela de seleção listou Bola de Fogo, Manto de Chamas e Muralha de Chamas junto do poder racial.
+- **PASSOU:** Bola de Fogo foi selecionada e conjurada pela tecla V; a mensagem confirmou explosão e consumo de 30 Mana, com partículas de fogo visíveis.
+- **PASSOU:** Manto de Chamas foi selecionado/conjurado; mensagem confirmou ativação por 10s e o ícone de efeito apareceu no HUD.
+- **PASSOU:** Muralha de Chamas foi selecionada/conjurada; mensagem confirmou projeção e partículas/faixa de fogo visíveis.
+- A sessão foi encerrada normalmente pelo menu/RCON; nenhum processo Java de teste permaneceu. OP temporário de `Homologa31` foi removido e `ops.json` restaurado para `[]`. Nenhum cliente principal ou mundo original foi tocado.
+- Limite: a sessão validou fluxo, requisitos, mensagens, mana e apresentação visual; não mede numericamente dano, duração do fogo ou raio contra alvos controlados. Os valores continuam provisórios.
