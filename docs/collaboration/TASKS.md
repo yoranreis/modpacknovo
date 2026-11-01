@@ -411,4 +411,11 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - A primeira compilação encontrou a API correta de iteração (`getAllEntities()` é `Iterable` em 1.20.1); ajuste aplicado antes do build final.
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 44 testes, zero falhas/erros/ignorados.
 - JAR atualizado no Lote B com SHA-256 `6D3191D264777A779AEFDB63F5A9BAB00B31E255AF9FA6CAD6D13F02F4057EE4`. Homologação prática da expiração ainda pendente.
+
+### Correção de modelos de itens legados — 01/11/2026
+- A inicialização prática do cliente isolado revelou avisos de modelos ausentes para grimórios antigos e moedas (`grimorio_espada`, `grimorio_cura`, `grimorio_relampago`, `grimorio_carvalho`, `grimorio_circulo_sagrado`, `grimorio_luz`, `grimorio_familiar`, `grimorio_sombras`, `moeda_*`).
+- Adicionados os 11 JSONs de modelo usando temporariamente a textura já existente da Centelha, eliminando o erro de arquivo ausente sem introduzir novas texturas ou dependências. A substituição visual por arte final permanece pendente.
+- O cliente não pôde concluir a homologação nesta tentativa porque o launcher isolado recebeu HTTP 401 na autenticação; nenhuma sessão do perfil principal foi usada.
+- `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 44 testes, zero falhas/erros/ignorados.
+- JAR atualizado no Lote B com SHA-256 `5F130C4346F2DA8E18CD040D766C260BC76BD35485C6A15E1C503E432BD902FF`.
 - Adicionado contrato automatizado para as oito magias mais recentes, validando escola, mana, recarga e descrição. A suíte final passou com **44 testes**, zero falhas/erros/ignorados; o conteúdo do JAR permaneceu idêntico.
