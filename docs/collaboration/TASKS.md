@@ -312,3 +312,8 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Valores padrão preservados: Bola `8/4s`; Manto `10s`, raio `4`, dano `5`, fogo `5s`; Muralha dano `6`, fogo `6s`, comprimento `12`. Cada campo possui limites de segurança no carregamento.
 - O código de conjuração lê a configuração no servidor e as mensagens do Manto refletem sua duração efetiva. A metadata de custo/recarga continua no registro mestre, preservando a tela de seleção e os contratos já homologados.
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados. O JAR atualizado foi copiado ao Lote B com SHA-256 `0A1E373C8A3611DF94B7082865B1E07C4A85CC093742A9E1BF664A1305779EF6` nos três artefatos.
+
+### Verificação de migração da configuração no servidor — 01/11/2026
+- Servidor descartável do Lote B iniciou com o JAR `0A1E373C8A3611DF94B7082865B1E07C4A85CC093742A9E1BF664A1305779EF6`, carregou o mod e chegou a `Done` sem erros de registro.
+- A configuração existente foi migrada automaticamente e passou a conter os nove campos da expansão (`fireball*`, `flameCloak*`, `flameWall*`) com os valores padrão esperados.
+- Servidor encerrado por RCON/`stop`; nenhum processo Java permaneceu ativo. Nenhum cliente ou mundo principal foi tocado.
