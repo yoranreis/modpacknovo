@@ -519,6 +519,31 @@ public class CaosArcanaTests {
     }
 
     @Test
+    @DisplayName("Teste dos contratos do primeiro lote expandido de Piromancia")
+    public void testPyromancyExpansionMetadata() {
+        var bola = br.com.caosarcana.content.spells.SpellRegistry.get("caosarcana:bola_de_fogo").orElseThrow();
+        var manto = br.com.caosarcana.content.spells.SpellRegistry.get("caosarcana:manto_de_chamas").orElseThrow();
+        var muralha = br.com.caosarcana.content.spells.SpellRegistry.get("caosarcana:muralha_de_chamas").orElseThrow();
+
+        assertEquals("piromancia", bola.school());
+        assertEquals(10, bola.minSchoolLevel());
+        assertEquals(30.0f, bola.manaCost(), 0.01f);
+        assertEquals(80, bola.cooldownTicks());
+        assertEquals(24.0, bola.maxDistanceBlocks(), 0.01);
+
+        assertEquals("piromancia", manto.school());
+        assertEquals(20, manto.minSchoolLevel());
+        assertEquals(40.0f, manto.manaCost(), 0.01f);
+        assertEquals(300, manto.cooldownTicks());
+
+        assertEquals("piromancia", muralha.school());
+        assertEquals(25, muralha.minSchoolLevel());
+        assertEquals(50.0f, muralha.manaCost(), 0.01f);
+        assertEquals(400, muralha.cooldownTicks());
+        assertTrue(muralha.description().contains("faixa de fogo"));
+    }
+
+    @Test
     @DisplayName("Teste de validação dos Poderes Raciais exclusivos e restrição entre raças")
     public void test10RacialPowersRegisteredAndExclusive() {
         Race[] racesWithPowers = {

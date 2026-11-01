@@ -25,7 +25,7 @@ import java.util.UUID;
 
 /**
  * Centralizador de regras e validação no servidor para conjuração de magias.
- * Executa as 10 magias raciais exclusivas e as 10 magias universais do Caos Arcana.
+ * Executa os poderes raciais exclusivos e as magias universais registradas do Caos Arcana.
  */
 public class SpellCastHandler {
     public static final String CENTELHA_IGNEA_ID = "caosarcana:centelha_ignea";

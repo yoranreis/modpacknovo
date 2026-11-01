@@ -300,3 +300,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - **PASSOU:** Muralha de Chamas foi selecionada/conjurada; mensagem confirmou projeção e partículas/faixa de fogo visíveis.
 - A sessão foi encerrada normalmente pelo menu/RCON; nenhum processo Java de teste permaneceu. OP temporário de `Homologa31` foi removido e `ops.json` restaurado para `[]`. Nenhum cliente principal ou mundo original foi tocado.
 - Limite: a sessão validou fluxo, requisitos, mensagens, mana e apresentação visual; não mede numericamente dano, duração do fogo ou raio contra alvos controlados. Os valores continuam provisórios.
+
+### Cobertura de regressão da expansão — 01/11/2026
+- Corrigido um comentário desatualizado que ainda dizia haver exatamente 10 magias universais; o código agora descreve o registro de forma neutra.
+- Adicionado teste automatizado específico para os contratos de Bola de Fogo, Manto de Chamas e Muralha de Chamas (escola, níveis, custos, recargas, alcance e descrição). A suíte passou com **43 testes**, zero falhas/erros/ignorados.
+- O JAR não mudou de conteúdo em relação ao lote homologado; hash confirmado novamente nos ambientes do Lote B: `443B1E24E0CA5CF3136C97D6F2863821BC553740E810CFBFE7196E2818A10D49`.
+- Próxima frente autorizada: medição opcional de dano/fogo em alvo controlado ou preparação do próximo bloco de magias, sem alterar a árvore de talentos aprovada.
