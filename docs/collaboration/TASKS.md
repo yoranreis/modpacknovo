@@ -349,3 +349,10 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Cada uma recebeu registro, grimório, traduções, modelo temporário e caminho completo de estudo, seleção e conjuração. Efeitos provisórios: cura direta, regeneração de 6s e resistência por 8s.
 - O catálogo universal chegou a 25 magias. `gradlew test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR atualizado no Lote B com SHA-256 `6E26DAE329DA98AA172652773E96C851BF8954952D20CAEFF60F4075354BD842`. Homologação prática de Restauração será agrupada com a sessão pendente de Criomancia/Eletromancia.
+
+### Correção de acesso à seleção e homologação conjunta parcial — 01/11/2026
+- Identificado e corrigido um bloqueio real: `SpellSelectionScreen` renderizava apenas as primeiras sete magias aprendidas, tornando o restante do catálogo inacessível pela tecla R. A tela agora pagina a lista com setas e indicador de página, sem redesenho amplo.
+- No servidor/cliente descartáveis, os níveis de Criomancia, Eletromancia e Restauração foram definidos para 50 e as nove magias pendentes foram aprendidas com comando administrativo. A lista de seleção confirmou a presença de novas entradas como Nevasca e Cura Básica; Nevasca foi selecionada e conjurada com partículas de neve visíveis.
+- As mensagens do servidor confirmaram o aprendizado de Dardo de Gelo, Espiga de Gelo, Nevasca, Faísca Elétrica, Corrente de Relâmpago, Tempestade de Raios, Cura Básica, Cura Rápida e Barreira Menor.
+- Cliente e servidor foram encerrados normalmente antes da cópia do JAR. Build/test passou com 43 testes; JAR atualizado no Lote B com SHA-256 `16015314E0E3A41BB030D3DBE9147DD5801AD2C352A538C67C96706A4C9F1B5E`.
+- Limite: a sessão confirmou aprendizado, paginação, seleção e conjuração representativa; não declara nove efeitos individuais como homologados numericamente. A melhoria de paginação é necessária antes de ampliar o catálogo além das 25 magias.

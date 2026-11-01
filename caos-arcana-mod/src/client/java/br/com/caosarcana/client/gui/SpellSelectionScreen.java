@@ -27,6 +27,8 @@ import java.util.Optional;
 public class SpellSelectionScreen extends Screen {
     private final int boxWidth = 340;
     private final int boxHeight = 220;
+    private static final int PAGE_SIZE = 7;
+    private int page = 0;
     private String inspectedSpellId = "";
     private Button selectActiveButton;
 
@@ -76,13 +78,18 @@ public class SpellSelectionScreen extends Screen {
             return;
         }
 
+        int pageCount = Math.max(1, (learnedSpells.size() + PAGE_SIZE - 1) / PAGE_SIZE);
+        page = Math.max(0, Math.min(page, pageCount - 1));
+        int pageStart = page * PAGE_SIZE;
+        int pageEnd = Math.min(learnedSpells.size(), pageStart + PAGE_SIZE);
+
         // Coluna da esquerda: botões para listar magias aprendidas
         int listX = left + 12;
         int listStartY = top + 36;
         int itemBtnWidth = 118;
         int itemBtnHeight = 22;
 
-        for (int i = 0; i < learnedSpells.size() && i < 7; i++) {
+        for (int i = pageStart; i < pageEnd; i++) {
             String spellId = learnedSpells.get(i);
             Optional<SpellDefinition> defOpt = SpellRegistry.get(spellId);
             String name = defOpt.map(SpellDefinition::name).orElse(spellId);
@@ -93,11 +100,23 @@ public class SpellSelectionScreen extends Screen {
                     ? Component.literal("★ " + name).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)
                     : (isRacial ? Component.literal("✦ " + name).withStyle(ChatFormatting.AQUA) : Component.literal(name));
 
-            int btnY = listStartY + (i * (itemBtnHeight + 2));
+            int btnY = listStartY + ((i - pageStart) * (itemBtnHeight + 2));
             this.addRenderableWidget(Button.builder(btnTitle, btn -> {
                 this.inspectedSpellId = spellId;
                 this.rebuildWidgets();
             }).bounds(listX, btnY, itemBtnWidth, itemBtnHeight).build());
+        }
+
+        if (pageCount > 1) {
+            int navY = top + boxHeight - 34;
+            this.addRenderableWidget(Button.builder(Component.literal("◀"), btn -> {
+                page = Math.max(0, page - 1);
+                this.rebuildWidgets();
+            }).bounds(listX, navY, 26, 20).build());
+            this.addRenderableWidget(Button.builder(Component.literal("▶"), btn -> {
+                page = Math.min(pageCount - 1, page + 1);
+                this.rebuildWidgets();
+            }).bounds(listX + 92, navY, 26, 20).build());
         }
 
         // Painel da direita: botão para selecionar como ativa
@@ -167,6 +186,10 @@ public class SpellSelectionScreen extends Screen {
 
         // Título Principal
         graphics.drawCenteredString(this.font, "§6§l✦ Grimório de Magias Aprendidas ✦", centerX, top + 12, 0xFFFFFF);
+        int pageCount = Math.max(1, (ClientRPGData.getKnownSpells().size() + PAGE_SIZE - 1) / PAGE_SIZE);
+        if (pageCount > 1) {
+            graphics.drawCenteredString(this.font, "§7Página " + (page + 1) + "/" + pageCount, left + 70, top + boxHeight - 28, 0xAAAAAA);
+        }
         graphics.fill(left + 15, top + 26, left + boxWidth - 15, top + 27, 0xFF7D5F31);
 
         // Divisória vertical entre a lista e os detalhes
