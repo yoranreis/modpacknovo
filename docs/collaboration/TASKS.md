@@ -343,3 +343,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Adicionados registros, grimórios, traduções, modelos temporários e conjuração no servidor. Os efeitos provisórios cobrem alvo único, encadeamento para criaturas próximas e área elétrica ao redor do conjurador.
 - O contrato universal foi atualizado para 22 magias. `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR copiado aos ambientes isolados do Lote B com SHA-256 `A265268AD18CE0836A7BC482D92D2AB6A802882F4604030CE5F9EE33FBDEF04A`. Homologação manual deste lote fica para a próxima sessão conjunta com a Criomancia.
+
+### Lote maior de Restauração — 01/11/2026
+- Implementadas três magias universais de Restauração: `Cura Básica` (nível 1), `Cura Rápida` (nível 15) e `Barreira Menor` (nível 30).
+- Cada uma recebeu registro, grimório, traduções, modelo temporário e caminho completo de estudo, seleção e conjuração. Efeitos provisórios: cura direta, regeneração de 6s e resistência por 8s.
+- O catálogo universal chegou a 25 magias. `gradlew test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR atualizado no Lote B com SHA-256 `6E26DAE329DA98AA172652773E96C851BF8954952D20CAEFF60F4075354BD842`. Homologação prática de Restauração será agrupada com a sessão pendente de Criomancia/Eletromancia.

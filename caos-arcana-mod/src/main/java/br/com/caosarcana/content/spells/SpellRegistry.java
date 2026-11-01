@@ -125,6 +125,19 @@ public class SpellRegistry {
             "Convoca uma tempestade elétrica concentrada que atinge inimigos ao redor do conjurador."
     ));
 
+    public static final SpellDefinition CURA_BASICA = register(new SpellDefinition(
+            "caosarcana:cura_basica", "Cura Básica", "restauracao", "Restauração", 1, 18.0f, 100, 0, 0,
+            "Restaura uma pequena quantidade de vida do conjurador."
+    ));
+    public static final SpellDefinition CURA_RAPIDA = register(new SpellDefinition(
+            "caosarcana:cura_rapida", "Cura Rápida", "restauracao", "Restauração", 15, 35.0f, 240, 0, 0,
+            "Aplica regeneração acelerada ao conjurador por alguns segundos."
+    ));
+    public static final SpellDefinition BARREIRA_MENOR = register(new SpellDefinition(
+            "caosarcana:barreira_menor", "Barreira Menor", "restauracao", "Restauração", 30, 45.0f, 300, 0, 0,
+            "Forma uma barreira arcana que reduz o dano recebido temporariamente."
+    ));
+
     // --- DESTRUIÇÃO: CRIOMANCIA ---
     public static final SpellDefinition GEADA_CONGELANTE = register(new SpellDefinition(
             "caosarcana:geada_congelante",

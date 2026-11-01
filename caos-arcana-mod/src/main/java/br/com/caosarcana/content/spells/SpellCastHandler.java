@@ -664,6 +664,25 @@ public class SpellCastHandler {
                 player.displayClientMessage(Component.literal("§5[Ilusão] §dManto de Sombras encobre sua presença aos olhos do mundo!"), true);
             }
 
+            case "caosarcana:cura_basica" -> {
+                player.heal(4.0f);
+                level.sendParticles(ParticleTypes.HEART, player.getX(), player.getY() + 1.0, player.getZ(), 8, 0.3, 0.4, 0.3, 0.04);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.6f, 1.6f);
+                player.displayClientMessage(Component.literal("§a[Restauração] §fCura Básica restaurou sua vitalidade!"), true);
+            }
+            case "caosarcana:cura_rapida" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 1));
+                level.sendParticles(ParticleTypes.HAPPY_VILLAGER, player.getX(), player.getY() + 1.0, player.getZ(), 18, 0.4, 0.5, 0.4, 0.04);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 0.8f, 1.4f);
+                player.displayClientMessage(Component.literal("§a[Restauração] §fCura Rápida aplicada por 6s!"), true);
+            }
+            case "caosarcana:barreira_menor" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 160, 0));
+                level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1.0, player.getZ(), 25, 1.0, 1.0, 1.0, 0.05);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 0.8f, 1.3f);
+                player.displayClientMessage(Component.literal("§a[Restauração] §fBarreira Menor protegeu você por 8s!"), true);
+            }
+
             // ==========================================
             // PODERES RACIAIS ESPECÍFICOS (10 RAÇAS)
             // ==========================================
