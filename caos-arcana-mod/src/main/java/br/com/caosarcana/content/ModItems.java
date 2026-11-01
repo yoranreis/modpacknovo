@@ -28,6 +28,9 @@ public class ModItems {
     public static final Item GRIMORIO_FAISCA_ELETRICA = new SpellGrimoireItem("caosarcana:faisca_eletrica");
     public static final Item GRIMORIO_CORRENTE_DE_RELAMPAGO = new SpellGrimoireItem("caosarcana:corrente_de_relampago");
     public static final Item GRIMORIO_TEMPESTADE_DE_RAIOS = new SpellGrimoireItem("caosarcana:tempestade_de_raios");
+    public static final Item GRIMORIO_MURALHA_DE_GELO = new SpellGrimoireItem("caosarcana:muralha_de_gelo");
+    public static final Item GRIMORIO_NEVASCA_MAXIMA = new SpellGrimoireItem("caosarcana:nevasca_maxima");
+    public static final Item GRIMORIO_TEMPESTADE_ELETRICA_GLOBAL = new SpellGrimoireItem("caosarcana:tempestade_eletrica_global");
     public static final Item GRIMORIO_CURA_BASICA = new SpellGrimoireItem("caosarcana:cura_basica");
     public static final Item GRIMORIO_CURA_RAPIDA = new SpellGrimoireItem("caosarcana:cura_rapida");
     public static final Item GRIMORIO_BARREIRA_MENOR = new SpellGrimoireItem("caosarcana:barreira_menor");
@@ -81,6 +84,9 @@ public class ModItems {
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_faisca_eletrica"), GRIMORIO_FAISCA_ELETRICA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_corrente_de_relampago"), GRIMORIO_CORRENTE_DE_RELAMPAGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_tempestade_de_raios"), GRIMORIO_TEMPESTADE_DE_RAIOS);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_muralha_de_gelo"), GRIMORIO_MURALHA_DE_GELO);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_nevasca_maxima"), GRIMORIO_NEVASCA_MAXIMA);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_tempestade_eletrica_global"), GRIMORIO_TEMPESTADE_ELETRICA_GLOBAL);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura_basica"), GRIMORIO_CURA_BASICA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura_rapida"), GRIMORIO_CURA_RAPIDA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_barreira_menor"), GRIMORIO_BARREIRA_MENOR);

@@ -390,3 +390,10 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - A primeira compilação identificou um nome de som incompatível com 1.20.1; substituído pelo identificador oficial existente antes do build final.
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR copiado somente aos ambientes do Lote B com SHA-256 `ACDD5A9F33888D9819A69499F3895484B9B217D7B87BE73D51F9B778313FAD65`. Homologação manual deste lote ainda pendente.
+
+### Lote Mestre de Destruição — 01/11/2026
+- Implementadas três magias universais de alto nível do catálogo: `Muralha de Gelo` (Criomancia), `Nevasca Máxima` (Criomancia) e `Tempestade Elétrica Global` (Eletromancia).
+- Os efeitos são server-side e provisórios: faixa congelante à frente, área de congelamento ampliada e descarga elétrica em criaturas hostis próximas. Nenhum bloco permanente é criado.
+- Cada magia recebeu registro, grimório, tradução, modelo temporário e fluxo completo de estudo, seleção, mana e recarga. O catálogo universal chegou a 48 magias.
+- `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR atualizado somente no Lote B com SHA-256 `AFF98F20D90C032BDA0D5F37710DCFEBDF5125C7713927BB9AC4D3C5FFF2224A`. Homologação manual deste lote e do lote elemental anterior permanecem pendentes.

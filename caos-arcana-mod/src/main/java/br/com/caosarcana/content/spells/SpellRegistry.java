@@ -124,6 +124,18 @@ public class SpellRegistry {
             45, 70.0f, 700, 0, 10.0,
             "Convoca uma tempestade elétrica concentrada que atinge inimigos ao redor do conjurador."
     ));
+    public static final SpellDefinition MURALHA_DE_GELO = register(new SpellDefinition(
+            "caosarcana:muralha_de_gelo", "Muralha de Gelo", "criomancia", "Criomancia (Destruição)", 30, 52.0f, 420, 100, 12.0,
+            "Projeta uma barreira congelante que fere e retarda criaturas em sua passagem."
+    ));
+    public static final SpellDefinition NEVASCA_MAXIMA = register(new SpellDefinition(
+            "caosarcana:nevasca_maxima", "Nevasca Máxima", "criomancia", "Criomancia (Destruição)", 60, 90.0f, 1000, 0, 12.0,
+            "Convoca um vórtice de gelo devastador ao redor do conjurador."
+    ));
+    public static final SpellDefinition TEMPESTADE_ELETRICA_GLOBAL = register(new SpellDefinition(
+            "caosarcana:tempestade_eletrica_global", "Tempestade Elétrica Global", "eletromancia", "Eletromancia (Destruição)", 65, 100.0f, 1200, 0, 16.0,
+            "Descarrega raios arcanos em todas as criaturas hostis próximas."
+    ));
 
     public static final SpellDefinition CURA_BASICA = register(new SpellDefinition(
             "caosarcana:cura_basica", "Cura Básica", "restauracao", "Restauração", 1, 18.0f, 100, 0, 0,

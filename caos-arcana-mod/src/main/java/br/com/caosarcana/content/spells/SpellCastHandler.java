@@ -508,6 +508,43 @@ public class SpellCastHandler {
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 1.0f, 0.8f);
                 player.displayClientMessage(Component.literal("§e[Eletromancia] §fTempestade de Raios invocada!"), true);
             }
+            case "caosarcana:muralha_de_gelo" -> {
+                double radius = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 12.0;
+                Vec3 look = player.getLookAngle();
+                Vec3 center = player.position().add(look.scale(4.0));
+                for (LivingEntity enemy : level.getEntitiesOfClass(LivingEntity.class, new AABB(center, center).inflate(radius * 0.5, 2.0, radius * 0.5), e -> e != player && e.isAlive() && !e.isAlliedTo(player))) {
+                    enemy.hurt(player.damageSources().magic(), 8.0f);
+                    enemy.setTicksFrozen(160);
+                    enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 140, 2));
+                }
+                level.sendParticles(ParticleTypes.SNOWFLAKE, center.x, center.y + 1.0, center.z, 100, radius * 0.5, 1.5, radius * 0.5, 0.04);
+                level.playSound(null, center.x, center.y, center.z, SoundEvents.POWDER_SNOW_PLACE, SoundSource.PLAYERS, 1.0f, 1.1f);
+                player.displayClientMessage(Component.literal("§b[Criomancia] §fMuralha de Gelo projetada à frente!"), true);
+            }
+            case "caosarcana:nevasca_maxima" -> {
+                double radius = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 12.0;
+                List<LivingEntity> enemies = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius), e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+                for (LivingEntity enemy : enemies) {
+                    enemy.hurt(player.damageSources().magic(), 16.0f);
+                    enemy.setTicksFrozen(360);
+                    enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 260, 3));
+                }
+                level.sendParticles(ParticleTypes.SNOWFLAKE, player.getX(), player.getY() + 1.0, player.getZ(), 220, radius * 0.7, 2.0, radius * 0.7, 0.06);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.POWDER_SNOW_PLACE, SoundSource.PLAYERS, 1.0f, 0.55f);
+                player.displayClientMessage(Component.literal("§b[Criomancia] §fNevasca Máxima atingiu " + enemies.size() + " criatura(s)!"), true);
+            }
+            case "caosarcana:tempestade_eletrica_global" -> {
+                double radius = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 16.0;
+                List<LivingEntity> enemies = level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius), e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+                for (LivingEntity enemy : enemies) {
+                    enemy.hurt(player.damageSources().lightningBolt(), 18.0f);
+                    enemy.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 240, 1));
+                    level.sendParticles(ParticleTypes.ELECTRIC_SPARK, enemy.getX(), enemy.getY() + 1.0, enemy.getZ(), 28, 0.3, 0.8, 0.3, 0.1);
+                }
+                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, player.getX(), player.getY() + 1.0, player.getZ(), 180, radius * 0.7, 2.0, radius * 0.7, 0.12);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 1.0f, 0.55f);
+                player.displayClientMessage(Component.literal("§e[Eletromancia] §fTempestade Elétrica Global atingiu " + enemies.size() + " criatura(s)!"), true);
+            }
             case "caosarcana:geada_congelante" -> {
                 Vec3 look = player.getLookAngle();
                 Vec3 start = player.getEyePosition();
