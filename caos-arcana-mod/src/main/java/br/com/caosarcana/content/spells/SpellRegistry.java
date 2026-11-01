@@ -89,6 +89,24 @@ public class SpellRegistry {
             "Convoca uma explosão de chamas ao redor do conjurador, atingindo inimigos próximos."
     ));
 
+    public static final SpellDefinition DARDO_DE_GELO = register(new SpellDefinition(
+            "caosarcana:dardo_de_gelo", "Dardo de Gelo", "criomancia", "Criomancia (Destruição)",
+            1, 20.0f, 30, 0, 28.0,
+            "Dispara uma lâmina de gelo que causa dano e reduz a velocidade do alvo."
+    ));
+
+    public static final SpellDefinition ESPIGA_DE_GELO = register(new SpellDefinition(
+            "caosarcana:espiga_de_gelo", "Espiga de Gelo", "criomancia", "Criomancia (Destruição)",
+            15, 35.0f, 100, 0, 24.0,
+            "Lança uma espiga congelante que atravessa a linha de visão e imobiliza brevemente o primeiro alvo."
+    ));
+
+    public static final SpellDefinition NEVASCA = register(new SpellDefinition(
+            "caosarcana:nevasca", "Nevasca", "criomancia", "Criomancia (Destruição)",
+            40, 65.0f, 600, 0, 8.0,
+            "Invoca uma nevasca concentrada ao redor do conjurador, congelando inimigos próximos."
+    ));
+
     // --- DESTRUIÇÃO: CRIOMANCIA ---
     public static final SpellDefinition GEADA_CONGELANTE = register(new SpellDefinition(
             "caosarcana:geada_congelante",

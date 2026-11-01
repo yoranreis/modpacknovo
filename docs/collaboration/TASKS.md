@@ -331,3 +331,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - **PASSOU:** Tempestade de Fogo abriu o estudo com requisito 50, custo 80, recarga 800 ticks e alcance 8; foi aprendida, listada e ativada. A primeira tentativa foi bloqueada corretamente por mana insuficiente; após `/caos setmana 100`, a conjuração ativou a recarga de 800 ticks, confirmando o caminho de consumo/recarga.
 - Cliente e servidor do Lote B foram encerrados normalmente. OP temporário removido e `ops.json` restaurado para `[]`; nenhum processo Java de teste permaneceu.
 - Limite: a homologação confirmou jornada, requisitos, custo, bloqueio de mana, recarga e efeitos visuais; ainda não mede dano/fogo numérico contra alvo controlado.
+
+### Lote maior de Criomancia — 01/11/2026
+- Implementadas três magias universais de Criomancia do catálogo: `Dardo de Gelo` (nível 1), `Espiga de Gelo` (nível 15) e `Nevasca` (nível 40).
+- Cada uma recebeu registro, grimório estudável, traduções, modelo temporário e caminho completo de seleção/conjuração. Efeitos provisórios: projéteis com lentidão/congelamento e área de Nevasca ao redor do conjurador; sem alteração permanente de blocos.
+- O contrato de magias universais foi atualizado para 19 entradas. `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR copiado somente aos ambientes do Lote B com SHA-256 `D2AE6A135287ED01DF66CA39727E803466CC06908604FF0F430405711D5573FA`. Homologação manual deste lote ainda pendente; loot continua sem novos grimórios até decisão específica.

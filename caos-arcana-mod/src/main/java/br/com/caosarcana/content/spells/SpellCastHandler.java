@@ -418,6 +418,48 @@ public class SpellCastHandler {
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 1.0f, 0.7f);
                 player.displayClientMessage(Component.literal("§6[Piromancia] §cTempestade de Fogo desencadeada!"), true);
             }
+            case "caosarcana:dardo_de_gelo" -> {
+                Vec3 start = player.getEyePosition();
+                Vec3 look = player.getLookAngle();
+                double range = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 28.0;
+                Vec3 end = start.add(look.scale(range));
+                LivingEntity target = null;
+                for (double d = 0.8; d <= range && target == null; d += 0.8) {
+                    Vec3 point = start.add(look.scale(d));
+                    level.sendParticles(ParticleTypes.SNOWFLAKE, point.x, point.y, point.z, 5, 0.12, 0.12, 0.12, 0.02);
+                    List<LivingEntity> hits = level.getEntitiesOfClass(LivingEntity.class, new AABB(point, point).inflate(0.65), e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+                    if (!hits.isEmpty()) target = hits.get(0);
+                }
+                if (target != null) { target.hurt(player.damageSources().magic(), 6.0f); target.setTicksFrozen(100); target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 1)); }
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 0.8f, 1.6f);
+                player.displayClientMessage(Component.literal("§b[Criomancia] §fDardo de Gelo lançado!"), true);
+            }
+            case "caosarcana:espiga_de_gelo" -> {
+                Vec3 start = player.getEyePosition();
+                Vec3 look = player.getLookAngle();
+                double range = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 24.0;
+                LivingEntity target = null;
+                for (double d = 0.8; d <= range && target == null; d += 0.8) {
+                    Vec3 point = start.add(look.scale(d));
+                    level.sendParticles(ParticleTypes.SNOWFLAKE, point.x, point.y, point.z, 8, 0.18, 0.18, 0.18, 0.02);
+                    List<LivingEntity> hits = level.getEntitiesOfClass(LivingEntity.class, new AABB(point, point).inflate(0.8), e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+                    if (!hits.isEmpty()) target = hits.get(0);
+                }
+                if (target != null) { target.hurt(player.damageSources().magic(), 10.0f); target.setTicksFrozen(180); target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 3)); }
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.0f, 0.8f);
+                player.displayClientMessage(Component.literal("§b[Criomancia] §fEspiga de Gelo perfurou a linha!"), true);
+            }
+            case "caosarcana:nevasca" -> {
+                double radius = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 8.0;
+                for (LivingEntity enemy : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius), e -> e != player && e.isAlive() && !e.isAlliedTo(player))) {
+                    enemy.hurt(player.damageSources().magic(), 9.0f);
+                    enemy.setTicksFrozen(220);
+                    enemy.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 160, 2));
+                }
+                level.sendParticles(ParticleTypes.SNOWFLAKE, player.getX(), player.getY() + 1.0, player.getZ(), 120, radius * 0.5, 1.5, radius * 0.5, 0.03);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.POWDER_SNOW_PLACE, SoundSource.PLAYERS, 1.0f, 0.8f);
+                player.displayClientMessage(Component.literal("§b[Criomancia] §fNevasca congelante invocada!"), true);
+            }
             case "caosarcana:geada_congelante" -> {
                 Vec3 look = player.getLookAngle();
                 Vec3 start = player.getEyePosition();

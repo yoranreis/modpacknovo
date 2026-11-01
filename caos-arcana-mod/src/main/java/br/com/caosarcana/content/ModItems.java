@@ -22,6 +22,9 @@ public class ModItems {
     public static final Item GRIMORIO_DARDO_DE_FOGO = new SpellGrimoireItem("caosarcana:dardo_de_fogo");
     public static final Item GRIMORIO_INCINERAR = new SpellGrimoireItem("caosarcana:incinerar");
     public static final Item GRIMORIO_TEMPESTADE_DE_FOGO = new SpellGrimoireItem("caosarcana:tempestade_de_fogo");
+    public static final Item GRIMORIO_DARDO_DE_GELO = new SpellGrimoireItem("caosarcana:dardo_de_gelo");
+    public static final Item GRIMORIO_ESPIGA_DE_GELO = new SpellGrimoireItem("caosarcana:espiga_de_gelo");
+    public static final Item GRIMORIO_NEVASCA = new SpellGrimoireItem("caosarcana:nevasca");
     public static final Item GRIMORIO_GEADA = new SpellGrimoireItem("caosarcana:geada_congelante");
     public static final Item GRIMORIO_RELAMPAGO = new SpellGrimoireItem("caosarcana:relampago_arcano");
     public static final Item GRIMORIO_CURA = new SpellGrimoireItem("caosarcana:toque_de_cura");
@@ -46,6 +49,9 @@ public class ModItems {
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_dardo_de_fogo"), GRIMORIO_DARDO_DE_FOGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_incinerar"), GRIMORIO_INCINERAR);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_tempestade_de_fogo"), GRIMORIO_TEMPESTADE_DE_FOGO);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_dardo_de_gelo"), GRIMORIO_DARDO_DE_GELO);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_espiga_de_gelo"), GRIMORIO_ESPIGA_DE_GELO);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_nevasca"), GRIMORIO_NEVASCA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_geada"), GRIMORIO_GEADA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_relampago"), GRIMORIO_RELAMPAGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura"), GRIMORIO_CURA);
