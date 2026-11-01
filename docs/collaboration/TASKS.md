@@ -295,3 +295,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Modelos JSON dos seis ovos, registro no grupo criativo e color provider foram integrados. Não houve alteração na branch `feat/races-spells-balance-v1`.
 - Build/teste após a resolução: **SUCESSO**, 43 testes, zero falhas/erros/ignorados. Nenhuma referência residual aos dez mobs ausentes foi encontrada nos registros isolados.
 - Próxima ação: validar os seis ovos e entidades em servidor descartável da branch isolada; loot/spawn natural continuam fora deste patch e exigem decisão de balanceamento.
+
+### Smoke runtime da integração isolada — 31/10/2026
+- O JAR da branch `feat/ash-mobs-isolated` foi copiado somente para `run/teste_lote_b/server_env/mods`, com SHA-256 `678FBA8BAC53A915DF3A079C4F1A7D...` conferido contra `build/libs`. O smoke anterior em `smoke_sessao_20261030`/25579 não foi interrompido.
+- Servidor `server_env`/25565 iniciou em Java 17 e chegou a `Done`. O console registrou os seis ovos e aceitou `summon` para Rastejante, Cão, Mineiro, Vigia, Carapaça e Colosso; marcadores `*_OK` confirmaram cada tipo. Entidades foram removidas e o servidor encerrou com `stop`, salvando os mundos.
+- O log registra `No data fixer registered` para os seis IDs durante o registro. Isso não impediu inicialização, summon ou encerramento e é a limitação conhecida de entidades customizadas sem DataFixer; não foi tratado como falha de runtime nesta etapa.
+- Nenhum cliente foi aberto e nenhum mundo original foi tocado. Texturas e registros funcionam no servidor; validação visual cliente ainda não executada. Spawn natural e loot seguem pendentes.
