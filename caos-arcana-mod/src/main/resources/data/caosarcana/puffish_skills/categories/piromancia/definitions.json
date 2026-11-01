@@ -1,0 +1,62 @@
+{
+  "caosarcana:piro_raiz_afinidade": {
+    "title": {
+      "text": "Afinidade com as Chamas",
+      "color": "gold"
+    },
+    "description": {
+      "text": "Estabilização elemental da Centelha Ígnea, reduzindo seu custo de conjuração. O custo efetivo aparece na tela de seleção de magias."
+    },
+    "extra_description": {
+      "text": "§6[Requisito] §fAprender a Centelha Ígnea (Grimório)\n§b[Custo] §f1 Ponto de Especialização"
+    },
+    "icon": {
+      "type": "item",
+      "data": {
+        "item": "minecraft:blaze_powder"
+      }
+    },
+    "frame": "goal",
+    "cost": 1
+  },
+  "caosarcana:piro_foco_combustao": {
+    "title": {
+      "text": "Foco em Combustão",
+      "color": "red"
+    },
+    "description": {
+      "text": "Especialização em queima prolongada: a Centelha Ígnea inflige 10s de fogo contínuo (mantém 5 de dano de impacto)."
+    },
+    "extra_description": {
+      "text": "§6[Requisito] §fAfinidade com as Chamas\n§c[Exclusivo] §7Incompatível com Foco Cinético\n§b[Custo] §f1 Ponto de Especialização"
+    },
+    "icon": {
+      "type": "item",
+      "data": {
+        "item": "minecraft:fire_charge"
+      }
+    },
+    "frame": "challenge",
+    "cost": 1
+  },
+  "caosarcana:piro_foco_cinetico": {
+    "title": {
+      "text": "Foco Cinético",
+      "color": "yellow"
+    },
+    "description": {
+      "text": "Especialização em ruptura tática: substitui as chamas (0s de fogo) por impacto físico com repulsão direcional (recuo 1.5)."
+    },
+    "extra_description": {
+      "text": "§6[Requisito] §fAfinidade com as Chamas\n§c[Exclusivo] §7Incompatível com Foco em Combustão\n§b[Custo] §f1 Ponto de Especialização"
+    },
+    "icon": {
+      "type": "item",
+      "data": {
+        "item": "minecraft:piston"
+      }
+    },
+    "frame": "challenge",
+    "cost": 1
+  }
+}

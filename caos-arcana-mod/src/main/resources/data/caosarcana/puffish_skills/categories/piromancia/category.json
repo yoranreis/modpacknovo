@@ -1,0 +1,49 @@
+{
+  "title": {
+    "text": "Piromancia",
+    "color": "gold"
+  },
+  "description": {
+    "text": "Especializações Arcanas da Escola do Fogo",
+    "color": "yellow"
+  },
+  "icon": {
+    "type": "item",
+    "data": {
+      "item": "minecraft:blaze_powder"
+    }
+  },
+  "background": {
+    "texture": "minecraft:textures/gui/advancements/backgrounds/nether.png",
+    "width": 16,
+    "height": 16,
+    "position": "tile"
+  },
+  "colors": {
+    "connections": {
+      "locked": {
+        "fill": "#555555",
+        "stroke": "#222222"
+      },
+      "available": {
+        "fill": "#ff8800",
+        "stroke": "#552200"
+      },
+      "affordable": {
+        "fill": "#ffff55",
+        "stroke": "#ffaa00"
+      },
+      "unlocked": {
+        "fill": "#ffaa00",
+        "stroke": "#ffffff"
+      },
+      "excluded": {
+        "fill": "#aa0000",
+        "stroke": "#330000"
+      }
+    }
+  },
+  "unlocked_by_default": true,
+  "starting_points": 0,
+  "erase_on_death": false
+}

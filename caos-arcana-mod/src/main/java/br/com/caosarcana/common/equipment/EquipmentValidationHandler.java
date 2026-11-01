@@ -4,17 +4,24 @@ import br.com.caosarcana.CaosArcana;
 import br.com.caosarcana.common.data.IRPGPlayerData;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
 
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EquipmentValidationHandler {
     private static final EquipmentSlot[] CHECKED_ARMOR_SLOTS = new EquipmentSlot[]{
@@ -24,6 +31,12 @@ public class EquipmentValidationHandler {
             EquipmentSlot.FEET,
             EquipmentSlot.OFFHAND
     };
+
+    /**
+     * Cache de controle de taxa (throttle) de feedback visual e sonoro por jogador (UUID -> timestamp ms).
+     * Evita spam em múltiplos pacotes de ataque, múltiplos alvos em ataques de área (cleave) ou cliques rápidos.
+     */
+    private static final Map<UUID, Long> LAST_ATTACK_DENIAL_FEEDBACK = new ConcurrentHashMap<>();
 
     /**
      * Registra listeners de validação e entrega.
@@ -72,6 +85,14 @@ public class EquipmentValidationHandler {
         for (EquipmentSlot slot : CHECKED_ARMOR_SLOTS) {
             ItemStack stack = player.getItemBySlot(slot);
             if (stack.isEmpty()) {
+                continue;
+            }
+
+            // Para a mão secundária (offhand), armas manuais (espadas, machados, etc.) NUNCA devem ser
+            // desequipadas compulsoriamente do slot. Preserva transporte, armazenamento e comércio.
+            // Apenas armaduras reais ou escudos sofrem auto-desequipamento de offhand.
+            // A restrição de armas é aplicada estritamente no momento do ataque (Player.attack).
+            if (slot == EquipmentSlot.OFFHAND && !(stack.getItem() instanceof ArmorItem || stack.getItem() instanceof ShieldItem)) {
                 continue;
             }
 
@@ -151,6 +172,57 @@ public class EquipmentValidationHandler {
         if (deliveredCount > 0) {
             player.playNotifySound(SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.8f, 1.2f);
             player.inventoryMenu.broadcastChanges();
+        }
+    }
+
+    /**
+     * Resolve a arma real de ataque do jogador de forma estritamente segura no servidor.
+     * Caso o Better Combat esteja instalado, utiliza introspecção (reflexão segura sem dependência dura de compilação)
+     * para consultar o ataque corrente (getCurrentAttack() / AttackHand) resolvido pelo servidor, garantindo
+     * diferenciação exata entre mão principal e mão secundária (dual wielding).
+     * Caso contrário, ou em falha de reflexão, recorre à arma da mão principal do vanilla.
+     */
+    public static ItemStack resolveAttackingWeapon(Player player) {
+        if (player == null) {
+            return ItemStack.EMPTY;
+        }
+
+        if (FabricLoader.getInstance().isModLoaded("bettercombat")) {
+            try {
+                Method getCurrentAttackMethod = player.getClass().getMethod("getCurrentAttack");
+                Object attackHand = getCurrentAttackMethod.invoke(player);
+                if (attackHand != null) {
+                    Method itemStackMethod = attackHand.getClass().getMethod("itemStack");
+                    Object stackObj = itemStackMethod.invoke(attackHand);
+                    if (stackObj instanceof ItemStack is && !is.isEmpty()) {
+                        return is;
+                    }
+                }
+            } catch (Throwable ignored) {
+                // Fallback seguro caso a chamada de Better Combat não retorne objeto válido
+            }
+        }
+
+        return player.getMainHandItem();
+    }
+
+    /**
+     * Emite feedback de negação com controle de taxa (throttle de 1.5s).
+     * Evita repetição excessiva em ataques de múltiplos alvos (cleave) ou múltiplos pacotes C2S.
+     */
+    public static void notifyAttackDenied(Player player, RequirementResult result) {
+        if (player == null || result == null) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        Long lastTime = LAST_ATTACK_DENIAL_FEEDBACK.get(player.getUUID());
+        if (lastTime == null || now - lastTime > 1500L) {
+            LAST_ATTACK_DENIAL_FEEDBACK.put(player.getUUID(), now);
+            player.sendSystemMessage(result.getDenialMessage());
+            if (player instanceof ServerPlayer sp) {
+                sp.playNotifySound(SoundEvents.VILLAGER_NO, SoundSource.PLAYERS, 1.0f, 1.0f);
+            }
         }
     }
 }

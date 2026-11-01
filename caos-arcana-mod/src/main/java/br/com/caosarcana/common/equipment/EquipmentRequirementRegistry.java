@@ -111,4 +111,37 @@ public class EquipmentRequirementRegistry {
 
         CaosArcana.LOGGER.info("[Caos Arcana] Requisitos centrais de equipamentos carregados (3 itens provisórios de teste registrados).");
     }
+
+    public static final ResourceLocation EXPERIMENTAL_IRON_SWORD_ID = new ResourceLocation("minecraft", "iron_sword");
+    private static volatile boolean experimentalWeaponRuleActive = false;
+
+    /**
+     * Indica se a regra de arma de teste experimental do Lote B está ativa.
+     * Desativada por padrão fora do ambiente experimental.
+     */
+    public static boolean isExperimentalWeaponRuleActive() {
+        return experimentalWeaponRuleActive;
+    }
+
+    /**
+     * Ativa ou desativa a regra temporária de teste para minecraft:iron_sword (Orc, Nível 3).
+     */
+    public static void setExperimentalWeaponRuleActive(boolean active) {
+        experimentalWeaponRuleActive = active;
+        if (active) {
+            register(new EquipmentRequirement(
+                    EXPERIMENTAL_IRON_SWORD_ID,
+                    RequirementType.EQUIP,
+                    Set.of(Race.ORC),
+                    3,
+                    null,
+                    0,
+                    "§c[Restrição de Arma - Teste Lote B] Espada de Ferro: Requer linhagem §eOrc§c e Nível Geral §e3§c."
+            ));
+            CaosArcana.LOGGER.info("[Caos Arcana] Regra experimental de arma de teste ativada: minecraft:iron_sword restrita a Orc Nível 3.");
+        } else {
+            unregister(EXPERIMENTAL_IRON_SWORD_ID, RequirementType.EQUIP);
+            CaosArcana.LOGGER.info("[Caos Arcana] Regra experimental de arma de teste desativada.");
+        }
+    }
 }
