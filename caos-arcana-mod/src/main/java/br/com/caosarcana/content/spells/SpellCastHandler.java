@@ -759,6 +759,7 @@ public class SpellCastHandler {
                 if (zombie != null) {
                     zombie.moveTo(player.getX() + 1.5, player.getY(), player.getZ() + 1.5, player.getYRot(), 0.0f);
                     zombie.setPersistenceRequired();
+                    zombie.addTag("caosarcana_summon");
                     zombie.setCustomName(Component.literal("Servo Reanimado"));
                     zombie.setCustomNameVisible(true);
                     level.addFreshEntity(zombie);
@@ -874,6 +875,7 @@ public class SpellCastHandler {
                 if (summon != null) {
                     summon.moveTo(player.getX() + 1.5, player.getY(), player.getZ() + 1.5, player.getYRot(), 0.0f);
                     summon.setPersistenceRequired();
+                    summon.addTag("caosarcana_summon");
                     summon.setCustomName(Component.literal("Atronach de Chamas"));
                     summon.setCustomNameVisible(true);
                     level.addFreshEntity(summon);
@@ -887,6 +889,7 @@ public class SpellCastHandler {
                 if (summon != null) {
                     summon.moveTo(player.getX() + 1.5, player.getY(), player.getZ() + 1.5, player.getYRot(), 0.0f);
                     summon.setPersistenceRequired();
+                    summon.addTag("caosarcana_summon");
                     summon.setCustomName(Component.literal("Atronach de Gelo"));
                     summon.setCustomNameVisible(true);
                     level.addFreshEntity(summon);

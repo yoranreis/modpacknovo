@@ -382,6 +382,19 @@ public class ModMessages {
                 }
             }
         });
+
+        // Expiração das invocações temporárias (1200 ticks = 60s), inclusive após reconexão.
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if (server.getTickCount() % 20 != 0) return;
+            for (ServerLevel level : server.getAllLevels()) {
+                for (Entity entity : level.getAllEntities()) {
+                    if (entity.getTags().contains("caosarcana_summon") && entity.tickCount >= 1200) {
+                        level.sendParticles(ParticleTypes.POOF, entity.getX(), entity.getY() + 0.5, entity.getZ(), 12, 0.25, 0.35, 0.25, 0.04);
+                        entity.discard();
+                    }
+                }
+            }
+        });
     }
 
     public static void syncPlayerData(ServerPlayer player) {

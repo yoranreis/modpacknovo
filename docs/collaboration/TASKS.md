@@ -404,4 +404,11 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - A alteração cobre as escolas e tiers registrados até o catálogo atual de 48 magias. Valores de peso são provisórios e reversíveis; não alteram requisitos de estudo, mana ou progressão.
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 44 testes, zero falhas/erros/ignorados.
 - JAR copiado ao Lote B com SHA-256 `3942E0C4C410E844C76E2D865B2874A6BD360033716D920E3503AC3D13D1224F`. Homologação prática de geração de baús ainda pendente.
+
+### Expiração de invocações temporárias — 01/11/2026
+- Corrigida falha concreta: `Reanimar Morto-Vivo` e os dois Atronachs eram marcados como persistentes, mas não eram removidos após o tempo de vida registrado.
+- As invocações agora recebem a tag server-side `caosarcana_summon` e são removidas após 1200 ticks (60s), com partículas de dissipação. A limpeza percorre todas as dimensões e continua funcionando após reconexão.
+- A primeira compilação encontrou a API correta de iteração (`getAllEntities()` é `Iterable` em 1.20.1); ajuste aplicado antes do build final.
+- `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 44 testes, zero falhas/erros/ignorados.
+- JAR atualizado no Lote B com SHA-256 `6D3191D264777A779AEFDB63F5A9BAB00B31E255AF9FA6CAD6D13F02F4057EE4`. Homologação prática da expiração ainda pendente.
 - Adicionado contrato automatizado para as oito magias mais recentes, validando escola, mana, recarga e descrição. A suíte final passou com **44 testes**, zero falhas/erros/ignorados; o conteúdo do JAR permaneceu idêntico.
