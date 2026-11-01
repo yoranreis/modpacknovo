@@ -425,3 +425,8 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 44 testes, zero falhas/erros/ignorados.
 - JAR atualizado no Lote B com SHA-256 `A39BF90635B9E94CAD1585C71B7FC847928C3FE59B4071D7ED09139B8886F301`. Homologação prática continua pendente do bloqueio HTTP 401 do launcher isolado.
 - Adicionado contrato automatizado para as oito magias mais recentes, validando escola, mana, recarga e descrição. A suíte final passou com **44 testes**, zero falhas/erros/ignorados; o conteúdo do JAR permaneceu idêntico.
+
+### Ajuste do launcher offline do Lote B — 01/11/2026
+- O script `run/teste_lote_b/iniciar_cliente_teste.ps1` agora envia `--userProperties {}` e um `--clientId` nulo explícito, alinhando os argumentos ao formato esperado pelo cliente 1.20.1 em sessão offline.
+- O ajuste é restrito ao harness de teste; não altera o perfil principal, tokens reais ou arquivos de instalação do Minecraft.
+- A preparação do arquivo de argumentos foi verificada. A confirmação de conexão visual ainda depende de uma execução do cliente que permaneça aberta neste ambiente.
