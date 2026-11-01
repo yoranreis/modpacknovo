@@ -19,6 +19,9 @@ public class ModItems {
     public static final Item GRIMORIO_BOLA_DE_FOGO = new SpellGrimoireItem("caosarcana:bola_de_fogo");
     public static final Item GRIMORIO_MANTO_DE_CHAMAS = new SpellGrimoireItem("caosarcana:manto_de_chamas");
     public static final Item GRIMORIO_MURALHA_DE_CHAMAS = new SpellGrimoireItem("caosarcana:muralha_de_chamas");
+    public static final Item GRIMORIO_DARDO_DE_FOGO = new SpellGrimoireItem("caosarcana:dardo_de_fogo");
+    public static final Item GRIMORIO_INCINERAR = new SpellGrimoireItem("caosarcana:incinerar");
+    public static final Item GRIMORIO_TEMPESTADE_DE_FOGO = new SpellGrimoireItem("caosarcana:tempestade_de_fogo");
     public static final Item GRIMORIO_GEADA = new SpellGrimoireItem("caosarcana:geada_congelante");
     public static final Item GRIMORIO_RELAMPAGO = new SpellGrimoireItem("caosarcana:relampago_arcano");
     public static final Item GRIMORIO_CURA = new SpellGrimoireItem("caosarcana:toque_de_cura");
@@ -40,6 +43,9 @@ public class ModItems {
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_bola_de_fogo"), GRIMORIO_BOLA_DE_FOGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_manto_de_chamas"), GRIMORIO_MANTO_DE_CHAMAS);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_muralha_de_chamas"), GRIMORIO_MURALHA_DE_CHAMAS);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_dardo_de_fogo"), GRIMORIO_DARDO_DE_FOGO);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_incinerar"), GRIMORIO_INCINERAR);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_tempestade_de_fogo"), GRIMORIO_TEMPESTADE_DE_FOGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_geada"), GRIMORIO_GEADA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_relampago"), GRIMORIO_RELAMPAGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura"), GRIMORIO_CURA);

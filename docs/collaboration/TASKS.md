@@ -317,3 +317,10 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Servidor descartável do Lote B iniciou com o JAR `0A1E373C8A3611DF94B7082865B1E07C4A85CC093742A9E1BF664A1305779EF6`, carregou o mod e chegou a `Done` sem erros de registro.
 - A configuração existente foi migrada automaticamente e passou a conter os nove campos da expansão (`fireball*`, `flameCloak*`, `flameWall*`) com os valores padrão esperados.
 - Servidor encerrado por RCON/`stop`; nenhum processo Java permaneceu ativo. Nenhum cliente ou mundo principal foi tocado.
+
+### Lote maior de Piromancia — 01/11/2026
+- Implementadas três novas magias universais de Piromancia em um único lote: `Dardo de Fogo` (nível 1), `Incinerar` (nível 35) e `Tempestade de Fogo` (nível 50). Todas percorrem registro, estudo por grimório, seleção, validação de escola/mana/recarga e conjuração no servidor.
+- Adicionados seis recursos por magia (item, tradução PT-BR/EN-US e modelo reutilizando temporariamente a textura da Centelha). A distribuição de loot permanece inalterada: nenhum grimório novo foi inserido em dungeons sem decisão específica.
+- Efeitos atuais são provisórios e diretos: dardo de alvo único, feixe concentrado e área de fogo ao redor do conjurador. Não há criação de blocos nem alteração de mundo permanente.
+- O contrato automatizado passou de 13 para 16 magias universais. `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR copiado exclusivamente ao Lote B com SHA-256 `1D464B5BB57DB95C6B5B7DD7EECF651FB1464FC2552B87ED49C6037EDFE6441F` nos ambientes de cliente e servidor. Homologação manual dessas três novas magias ainda pendente; as três anteriores continuam homologadas.

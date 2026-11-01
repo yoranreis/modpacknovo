@@ -71,6 +71,24 @@ public class SpellRegistry {
             "Projeta uma faixa de fogo à frente do conjurador, queimando inimigos que a atravessam."
     ));
 
+    public static final SpellDefinition DARDO_DE_FOGO = register(new SpellDefinition(
+            "caosarcana:dardo_de_fogo", "Dardo de Fogo", "piromancia", "Piromancia (Destruição)",
+            1, 22.0f, 30, 0, 32.0,
+            "Dispara um dardo ígneo veloz contra o primeiro alvo na linha de visão."
+    ));
+
+    public static final SpellDefinition INCINERAR = register(new SpellDefinition(
+            "caosarcana:incinerar", "Incinerar", "piromancia", "Piromancia (Destruição)",
+            35, 60.0f, 500, 0, 30.0,
+            "Canaliza um feixe concentrado de fogo que incinera o alvo atingido."
+    ));
+
+    public static final SpellDefinition TEMPESTADE_DE_FOGO = register(new SpellDefinition(
+            "caosarcana:tempestade_de_fogo", "Tempestade de Fogo", "piromancia", "Piromancia (Destruição)",
+            50, 80.0f, 800, 0, 8.0,
+            "Convoca uma explosão de chamas ao redor do conjurador, atingindo inimigos próximos."
+    ));
+
     // --- DESTRUIÇÃO: CRIOMANCIA ---
     public static final SpellDefinition GEADA_CONGELANTE = register(new SpellDefinition(
             "caosarcana:geada_congelante",

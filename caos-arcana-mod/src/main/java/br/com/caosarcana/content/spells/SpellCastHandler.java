@@ -373,6 +373,51 @@ public class SpellCastHandler {
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 1.0f, 0.7f);
                 player.displayClientMessage(Component.literal("§6[Piromancia] §cMuralha de Chamas projetada!"), true);
             }
+            case "caosarcana:dardo_de_fogo" -> {
+                Vec3 start = player.getEyePosition();
+                Vec3 look = player.getLookAngle();
+                double maxDist = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 32.0;
+                Vec3 end = start.add(look.scale(maxDist));
+                var blockHit = level.clip(new net.minecraft.world.level.ClipContext(start, end,
+                        net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                        net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+                double effective = blockHit.getType() != net.minecraft.world.phys.HitResult.Type.MISS ? start.distanceTo(blockHit.getLocation()) : maxDist;
+                LivingEntity target = null;
+                double best = effective * effective;
+                for (LivingEntity candidate : level.getEntitiesOfClass(LivingEntity.class, new AABB(start, start.add(look.scale(effective))).inflate(0.6),
+                        e -> e != player && e.isAlive() && !e.isAlliedTo(player))) {
+                    var hit = candidate.getBoundingBox().inflate(0.15).clip(start, start.add(look.scale(effective)));
+                    if (hit.isPresent() && start.distanceToSqr(hit.get()) < best) { best = start.distanceToSqr(hit.get()); target = candidate; }
+                }
+                Vec3 impact = target != null ? target.position() : start.add(look.scale(effective));
+                level.sendParticles(ParticleTypes.FLAME, impact.x, impact.y + 0.5, impact.z, 18, 0.25, 0.25, 0.25, 0.04);
+                if (target != null) { target.hurt(player.damageSources().inFire(), 6.0f); target.setSecondsOnFire(3); }
+                level.playSound(null, impact.x, impact.y, impact.z, SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 0.8f, 1.5f);
+                player.displayClientMessage(Component.literal("§6[Piromancia] §cDardo de Fogo lançado!"), true);
+            }
+            case "caosarcana:incinerar" -> {
+                Vec3 start = player.getEyePosition();
+                Vec3 look = player.getLookAngle();
+                double maxDist = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 30.0;
+                LivingEntity target = null;
+                for (double d = 1.0; d <= maxDist && target == null; d += 0.75) {
+                    Vec3 point = start.add(look.scale(d));
+                    level.sendParticles(ParticleTypes.FLAME, point.x, point.y, point.z, 8, 0.2, 0.2, 0.2, 0.03);
+                    List<LivingEntity> hits = level.getEntitiesOfClass(LivingEntity.class, new AABB(point, point).inflate(0.8), e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+                    if (!hits.isEmpty()) target = hits.get(0);
+                }
+                if (target != null) { target.hurt(player.damageSources().inFire(), 14.0f); target.setSecondsOnFire(8); }
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLAZE_HURT, SoundSource.PLAYERS, 1.0f, 0.6f);
+                player.displayClientMessage(Component.literal("§6[Piromancia] §cIncinerar canalizado!"), true);
+            }
+            case "caosarcana:tempestade_de_fogo" -> {
+                AABB area = player.getBoundingBox().inflate(spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 8.0);
+                List<LivingEntity> enemies = level.getEntitiesOfClass(LivingEntity.class, area, e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+                for (LivingEntity enemy : enemies) { enemy.hurt(player.damageSources().inFire(), 12.0f); enemy.setSecondsOnFire(6); }
+                level.sendParticles(ParticleTypes.FLAME, player.getX(), player.getY() + 1.0, player.getZ(), 100, 4.0, 1.2, 4.0, 0.1);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 1.0f, 0.7f);
+                player.displayClientMessage(Component.literal("§6[Piromancia] §cTempestade de Fogo desencadeada!"), true);
+            }
             case "caosarcana:geada_congelante" -> {
                 Vec3 look = player.getLookAngle();
                 Vec3 start = player.getEyePosition();
