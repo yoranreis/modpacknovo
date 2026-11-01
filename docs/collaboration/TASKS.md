@@ -337,3 +337,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Cada uma recebeu registro, grimório estudável, traduções, modelo temporário e caminho completo de seleção/conjuração. Efeitos provisórios: projéteis com lentidão/congelamento e área de Nevasca ao redor do conjurador; sem alteração permanente de blocos.
 - O contrato de magias universais foi atualizado para 19 entradas. `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR copiado somente aos ambientes do Lote B com SHA-256 `D2AE6A135287ED01DF66CA39727E803466CC06908604FF0F430405711D5573FA`. Homologação manual deste lote ainda pendente; loot continua sem novos grimórios até decisão específica.
+
+### Lote maior de Eletromancia — 01/11/2026
+- Implementadas três magias universais de Eletromancia: `Faísca Elétrica` (nível 1), `Corrente de Relâmpago` (nível 20) e `Tempestade de Raios` (nível 45).
+- Adicionados registros, grimórios, traduções, modelos temporários e conjuração no servidor. Os efeitos provisórios cobrem alvo único, encadeamento para criaturas próximas e área elétrica ao redor do conjurador.
+- O contrato universal foi atualizado para 22 magias. `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR copiado aos ambientes isolados do Lote B com SHA-256 `A265268AD18CE0836A7BC482D92D2AB6A802882F4604030CE5F9EE33FBDEF04A`. Homologação manual deste lote fica para a próxima sessão conjunta com a Criomancia.

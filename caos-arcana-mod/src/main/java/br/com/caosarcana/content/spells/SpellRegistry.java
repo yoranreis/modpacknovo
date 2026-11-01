@@ -107,6 +107,24 @@ public class SpellRegistry {
             "Invoca uma nevasca concentrada ao redor do conjurador, congelando inimigos próximos."
     ));
 
+    public static final SpellDefinition FASCULA_ELETRICA = register(new SpellDefinition(
+            "caosarcana:faisca_eletrica", "Faísca Elétrica", "eletromancia", "Eletromancia (Destruição)",
+            1, 16.0f, 20, 0, 24.0,
+            "Dispara uma faísca elétrica rápida contra o primeiro alvo na linha de visão."
+    ));
+
+    public static final SpellDefinition CORRENTE_DE_RELAMPAGO = register(new SpellDefinition(
+            "caosarcana:corrente_de_relampago", "Corrente de Relâmpago", "eletromancia", "Eletromancia (Destruição)",
+            20, 38.0f, 140, 0, 20.0,
+            "Encadeia uma descarga elétrica do alvo principal para criaturas próximas."
+    ));
+
+    public static final SpellDefinition TEMPESTADE_DE_RAIOS = register(new SpellDefinition(
+            "caosarcana:tempestade_de_raios", "Tempestade de Raios", "eletromancia", "Eletromancia (Destruição)",
+            45, 70.0f, 700, 0, 10.0,
+            "Convoca uma tempestade elétrica concentrada que atinge inimigos ao redor do conjurador."
+    ));
+
     // --- DESTRUIÇÃO: CRIOMANCIA ---
     public static final SpellDefinition GEADA_CONGELANTE = register(new SpellDefinition(
             "caosarcana:geada_congelante",

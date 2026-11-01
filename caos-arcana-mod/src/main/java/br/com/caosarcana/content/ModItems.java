@@ -25,6 +25,9 @@ public class ModItems {
     public static final Item GRIMORIO_DARDO_DE_GELO = new SpellGrimoireItem("caosarcana:dardo_de_gelo");
     public static final Item GRIMORIO_ESPIGA_DE_GELO = new SpellGrimoireItem("caosarcana:espiga_de_gelo");
     public static final Item GRIMORIO_NEVASCA = new SpellGrimoireItem("caosarcana:nevasca");
+    public static final Item GRIMORIO_FAISCA_ELETRICA = new SpellGrimoireItem("caosarcana:faisca_eletrica");
+    public static final Item GRIMORIO_CORRENTE_DE_RELAMPAGO = new SpellGrimoireItem("caosarcana:corrente_de_relampago");
+    public static final Item GRIMORIO_TEMPESTADE_DE_RAIOS = new SpellGrimoireItem("caosarcana:tempestade_de_raios");
     public static final Item GRIMORIO_GEADA = new SpellGrimoireItem("caosarcana:geada_congelante");
     public static final Item GRIMORIO_RELAMPAGO = new SpellGrimoireItem("caosarcana:relampago_arcano");
     public static final Item GRIMORIO_CURA = new SpellGrimoireItem("caosarcana:toque_de_cura");
@@ -52,6 +55,9 @@ public class ModItems {
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_dardo_de_gelo"), GRIMORIO_DARDO_DE_GELO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_espiga_de_gelo"), GRIMORIO_ESPIGA_DE_GELO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_nevasca"), GRIMORIO_NEVASCA);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_faisca_eletrica"), GRIMORIO_FAISCA_ELETRICA);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_corrente_de_relampago"), GRIMORIO_CORRENTE_DE_RELAMPAGO);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_tempestade_de_raios"), GRIMORIO_TEMPESTADE_DE_RAIOS);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_geada"), GRIMORIO_GEADA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_relampago"), GRIMORIO_RELAMPAGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura"), GRIMORIO_CURA);

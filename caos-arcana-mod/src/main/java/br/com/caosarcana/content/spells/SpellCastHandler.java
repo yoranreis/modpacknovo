@@ -460,6 +460,54 @@ public class SpellCastHandler {
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.POWDER_SNOW_PLACE, SoundSource.PLAYERS, 1.0f, 0.8f);
                 player.displayClientMessage(Component.literal("§b[Criomancia] §fNevasca congelante invocada!"), true);
             }
+            case "caosarcana:faisca_eletrica" -> {
+                Vec3 start = player.getEyePosition();
+                Vec3 look = player.getLookAngle();
+                double range = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 24.0;
+                LivingEntity target = null;
+                for (double d = 0.8; d <= range && target == null; d += 0.8) {
+                    Vec3 point = start.add(look.scale(d));
+                    level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 6, 0.12, 0.12, 0.12, 0.03);
+                    List<LivingEntity> hits = level.getEntitiesOfClass(LivingEntity.class, new AABB(point, point).inflate(0.65), e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+                    if (!hits.isEmpty()) target = hits.get(0);
+                }
+                if (target != null) { target.hurt(player.damageSources().lightningBolt(), 5.0f); target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 80, 0)); }
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 0.6f, 1.8f);
+                player.displayClientMessage(Component.literal("§e[Eletromancia] §fFaísca Elétrica descarregada!"), true);
+            }
+            case "caosarcana:corrente_de_relampago" -> {
+                Vec3 start = player.getEyePosition();
+                Vec3 look = player.getLookAngle();
+                double range = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 20.0;
+                LivingEntity primary = null;
+                for (double d = 0.8; d <= range && primary == null; d += 0.8) {
+                    Vec3 point = start.add(look.scale(d));
+                    level.sendParticles(ParticleTypes.ELECTRIC_SPARK, point.x, point.y, point.z, 8, 0.15, 0.15, 0.15, 0.03);
+                    List<LivingEntity> hits = level.getEntitiesOfClass(LivingEntity.class, new AABB(point, point).inflate(0.75), e -> e != player && e.isAlive() && !e.isAlliedTo(player));
+                    if (!hits.isEmpty()) primary = hits.get(0);
+                }
+                if (primary != null) {
+                    final LivingEntity chainTarget = primary;
+                    chainTarget.hurt(player.damageSources().lightningBolt(), 8.0f);
+                    for (LivingEntity nearby : level.getEntitiesOfClass(LivingEntity.class, chainTarget.getBoundingBox().inflate(4.0), e -> e != player && e != chainTarget && e.isAlive() && !e.isAlliedTo(player))) {
+                        nearby.hurt(player.damageSources().lightningBolt(), 4.0f);
+                        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, nearby.getX(), nearby.getY() + 0.8, nearby.getZ(), 12, 0.2, 0.3, 0.2, 0.05);
+                    }
+                }
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 0.9f, 1.2f);
+                player.displayClientMessage(Component.literal("§e[Eletromancia] §fCorrente de Relâmpago encadeada!"), true);
+            }
+            case "caosarcana:tempestade_de_raios" -> {
+                double radius = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 10.0;
+                for (LivingEntity enemy : level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(radius), e -> e != player && e.isAlive() && !e.isAlliedTo(player))) {
+                    enemy.hurt(player.damageSources().lightningBolt(), 12.0f);
+                    enemy.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 160, 1));
+                    level.sendParticles(ParticleTypes.ELECTRIC_SPARK, enemy.getX(), enemy.getY() + 1.0, enemy.getZ(), 20, 0.25, 0.5, 0.25, 0.08);
+                }
+                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, player.getX(), player.getY() + 1.0, player.getZ(), 100, radius * 0.5, 1.2, radius * 0.5, 0.08);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 1.0f, 0.8f);
+                player.displayClientMessage(Component.literal("§e[Eletromancia] §fTempestade de Raios invocada!"), true);
+            }
             case "caosarcana:geada_congelante" -> {
                 Vec3 look = player.getLookAngle();
                 Vec3 start = player.getEyePosition();
