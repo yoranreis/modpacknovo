@@ -166,6 +166,18 @@ public class SpellRegistry {
             "caosarcana:armadura_de_ferro", "Armadura de Ferro", "alteracao", "Alteração", 35, 48.0f, 360, 0, 0,
             "Endurece o corpo com uma proteção metálica duradoura."
     ));
+    public static final SpellDefinition ARMADURA_DE_EBANO = register(new SpellDefinition(
+            "caosarcana:armadura_de_ebano", "Armadura de Ébano", "alteracao", "Alteração", 55, 72.0f, 620, 0, 0,
+            "Invoca uma couraça arcana de ébano, concedendo resistência excepcional."
+    ));
+    public static final SpellDefinition TELECINESE = register(new SpellDefinition(
+            "caosarcana:telecinese", "Telecinese", "alteracao", "Alteração", 25, 30.0f, 180, 0, 16.0,
+            "Manipula à distância a primeira criatura ou objeto alcançado pela mira."
+    ));
+    public static final SpellDefinition PARALISIA_DE_TOQUE = register(new SpellDefinition(
+            "caosarcana:paralisia_de_toque", "Paralisia de Toque", "alteracao", "Alteração", 45, 52.0f, 420, 0, 8.0,
+            "Paralisa por instantes a criatura atingida pelo toque arcano."
+    ));
 
     public static final SpellDefinition MACHADO_VINCULADO = register(new SpellDefinition(
             "caosarcana:machado_vinculado", "Machado Vinculado", "conjuracao", "Conjuração", 1, 34.0f, 180, 0, 0,
@@ -178,6 +190,14 @@ public class SpellRegistry {
     public static final SpellDefinition REANIMAR_MORTO_VIVO = register(new SpellDefinition(
             "caosarcana:reanimar_morto_vivo", "Reanimar Morto-Vivo", "conjuracao", "Conjuração", 35, 58.0f, 500, 1200, 0,
             "Levanta um servo morto-vivo temporário para lutar ao lado do conjurador."
+    ));
+    public static final SpellDefinition INVOCAR_ATRONACH_DE_CHAMAS = register(new SpellDefinition(
+            "caosarcana:invocar_atronach_de_chamas", "Invocar Atronach de Chamas", "conjuracao", "Conjuração", 40, 68.0f, 700, 1200, 0,
+            "Invoca um elemental de chamas temporário para lutar ao lado do conjurador."
+    ));
+    public static final SpellDefinition INVOCAR_ATRONACH_DE_GELO = register(new SpellDefinition(
+            "caosarcana:invocar_atronach_de_gelo", "Invocar Atronach de Gelo", "conjuracao", "Conjuração", 50, 78.0f, 800, 1200, 0,
+            "Invoca um elemental de gelo temporário para proteger o conjurador."
     ));
 
     public static final SpellDefinition CLARIVIDENCIA = register(new SpellDefinition(

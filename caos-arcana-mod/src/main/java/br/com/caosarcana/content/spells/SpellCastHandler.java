@@ -802,6 +802,62 @@ public class SpellCastHandler {
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.4f, 1.5f);
                 player.displayClientMessage(Component.literal("§2[Alteração] §fArmadura de Ferro ativa por 30s!"), true);
             }
+            case "caosarcana:armadura_de_ebano" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 800, 2));
+                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 800, 2));
+                level.sendParticles(ParticleTypes.PORTAL, player.getX(), player.getY() + 1.0, player.getZ(), 40, 0.7, 1.0, 0.7, 0.06);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_NETHERITE, SoundSource.PLAYERS, 0.8f, 0.8f);
+                player.displayClientMessage(Component.literal("§2[Alteração] §fArmadura de Ébano ativa por 40s!"), true);
+            }
+            case "caosarcana:telecinese" -> {
+                AABB area = player.getBoundingBox().inflate(spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 16.0);
+                LivingEntity target = level.getEntitiesOfClass(LivingEntity.class, area, e -> e != player && e.isAlive()).stream()
+                        .min(java.util.Comparator.comparingDouble(player::distanceToSqr)).orElse(null);
+                if (target != null) {
+                    Vec3 push = target.position().subtract(player.position()).normalize().scale(1.2);
+                    target.push(push.x, 0.55, push.z);
+                    target.hurtMarked = true;
+                }
+                level.sendParticles(ParticleTypes.ENCHANT, player.getX(), player.getY() + 1.0, player.getZ(), 30, 1.0, 0.8, 1.0, 0.05);
+                player.displayClientMessage(Component.literal("§2[Alteração] §fTelecinese " + (target == null ? "não encontrou alvo." : "arremessou " + target.getName().getString() + "!")), true);
+            }
+            case "caosarcana:paralisia_de_toque" -> {
+                AABB area = player.getBoundingBox().inflate(spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 8.0);
+                LivingEntity target = level.getEntitiesOfClass(LivingEntity.class, area, e -> e != player && e.isAlive()).stream()
+                        .min(java.util.Comparator.comparingDouble(player::distanceToSqr)).orElse(null);
+                if (target != null) {
+                    target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 10));
+                    target.setDeltaMovement(Vec3.ZERO);
+                }
+                level.sendParticles(ParticleTypes.CRIT, player.getX(), player.getY() + 1.0, player.getZ(), 26, 0.8, 0.8, 0.8, 0.04);
+                player.displayClientMessage(Component.literal("§2[Alteração] §fParalisia " + (target == null ? "não encontrou alvo." : "imobilizou " + target.getName().getString() + " por 5s!")), true);
+            }
+            case "caosarcana:invocar_atronach_de_chamas" -> {
+                Mob summon = EntityType.BLAZE.create(level);
+                if (summon != null) {
+                    summon.moveTo(player.getX() + 1.5, player.getY(), player.getZ() + 1.5, player.getYRot(), 0.0f);
+                    summon.setPersistenceRequired();
+                    summon.setCustomName(Component.literal("Atronach de Chamas"));
+                    summon.setCustomNameVisible(true);
+                    level.addFreshEntity(summon);
+                }
+                level.sendParticles(ParticleTypes.FLAME, player.getX(), player.getY() + 0.8, player.getZ(), 35, 0.8, 0.7, 0.8, 0.06);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 0.8f, 0.8f);
+                player.displayClientMessage(Component.literal("§9[Conjuração] §fUm Atronach de Chamas foi invocado por 60s!"), true);
+            }
+            case "caosarcana:invocar_atronach_de_gelo" -> {
+                Mob summon = EntityType.STRAY.create(level);
+                if (summon != null) {
+                    summon.moveTo(player.getX() + 1.5, player.getY(), player.getZ() + 1.5, player.getYRot(), 0.0f);
+                    summon.setPersistenceRequired();
+                    summon.setCustomName(Component.literal("Atronach de Gelo"));
+                    summon.setCustomNameVisible(true);
+                    level.addFreshEntity(summon);
+                }
+                level.sendParticles(ParticleTypes.SNOWFLAKE, player.getX(), player.getY() + 0.8, player.getZ(), 35, 0.8, 0.7, 0.8, 0.04);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.STRAY_AMBIENT, SoundSource.PLAYERS, 0.8f, 0.8f);
+                player.displayClientMessage(Component.literal("§9[Conjuração] §fUm Atronach de Gelo foi invocado por 60s!"), true);
+            }
 
             // ==========================================
             // PODERES RACIAIS ESPECÍFICOS (10 RAÇAS)

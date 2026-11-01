@@ -382,3 +382,11 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Adicionado `/caos ajuda` com exemplos dos comandos administrativos e lista das escolas. A ajuda esclarece que o aprendizado usa `/caos learn "caosarcana:<id>"`, enquanto a árvore usa `/caos talent open`.
 - O catálogo universal chegou a 40 magias. `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR copiado exclusivamente ao Lote B com SHA-256 `F0E28E0E116CFB344B792512CF45A50896387C8F3354F6ACF97BC6F2A7882B6E` nos ambientes de cliente e servidor. Homologação manual deste lote ainda pendente.
+
+### Lote de Conjuração Elemental e Alteração Avançada — 01/11/2026
+- Implementadas cinco magias universais adicionais do catálogo: `Invocar Atronach de Chamas`, `Invocar Atronach de Gelo`, `Telecinese`, `Paralisia de Toque` e `Armadura de Ébano`.
+- Os atronachs usam entidades vanilla temporárias nomeadas e persistentes durante a sessão; Telecinese e Paralisia afetam o alvo vivo mais próximo no raio configurado; Armadura de Ébano concede resistência/absorção temporárias. Não foram adicionadas dependências nem entidades novas.
+- Cada magia recebeu registro, grimório, tradução, modelo temporário e fluxo completo de estudo/seleção/conjuração. O catálogo universal chegou a 45 magias.
+- A primeira compilação identificou um nome de som incompatível com 1.20.1; substituído pelo identificador oficial existente antes do build final.
+- `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR copiado somente aos ambientes do Lote B com SHA-256 `ACDD5A9F33888D9819A69499F3895484B9B217D7B87BE73D51F9B778313FAD65`. Homologação manual deste lote ainda pendente.
