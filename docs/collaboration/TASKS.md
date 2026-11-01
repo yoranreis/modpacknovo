@@ -397,3 +397,4 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Cada magia recebeu registro, grimório, tradução, modelo temporário e fluxo completo de estudo, seleção, mana e recarga. O catálogo universal chegou a 48 magias.
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR atualizado somente no Lote B com SHA-256 `AFF98F20D90C032BDA0D5F37710DCFEBDF5125C7713927BB9AC4D3C5FFF2224A`. Homologação manual deste lote e do lote elemental anterior permanecem pendentes.
+- Adicionado contrato automatizado para as oito magias mais recentes, validando escola, mana, recarga e descrição. A suíte final passou com **44 testes**, zero falhas/erros/ignorados; o conteúdo do JAR permaneceu idêntico.

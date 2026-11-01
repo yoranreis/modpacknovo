@@ -600,6 +600,28 @@ public class CaosArcanaTests {
     }
 
     @Test
+    @DisplayName("Contratos das magias mestre e utilitárias adicionadas")
+    public void testLatestSpellMetadataContracts() {
+        var ids = java.util.Map.of(
+                "caosarcana:muralha_de_gelo", "criomancia",
+                "caosarcana:nevasca_maxima", "criomancia",
+                "caosarcana:tempestade_eletrica_global", "eletromancia",
+                "caosarcana:invocar_atronach_de_chamas", "conjuracao",
+                "caosarcana:invocar_atronach_de_gelo", "conjuracao",
+                "caosarcana:telecinese", "alteracao",
+                "caosarcana:paralisia_de_toque", "alteracao",
+                "caosarcana:armadura_de_ebano", "alteracao"
+        );
+        for (var entry : ids.entrySet()) {
+            var spell = br.com.caosarcana.content.spells.SpellRegistry.get(entry.getKey()).orElseThrow();
+            assertEquals(entry.getValue(), spell.school(), "Escola incorreta para " + entry.getKey());
+            assertTrue(spell.manaCost() > 0, "Custo de mana deve ser positivo para " + entry.getKey());
+            assertTrue(spell.cooldownTicks() > 0, "Recarga deve ser positiva para " + entry.getKey());
+            assertFalse(spell.description().isBlank(), "Descrição não pode ser vazia para " + entry.getKey());
+        }
+    }
+
+    @Test
     @DisplayName("Teste do registro de Provações Arcanas (Arcane Trials)")
     public void testArcaneTrialsRegistry() {
         var trials = br.com.caosarcana.content.trials.ArcaneTrialRegistry.getAll();
