@@ -397,4 +397,11 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Cada magia recebeu registro, grimório, tradução, modelo temporário e fluxo completo de estudo, seleção, mana e recarga. O catálogo universal chegou a 48 magias.
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR atualizado somente no Lote B com SHA-256 `AFF98F20D90C032BDA0D5F37710DCFEBDF5125C7713927BB9AC4D3C5FFF2224A`. Homologação manual deste lote e do lote elemental anterior permanecem pendentes.
+
+### Integração de grimórios no loot avançado — 01/11/2026
+- Corrigida uma lacuna de jornada: os grimórios adicionados nos lotes recentes agora participam do pool aleatório das estruturas avançadas já suportadas (`mineshaft`, templos, stronghold, Nether, Ancient City e mansão), com pesos menores para magias de nível alto.
+- A dungeon simples continua com exatamente uma Centelha Ígnea garantida por baú, sem duplicar pools e sem substituir ou remover entradas vanilla. Moedas e loot original permanecem preservados.
+- A alteração cobre as escolas e tiers registrados até o catálogo atual de 48 magias. Valores de peso são provisórios e reversíveis; não alteram requisitos de estudo, mana ou progressão.
+- `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 44 testes, zero falhas/erros/ignorados.
+- JAR copiado ao Lote B com SHA-256 `3942E0C4C410E844C76E2D865B2874A6BD360033716D920E3503AC3D13D1224F`. Homologação prática de geração de baús ainda pendente.
 - Adicionado contrato automatizado para as oito magias mais recentes, validando escola, mana, recarga e descrição. A suíte final passou com **44 testes**, zero falhas/erros/ignorados; o conteúdo do JAR permaneceu idêntico.
