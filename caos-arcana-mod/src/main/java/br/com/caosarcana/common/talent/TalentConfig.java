@@ -61,6 +61,17 @@ public class TalentConfig {
     private static int pyromancyBaseXp = 50;
     private static int pyromancyXpPerLevel = 25;
 
+    // Valores provisórios configuráveis da expansão de Piromancia
+    private static int fireballDamage = 8;
+    private static int fireballFireSeconds = 4;
+    private static int flameCloakDurationSeconds = 10;
+    private static double flameCloakRadius = 4.0;
+    private static int flameCloakDamage = 5;
+    private static int flameCloakFireSeconds = 5;
+    private static int flameWallDamage = 6;
+    private static int flameWallFireSeconds = 6;
+    private static int flameWallLength = 12;
+
     public static float getRootManaCost() {
         return rootManaCost;
     }
@@ -105,6 +116,16 @@ public class TalentConfig {
         return pyromancyXpPerLevel;
     }
 
+    public static int getFireballDamage() { return fireballDamage; }
+    public static int getFireballFireSeconds() { return fireballFireSeconds; }
+    public static int getFlameCloakDurationSeconds() { return flameCloakDurationSeconds; }
+    public static double getFlameCloakRadius() { return flameCloakRadius; }
+    public static int getFlameCloakDamage() { return flameCloakDamage; }
+    public static int getFlameCloakFireSeconds() { return flameCloakFireSeconds; }
+    public static int getFlameWallDamage() { return flameWallDamage; }
+    public static int getFlameWallFireSeconds() { return flameWallFireSeconds; }
+    public static int getFlameWallLength() { return flameWallLength; }
+
     public static synchronized void load() {
         try {
             Path configDir = FabricLoader.getInstance().getConfigDir();
@@ -140,6 +161,15 @@ public class TalentConfig {
         json.addProperty("maxHitsPerTarget", maxHitsPerTarget);
         json.addProperty("pyromancyBaseXp", pyromancyBaseXp);
         json.addProperty("pyromancyXpPerLevel", pyromancyXpPerLevel);
+        json.addProperty("fireballDamage", fireballDamage);
+        json.addProperty("fireballFireSeconds", fireballFireSeconds);
+        json.addProperty("flameCloakDurationSeconds", flameCloakDurationSeconds);
+        json.addProperty("flameCloakRadius", flameCloakRadius);
+        json.addProperty("flameCloakDamage", flameCloakDamage);
+        json.addProperty("flameCloakFireSeconds", flameCloakFireSeconds);
+        json.addProperty("flameWallDamage", flameWallDamage);
+        json.addProperty("flameWallFireSeconds", flameWallFireSeconds);
+        json.addProperty("flameWallLength", flameWallLength);
 
         try (FileWriter writer = new FileWriter(file)) {
             GSON.toJson(json, writer);
@@ -202,7 +232,24 @@ public class TalentConfig {
                 pyromancyXpPerLevel = Math.max(MIN_XP_PER_LEVEL, Math.min(MAX_XP_PER_LEVEL, json.get("pyromancyXpPerLevel").getAsInt()));
             }
 
+            if (json.has("fireballDamage")) fireballDamage = Math.max(1, Math.min(40, json.get("fireballDamage").getAsInt()));
+            if (json.has("fireballFireSeconds")) fireballFireSeconds = Math.max(0, Math.min(30, json.get("fireballFireSeconds").getAsInt()));
+            if (json.has("flameCloakDurationSeconds")) flameCloakDurationSeconds = Math.max(1, Math.min(60, json.get("flameCloakDurationSeconds").getAsInt()));
+            if (json.has("flameCloakRadius")) flameCloakRadius = Math.max(1.0, Math.min(12.0, json.get("flameCloakRadius").getAsDouble()));
+            if (json.has("flameCloakDamage")) flameCloakDamage = Math.max(1, Math.min(30, json.get("flameCloakDamage").getAsInt()));
+            if (json.has("flameCloakFireSeconds")) flameCloakFireSeconds = Math.max(0, Math.min(30, json.get("flameCloakFireSeconds").getAsInt()));
+            if (json.has("flameWallDamage")) flameWallDamage = Math.max(1, Math.min(30, json.get("flameWallDamage").getAsInt()));
+            if (json.has("flameWallFireSeconds")) flameWallFireSeconds = Math.max(0, Math.min(30, json.get("flameWallFireSeconds").getAsInt()));
+            if (json.has("flameWallLength")) flameWallLength = Math.max(1, Math.min(24, json.get("flameWallLength").getAsInt()));
+
             milestone2Level = Math.max(milestone1Level + 1, milestone2Level);
+
+            // Migração leve: torna os novos parâmetros visíveis em configs existentes sem
+            // exigir que o administrador descubra os nomes por tentativa e erro.
+            addExpansionDefaultsIfMissing(json);
+            try (FileWriter writer = new FileWriter(file)) {
+                GSON.toJson(json, writer);
+            }
 
             LOGGER.info("[Caos Arcana] Configuração carregada: Mana={}, Fogo={}s, Recuo={}, Marcos=[Lvl {}: +{}pts, Lvl {}: +{}pts], XP=[Hit={}, MaxHits={}, Base={}, PerLvl={}]",
                     rootManaCost, combustionFireSeconds, kineticKnockbackStrength,
@@ -212,6 +259,18 @@ public class TalentConfig {
             LOGGER.error("[Caos Arcana] Falha ao ler arquivo de configuração de talentos. Restaurando padrões.", e);
             resetToDefaults();
         }
+    }
+
+    private static void addExpansionDefaultsIfMissing(JsonObject json) {
+        if (!json.has("fireballDamage")) json.addProperty("fireballDamage", fireballDamage);
+        if (!json.has("fireballFireSeconds")) json.addProperty("fireballFireSeconds", fireballFireSeconds);
+        if (!json.has("flameCloakDurationSeconds")) json.addProperty("flameCloakDurationSeconds", flameCloakDurationSeconds);
+        if (!json.has("flameCloakRadius")) json.addProperty("flameCloakRadius", flameCloakRadius);
+        if (!json.has("flameCloakDamage")) json.addProperty("flameCloakDamage", flameCloakDamage);
+        if (!json.has("flameCloakFireSeconds")) json.addProperty("flameCloakFireSeconds", flameCloakFireSeconds);
+        if (!json.has("flameWallDamage")) json.addProperty("flameWallDamage", flameWallDamage);
+        if (!json.has("flameWallFireSeconds")) json.addProperty("flameWallFireSeconds", flameWallFireSeconds);
+        if (!json.has("flameWallLength")) json.addProperty("flameWallLength", flameWallLength);
     }
 
     public static void syncDefinitions(Path configDir) {
@@ -335,5 +394,14 @@ public class TalentConfig {
         maxHitsPerTarget = 5;
         pyromancyBaseXp = 50;
         pyromancyXpPerLevel = 25;
+        fireballDamage = 8;
+        fireballFireSeconds = 4;
+        flameCloakDurationSeconds = 10;
+        flameCloakRadius = 4.0;
+        flameCloakDamage = 5;
+        flameCloakFireSeconds = 5;
+        flameWallDamage = 6;
+        flameWallFireSeconds = 6;
+        flameWallLength = 12;
     }
 }

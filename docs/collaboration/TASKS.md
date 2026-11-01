@@ -306,3 +306,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Adicionado teste automatizado específico para os contratos de Bola de Fogo, Manto de Chamas e Muralha de Chamas (escola, níveis, custos, recargas, alcance e descrição). A suíte passou com **43 testes**, zero falhas/erros/ignorados.
 - O JAR não mudou de conteúdo em relação ao lote homologado; hash confirmado novamente nos ambientes do Lote B: `443B1E24E0CA5CF3136C97D6F2863821BC553740E810CFBFE7196E2818A10D49`.
 - Próxima frente autorizada: medição opcional de dano/fogo em alvo controlado ou preparação do próximo bloco de magias, sem alterar a árvore de talentos aprovada.
+
+### Configuração dos efeitos da expansão — 01/11/2026
+- Os efeitos provisórios das três novas magias agora podem ser ajustados no `config/caosarcana_talents.json`, sem recompilar: dano/fogo da Bola de Fogo; duração, raio, dano e fogo do Manto; dano, fogo e comprimento da Muralha.
+- Valores padrão preservados: Bola `8/4s`; Manto `10s`, raio `4`, dano `5`, fogo `5s`; Muralha dano `6`, fogo `6s`, comprimento `12`. Cada campo possui limites de segurança no carregamento.
+- O código de conjuração lê a configuração no servidor e as mensagens do Manto refletem sua duração efetiva. A metadata de custo/recarga continua no registro mestre, preservando a tela de seleção e os contratos já homologados.
+- `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados. O JAR atualizado foi copiado ao Lote B com SHA-256 `0A1E373C8A3611DF94B7082865B1E07C4A85CC093742A9E1BF664A1305779EF6` nos três artefatos.

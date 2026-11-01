@@ -991,6 +991,12 @@ public class CaosArcanaTests {
         assertEquals(15.0f, br.com.caosarcana.common.talent.TalentConfig.getRootManaCost());
         assertEquals(10, br.com.caosarcana.common.talent.TalentConfig.getCombustionFireSeconds());
         assertEquals(1.5, br.com.caosarcana.common.talent.TalentConfig.getKineticKnockbackStrength());
+        assertEquals(8, br.com.caosarcana.common.talent.TalentConfig.getFireballDamage());
+        assertEquals(4, br.com.caosarcana.common.talent.TalentConfig.getFireballFireSeconds());
+        assertEquals(10, br.com.caosarcana.common.talent.TalentConfig.getFlameCloakDurationSeconds());
+        assertEquals(4.0, br.com.caosarcana.common.talent.TalentConfig.getFlameCloakRadius());
+        assertEquals(6, br.com.caosarcana.common.talent.TalentConfig.getFlameWallDamage());
+        assertEquals(12, br.com.caosarcana.common.talent.TalentConfig.getFlameWallLength());
 
         // 2. Descrições informam o efeito; valores numéricos exatos são mostrados na tela de magia,
         // que usa o valor sincronizado do servidor para não exibir um número local divergente.

@@ -329,11 +329,11 @@ public class SpellCastHandler {
                 }
                 if (primary != null) {
                     final LivingEntity impactTarget = primary;
-                    impactTarget.hurt(player.damageSources().inFire(), 8.0f);
-                    impactTarget.setSecondsOnFire(4);
+                    impactTarget.hurt(player.damageSources().inFire(), br.com.caosarcana.common.talent.TalentConfig.getFireballDamage());
+                    impactTarget.setSecondsOnFire(br.com.caosarcana.common.talent.TalentConfig.getFireballFireSeconds());
                     for (LivingEntity nearby : level.getEntitiesOfClass(LivingEntity.class,
                             impactTarget.getBoundingBox().inflate(2.0), e -> e != player && e != impactTarget && e.isAlive() && !e.isAlliedTo(player))) {
-                        nearby.hurt(player.damageSources().inFire(), 4.0f);
+                        nearby.hurt(player.damageSources().inFire(), br.com.caosarcana.common.talent.TalentConfig.getFireballDamage() / 2.0f);
                         nearby.setSecondsOnFire(2);
                     }
                 }
@@ -342,21 +342,23 @@ public class SpellCastHandler {
                 player.displayClientMessage(Component.literal("§6[Piromancia] §cBola de Fogo explodiu! §b(-" + formatManaAmount(spell.manaCost()) + " Mana)"), true);
             }
             case "caosarcana:manto_de_chamas" -> {
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200, 0));
-                AABB area = player.getBoundingBox().inflate(4.0);
+                int cloakDuration = br.com.caosarcana.common.talent.TalentConfig.getFlameCloakDurationSeconds();
+                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, cloakDuration * 20, 0));
+                AABB area = player.getBoundingBox().inflate(br.com.caosarcana.common.talent.TalentConfig.getFlameCloakRadius());
                 for (LivingEntity enemy : level.getEntitiesOfClass(LivingEntity.class, area,
                         e -> e != player && e.isAlive() && !e.isAlliedTo(player))) {
-                    enemy.hurt(player.damageSources().inFire(), 5.0f);
-                    enemy.setSecondsOnFire(5);
+                    enemy.hurt(player.damageSources().inFire(), br.com.caosarcana.common.talent.TalentConfig.getFlameCloakDamage());
+                    enemy.setSecondsOnFire(br.com.caosarcana.common.talent.TalentConfig.getFlameCloakFireSeconds());
                 }
                 level.sendParticles(ParticleTypes.FLAME, player.getX(), player.getY() + 1.0, player.getZ(), 40, 2.0, 1.0, 2.0, 0.08);
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLAZE_AMBIENT, SoundSource.PLAYERS, 1.0f, 0.8f);
-                player.displayClientMessage(Component.literal("§6[Piromancia] §cManto de Chamas ativo por 10s!"), true);
+                player.displayClientMessage(Component.literal("§6[Piromancia] §cManto de Chamas ativo por " + cloakDuration + "s!"), true);
             }
             case "caosarcana:muralha_de_chamas" -> {
                 Vec3 start = player.getEyePosition();
                 Vec3 look = player.getLookAngle();
-                double length = spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 12.0;
+                double length = Math.min(spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 12.0,
+                        br.com.caosarcana.common.talent.TalentConfig.getFlameWallLength());
                 java.util.Set<LivingEntity> affected = new java.util.HashSet<>();
                 for (double d = 1.0; d <= length; d += 1.0) {
                     Vec3 center = start.add(look.scale(d));
@@ -364,8 +366,8 @@ public class SpellCastHandler {
                     for (LivingEntity enemy : level.getEntitiesOfClass(LivingEntity.class, new AABB(center, center).inflate(1.3),
                             e -> e != player && e.isAlive() && !e.isAlliedTo(player) && !affected.contains(e))) {
                         affected.add(enemy);
-                        enemy.hurt(player.damageSources().inFire(), 6.0f);
-                        enemy.setSecondsOnFire(6);
+                        enemy.hurt(player.damageSources().inFire(), br.com.caosarcana.common.talent.TalentConfig.getFlameWallDamage());
+                        enemy.setSecondsOnFire(br.com.caosarcana.common.talent.TalentConfig.getFlameWallFireSeconds());
                     }
                 }
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 1.0f, 0.7f);
