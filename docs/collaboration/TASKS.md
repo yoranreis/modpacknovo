@@ -324,3 +324,10 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Efeitos atuais são provisórios e diretos: dardo de alvo único, feixe concentrado e área de fogo ao redor do conjurador. Não há criação de blocos nem alteração de mundo permanente.
 - O contrato automatizado passou de 13 para 16 magias universais. `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR copiado exclusivamente ao Lote B com SHA-256 `1D464B5BB57DB95C6B5B7DD7EECF651FB1464FC2552B87ED49C6037EDFE6441F` nos ambientes de cliente e servidor. Homologação manual dessas três novas magias ainda pendente; as três anteriores continuam homologadas.
+
+### Homologação do lote maior de Piromancia — 01/11/2026
+- **PASSOU:** Dardo de Fogo abriu o estudo com requisito 1, custo 22, recarga 30 ticks e alcance 32; foi aprendido, listado na seleção e conjurado pela tecla V com mensagem de lançamento.
+- **PASSOU:** Incinerar abriu o estudo com requisito 35, custo 60, recarga 500 ticks e alcance 30; foi aprendido, listado e conjurado, com feixe/partículas visíveis e mensagem de canalização.
+- **PASSOU:** Tempestade de Fogo abriu o estudo com requisito 50, custo 80, recarga 800 ticks e alcance 8; foi aprendida, listada e ativada. A primeira tentativa foi bloqueada corretamente por mana insuficiente; após `/caos setmana 100`, a conjuração ativou a recarga de 800 ticks, confirmando o caminho de consumo/recarga.
+- Cliente e servidor do Lote B foram encerrados normalmente. OP temporário removido e `ops.json` restaurado para `[]`; nenhum processo Java de teste permaneceu.
+- Limite: a homologação confirmou jornada, requisitos, custo, bloqueio de mana, recarga e efeitos visuais; ainda não mede dano/fogo numérico contra alvo controlado.
