@@ -703,6 +703,33 @@ public class SpellCastHandler {
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_SPLASH, SoundSource.PLAYERS, 0.8f, 1.2f);
                 player.displayClientMessage(Component.literal("§b[Alteração] §fRespiração Aquática ativa por 60s!"), true);
             }
+            case "caosarcana:machado_vinculado" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 360, 1));
+                player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 360, 0));
+                level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1.0, player.getZ(), 22, 0.3, 0.5, 0.3, 0.05);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_NETHERITE, SoundSource.PLAYERS, 0.8f, 1.1f);
+                player.displayClientMessage(Component.literal("§9[Conjuração] §fMachado Vinculado fortaleceu seus golpes por 18s!"), true);
+            }
+            case "caosarcana:arco_vinculado" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 360, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 360, 1));
+                level.sendParticles(ParticleTypes.ENCHANT, player.getX(), player.getY() + 1.2, player.getZ(), 25, 0.4, 0.6, 0.4, 0.05);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 0.9f, 1.3f);
+                player.displayClientMessage(Component.literal("§9[Conjuração] §fArco Vinculado guiou seus disparos por 18s!"), true);
+            }
+            case "caosarcana:reanimar_morto_vivo" -> {
+                net.minecraft.world.entity.monster.Zombie zombie = EntityType.ZOMBIE.create(level);
+                if (zombie != null) {
+                    zombie.moveTo(player.getX() + 1.5, player.getY(), player.getZ() + 1.5, player.getYRot(), 0.0f);
+                    zombie.setPersistenceRequired();
+                    zombie.setCustomName(Component.literal("Servo Reanimado"));
+                    zombie.setCustomNameVisible(true);
+                    level.addFreshEntity(zombie);
+                }
+                level.sendParticles(ParticleTypes.SOUL, player.getX(), player.getY() + 0.5, player.getZ(), 30, 0.7, 0.5, 0.7, 0.06);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ZOMBIE_AMBIENT, SoundSource.PLAYERS, 0.9f, 0.7f);
+                player.displayClientMessage(Component.literal("§9[Conjuração] §fUm Servo Reanimado surgiu ao seu lado!"), true);
+            }
 
             // ==========================================
             // PODERES RACIAIS ESPECÍFICOS (10 RAÇAS)

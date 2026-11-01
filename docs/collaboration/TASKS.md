@@ -362,3 +362,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - Adicionados registro, grimórios, traduções, modelos temporários e efeitos server-side: resistência/absorção, visão noturna/brilho e respiração aquática/visão noturna.
 - O catálogo universal chegou a 28 magias. `gradlew test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados. A primeira tentativa de compilação detectou o tipo inválido de partícula `BLOCK`; corrigido para `POOF` antes da execução final.
 - JAR atualizado no Lote B com SHA-256 `BFF453496E84C709D7FE3A391D72AAD8571301B93CB5027A33397405B20E084B`. Homologação prática de Alteração será agrupada com a próxima sessão de magia utilitária.
+
+### Lote maior de Conjuração — 01/11/2026
+- Implementadas três magias universais de Conjuração: `Machado Vinculado` (nível 1), `Arco Vinculado` (nível 15) e `Reanimar Morto-Vivo` (nível 35).
+- Adicionados registro, grimórios, traduções, modelos temporários e efeitos server-side. As duas armas vinculadas aplicam aprimoramentos temporários; Reanimar cria um zumbi persistente nomeado como servo temporário da sessão.
+- O catálogo universal chegou a 31 magias. `gradlew test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR atualizado no Lote B com SHA-256 `DC441B0E60B2152558F8AD7E8810B42E633509FAAF935D367375D278A1F34784`. Homologação prática de Conjuração será agrupada com Alteração e as demais escolas utilitárias.

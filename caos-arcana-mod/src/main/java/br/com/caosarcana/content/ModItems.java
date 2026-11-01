@@ -34,6 +34,9 @@ public class ModItems {
     public static final Item GRIMORIO_ARMADURA_DE_PEDRA = new SpellGrimoireItem("caosarcana:armadura_de_pedra");
     public static final Item GRIMORIO_LUZ_ARCANA = new SpellGrimoireItem("caosarcana:luz_arcana");
     public static final Item GRIMORIO_RESPIRACAO_AQUATICA = new SpellGrimoireItem("caosarcana:respiracao_aquatica");
+    public static final Item GRIMORIO_MACHADO_VINCULADO = new SpellGrimoireItem("caosarcana:machado_vinculado");
+    public static final Item GRIMORIO_ARCO_VINCULADO = new SpellGrimoireItem("caosarcana:arco_vinculado");
+    public static final Item GRIMORIO_REANIMAR_MORTO_VIVO = new SpellGrimoireItem("caosarcana:reanimar_morto_vivo");
     public static final Item GRIMORIO_GEADA = new SpellGrimoireItem("caosarcana:geada_congelante");
     public static final Item GRIMORIO_RELAMPAGO = new SpellGrimoireItem("caosarcana:relampago_arcano");
     public static final Item GRIMORIO_CURA = new SpellGrimoireItem("caosarcana:toque_de_cura");
@@ -70,6 +73,9 @@ public class ModItems {
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_armadura_de_pedra"), GRIMORIO_ARMADURA_DE_PEDRA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_luz_arcana"), GRIMORIO_LUZ_ARCANA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_respiracao_aquatica"), GRIMORIO_RESPIRACAO_AQUATICA);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_machado_vinculado"), GRIMORIO_MACHADO_VINCULADO);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_arco_vinculado"), GRIMORIO_ARCO_VINCULADO);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_reanimar_morto_vivo"), GRIMORIO_REANIMAR_MORTO_VIVO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_geada"), GRIMORIO_GEADA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_relampago"), GRIMORIO_RELAMPAGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura"), GRIMORIO_CURA);

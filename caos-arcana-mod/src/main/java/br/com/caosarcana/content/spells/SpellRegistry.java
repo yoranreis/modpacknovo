@@ -151,6 +151,19 @@ public class SpellRegistry {
             "Permite respirar sob a água e enxergar com clareza por um período prolongado."
     ));
 
+    public static final SpellDefinition MACHADO_VINCULADO = register(new SpellDefinition(
+            "caosarcana:machado_vinculado", "Machado Vinculado", "conjuracao", "Conjuração", 1, 34.0f, 180, 0, 0,
+            "Invoca o poder de uma arma vinculada, fortalecendo os golpes do conjurador."
+    ));
+    public static final SpellDefinition ARCO_VINCULADO = register(new SpellDefinition(
+            "caosarcana:arco_vinculado", "Arco Vinculado", "conjuracao", "Conjuração", 15, 38.0f, 220, 0, 0,
+            "Vincula um arco espectral ao conjurador, aprimorando seus ataques à distância."
+    ));
+    public static final SpellDefinition REANIMAR_MORTO_VIVO = register(new SpellDefinition(
+            "caosarcana:reanimar_morto_vivo", "Reanimar Morto-Vivo", "conjuracao", "Conjuração", 35, 58.0f, 500, 1200, 0,
+            "Levanta um servo morto-vivo temporário para lutar ao lado do conjurador."
+    ));
+
     // --- DESTRUIÇÃO: CRIOMANCIA ---
     public static final SpellDefinition GEADA_CONGELANTE = register(new SpellDefinition(
             "caosarcana:geada_congelante",
