@@ -752,6 +752,56 @@ public class SpellCastHandler {
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.PLAYERS, 0.8f, 1.4f);
                 player.displayClientMessage(Component.literal("§5[Ilusão] §dFúria provocou " + mobs.size() + " criatura(s) próximas!"), true);
             }
+            case "caosarcana:calma" -> {
+                AABB area = player.getBoundingBox().inflate(spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 8.0);
+                List<Mob> mobs = level.getEntitiesOfClass(Mob.class, area, Mob::isAlive);
+                for (Mob mob : mobs) {
+                    mob.setTarget(null);
+                    mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 160, 0));
+                }
+                level.sendParticles(ParticleTypes.HEART, player.getX(), player.getY() + 1.2, player.getZ(), 18, 2.0, 0.8, 2.0, 0.03);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.PLAYERS, 0.8f, 1.0f);
+                player.displayClientMessage(Component.literal("§5[Ilusão] §dCalma pacificou " + mobs.size() + " criatura(s) próximas!"), true);
+            }
+            case "caosarcana:invisibilidade" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 600, 0));
+                level.sendParticles(ParticleTypes.SMOKE, player.getX(), player.getY() + 1.0, player.getZ(), 28, 0.4, 0.7, 0.4, 0.03);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.6f, 1.0f);
+                player.displayClientMessage(Component.literal("§5[Ilusão] §dInvisibilidade ativa por 30s!"), true);
+            }
+            case "caosarcana:circulo_de_protecao" -> {
+                AABB area = player.getBoundingBox().inflate(spell.maxDistanceBlocks() > 0 ? spell.maxDistanceBlocks() : 6.0);
+                List<LivingEntity> undead = level.getEntitiesOfClass(LivingEntity.class, area,
+                        e -> e.isAlive() && e.getMobType() == net.minecraft.world.entity.MobType.UNDEAD);
+                for (LivingEntity entity : undead) {
+                    entity.hurt(player.damageSources().magic(), 4.0f);
+                    Vec3 push = entity.position().subtract(player.position()).normalize().scale(0.8);
+                    entity.push(push.x, 0.35, push.z);
+                }
+                level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 0.2, player.getZ(), 36, 3.0, 0.1, 3.0, 0.02);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.8f, 1.2f);
+                player.displayClientMessage(Component.literal("§e[Restauração] §fCírculo de Proteção repeliu " + undead.size() + " morto(s)-vivo(s)!"), true);
+            }
+            case "caosarcana:barreira_maior" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 400, 1));
+                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 400, 1));
+                level.sendParticles(ParticleTypes.ENCHANT, player.getX(), player.getY() + 1.0, player.getZ(), 35, 0.8, 1.0, 0.8, 0.04);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 0.8f, 0.9f);
+                player.displayClientMessage(Component.literal("§e[Restauração] §fBarreira Maior ativa por 20s!"), true);
+            }
+            case "caosarcana:armadura_de_carvalho" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 320, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 320, 0));
+                level.sendParticles(ParticleTypes.COMPOSTER, player.getX(), player.getY() + 1.0, player.getZ(), 28, 0.5, 0.8, 0.5, 0.03);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.WOOD_PLACE, SoundSource.PLAYERS, 0.8f, 0.8f);
+                player.displayClientMessage(Component.literal("§2[Alteração] §fArmadura de Carvalho fortaleceu seu corpo por 16s!"), true);
+            }
+            case "caosarcana:armadura_de_ferro" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 600, 1));
+                level.sendParticles(ParticleTypes.CRIT, player.getX(), player.getY() + 1.0, player.getZ(), 30, 0.6, 0.8, 0.6, 0.04);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.4f, 1.5f);
+                player.displayClientMessage(Component.literal("§2[Alteração] §fArmadura de Ferro ativa por 30s!"), true);
+            }
 
             // ==========================================
             // PODERES RACIAIS ESPECÍFICOS (10 RAÇAS)

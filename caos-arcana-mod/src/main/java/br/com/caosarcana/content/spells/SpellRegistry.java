@@ -137,6 +137,14 @@ public class SpellRegistry {
             "caosarcana:barreira_menor", "Barreira Menor", "restauracao", "Restauração", 30, 45.0f, 300, 0, 0,
             "Forma uma barreira arcana que reduz o dano recebido temporariamente."
     ));
+    public static final SpellDefinition CIRCULO_DE_PROTECAO = register(new SpellDefinition(
+            "caosarcana:circulo_de_protecao", "Círculo de Proteção", "restauracao", "Restauração", 20, 42.0f, 320, 0, 6.0,
+            "Repele criaturas mortas-vivas próximas com um círculo sagrado de proteção."
+    ));
+    public static final SpellDefinition BARREIRA_MAIOR = register(new SpellDefinition(
+            "caosarcana:barreira_maior", "Barreira Maior", "restauracao", "Restauração", 50, 70.0f, 600, 0, 0,
+            "Forma uma barreira arcana robusta que reduz fortemente o dano recebido."
+    ));
 
     public static final SpellDefinition ARMADURA_DE_PEDRA = register(new SpellDefinition(
             "caosarcana:armadura_de_pedra", "Armadura de Pedra", "alteracao", "Alteração", 1, 26.0f, 180, 0, 0,
@@ -149,6 +157,14 @@ public class SpellRegistry {
     public static final SpellDefinition RESPIRACAO_AQUATICA = register(new SpellDefinition(
             "caosarcana:respiracao_aquatica", "Respiração Aquática", "alteracao", "Alteração", 30, 32.0f, 300, 0, 0,
             "Permite respirar sob a água e enxergar com clareza por um período prolongado."
+    ));
+    public static final SpellDefinition ARMADURA_DE_CARVALHO = register(new SpellDefinition(
+            "caosarcana:armadura_de_carvalho", "Armadura de Carvalho", "alteracao", "Alteração", 10, 22.0f, 160, 0, 0,
+            "Reveste o conjurador com a resistência viva do carvalho."
+    ));
+    public static final SpellDefinition ARMADURA_DE_FERRO = register(new SpellDefinition(
+            "caosarcana:armadura_de_ferro", "Armadura de Ferro", "alteracao", "Alteração", 35, 48.0f, 360, 0, 0,
+            "Endurece o corpo com uma proteção metálica duradoura."
     ));
 
     public static final SpellDefinition MACHADO_VINCULADO = register(new SpellDefinition(
@@ -175,6 +191,14 @@ public class SpellRegistry {
     public static final SpellDefinition FURIA = register(new SpellDefinition(
             "caosarcana:furia", "Fúria", "ilusao", "Ilusão", 30, 35.0f, 300, 0, 10.0,
             "Instiga criaturas próximas a entrarem em combate contra o conjurador."
+    ));
+    public static final SpellDefinition CALMA = register(new SpellDefinition(
+            "caosarcana:calma", "Calma", "ilusao", "Ilusão", 20, 32.0f, 260, 0, 8.0,
+            "Acalma criaturas hostis próximas e interrompe seus alvos atuais."
+    ));
+    public static final SpellDefinition INVISIBILIDADE = register(new SpellDefinition(
+            "caosarcana:invisibilidade", "Invisibilidade", "ilusao", "Ilusão", 40, 55.0f, 500, 0, 0,
+            "Oculta completamente o conjurador por um período limitado."
     ));
 
     // --- DESTRUIÇÃO: CRIOMANCIA ---

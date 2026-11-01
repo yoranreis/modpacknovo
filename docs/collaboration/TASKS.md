@@ -375,3 +375,10 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - O catálogo universal chegou a 34 magias. A primeira compilação detectou comparação inválida entre `Mob` e `ServerPlayer` no filtro de Fúria; o filtro foi corrigido para aceitar apenas mobs vivos antes da execução final.
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR atualizado exclusivamente nos ambientes do Lote B com SHA-256 `698DC0013E2057EAA380421D2A0CA0E2A6F54C5F21DF5E9F689466B46A7CE229`. Homologação manual de Ilusão ainda pendente; os efeitos permanecem provisórios e configuráveis apenas quando já cobertos pela configuração existente.
+
+### Lote utilitário de Restauração, Alteração e Ilusão — 01/11/2026
+- Implementadas seis magias universais aprovadas no catálogo: `Círculo de Proteção` e `Barreira Maior` (Restauração); `Armadura de Carvalho` e `Armadura de Ferro` (Alteração); `Calma` e `Invisibilidade` (Ilusão).
+- Cada magia recebeu registro, grimório, tradução, modelo temporário e caminho completo de estudo, seleção, validação e conjuração no servidor. Efeitos são provisórios e server-side: repulsão/dano a mortos-vivos, resistência/absorção, pacificação de mobs e invisibilidade.
+- Adicionado `/caos ajuda` com exemplos dos comandos administrativos e lista das escolas. A ajuda esclarece que o aprendizado usa `/caos learn "caosarcana:<id>"`, enquanto a árvore usa `/caos talent open`.
+- O catálogo universal chegou a 40 magias. `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR copiado exclusivamente ao Lote B com SHA-256 `F0E28E0E116CFB344B792512CF45A50896387C8F3354F6ACF97BC6F2A7882B6E` nos ambientes de cliente e servidor. Homologação manual deste lote ainda pendente.

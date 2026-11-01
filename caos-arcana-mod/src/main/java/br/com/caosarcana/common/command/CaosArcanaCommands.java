@@ -67,6 +67,17 @@ public class CaosArcanaCommands {
                     return 1;
                 })
             )
+            .then(Commands.literal("ajuda")
+                .executes(ctx -> {
+                    ctx.getSource().sendSuccess(() -> Component.literal("§6--- [Caos Arcana: Ajuda] ---"), false);
+                    ctx.getSource().sendSuccess(() -> Component.literal("§e/caos status §7- mostra raça, níveis, mana e magias"), false);
+                    ctx.getSource().sendSuccess(() -> Component.literal("§e/caos setschool <escola> <1-100> §7- ajusta uma escola (OP 2)"), false);
+                    ctx.getSource().sendSuccess(() -> Component.literal("§e/caos learn \"caosarcana:<id>\" §7- ensina uma magia (OP 2)"), false);
+                    ctx.getSource().sendSuccess(() -> Component.literal("§e/caos spells §7- lista magias conhecidas e a magia ativa"), false);
+                    ctx.getSource().sendSuccess(() -> Component.literal("§7Escolas: piromancia, criomancia, eletromancia, restauracao, alteracao, conjuracao, ilusao"), false);
+                    return 1;
+                })
+            )
             .then(Commands.literal("resetrace")
                 .requires(source -> source.hasPermission(2))
                 .executes(ctx -> {
