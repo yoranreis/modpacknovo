@@ -279,3 +279,10 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - O contrato do teste de magias universais foi atualizado de 10 para 13 entradas. `gradlew.bat test build --offline --no-daemon --console=plain` passou com JDK 25.0.2, alvo Java 17: 43 testes, zero falhas/erros/ignorados.
 - Primeiro ensaio falhou por cache isolado sem o plugin Loom; a repetição usando o cache Gradle padrão concluiu com sucesso. Nenhuma homologação manual dos três efeitos foi executada nesta etapa; números e forma visual permanecem provisórios.
 - Próxima ação: copiar o JAR recém-buildado somente após confirmar os processos do Lote B fechados, verificar hashes e executar até cinco verificações manuais da jornada. Depois, revisar valores com base na homologação antes de avançar para o próximo bloco de magias.
+
+### Integração dos grimórios da expansão — 01/11/2026
+- Registrados os itens `grimorio_bola_de_fogo`, `grimorio_manto_de_chamas` e `grimorio_muralha_de_chamas`, todos ligados ao `SpellGrimoireItem` e aos IDs do `SpellRegistry`. O estudo agora percorre o mesmo fluxo persistente já usado pela Centelha; não foi criada distribuição de loot nova, portanto a garantia de dungeon simples continua exclusiva da Centelha até decisão de design.
+- Adicionadas traduções PT-BR/EN-US e modelos de item reutilizando temporariamente a textura existente da Centelha. A textura própria de cada grimório permanece uma melhoria visual posterior, sem bloquear o estudo funcional.
+- `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
+- JAR atualizado copiado apenas para `run/teste_lote_b/client_env/mods` e `server_env/mods`, com processos Java ausentes no momento da cópia. SHA-256 confirmado nos três artefatos: `443B1E24E0CA5CF3136C97D6F2863821BC553740E810CFBFE7196E2818A10D49`.
+- Homologação visual ainda não executada. Próxima ação prática: abrir os três grimórios no cliente Lote B, confirmar a tela de estudo, aprender cada magia e testar seleção/conjuração; depois verificar reconexão e bloqueio de nível.

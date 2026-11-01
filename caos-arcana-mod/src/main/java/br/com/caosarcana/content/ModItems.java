@@ -16,6 +16,9 @@ public class ModItems {
 
     // Grimórios Arcanos de Magias Universais (Escolas de Skyrim)
     public static final Item CENTELHA_IGNEA = new FlameSparkItem();
+    public static final Item GRIMORIO_BOLA_DE_FOGO = new SpellGrimoireItem("caosarcana:bola_de_fogo");
+    public static final Item GRIMORIO_MANTO_DE_CHAMAS = new SpellGrimoireItem("caosarcana:manto_de_chamas");
+    public static final Item GRIMORIO_MURALHA_DE_CHAMAS = new SpellGrimoireItem("caosarcana:muralha_de_chamas");
     public static final Item GRIMORIO_GEADA = new SpellGrimoireItem("caosarcana:geada_congelante");
     public static final Item GRIMORIO_RELAMPAGO = new SpellGrimoireItem("caosarcana:relampago_arcano");
     public static final Item GRIMORIO_CURA = new SpellGrimoireItem("caosarcana:toque_de_cura");
@@ -34,6 +37,9 @@ public class ModItems {
 
         // Grimórios
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("centelha_ignea"), CENTELHA_IGNEA);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_bola_de_fogo"), GRIMORIO_BOLA_DE_FOGO);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_manto_de_chamas"), GRIMORIO_MANTO_DE_CHAMAS);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_muralha_de_chamas"), GRIMORIO_MURALHA_DE_CHAMAS);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_geada"), GRIMORIO_GEADA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_relampago"), GRIMORIO_RELAMPAGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura"), GRIMORIO_CURA);
