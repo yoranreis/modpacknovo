@@ -356,3 +356,9 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - As mensagens do servidor confirmaram o aprendizado de Dardo de Gelo, Espiga de Gelo, Nevasca, Faísca Elétrica, Corrente de Relâmpago, Tempestade de Raios, Cura Básica, Cura Rápida e Barreira Menor.
 - Cliente e servidor foram encerrados normalmente antes da cópia do JAR. Build/test passou com 43 testes; JAR atualizado no Lote B com SHA-256 `16015314E0E3A41BB030D3DBE9147DD5801AD2C352A538C67C96706A4C9F1B5E`.
 - Limite: a sessão confirmou aprendizado, paginação, seleção e conjuração representativa; não declara nove efeitos individuais como homologados numericamente. A melhoria de paginação é necessária antes de ampliar o catálogo além das 25 magias.
+
+### Lote maior de Alteração — 01/11/2026
+- Implementadas três magias universais de Alteração: `Armadura de Pedra` (nível 1), `Luz Arcana` (nível 15) e `Respiração Aquática` (nível 30).
+- Adicionados registro, grimórios, traduções, modelos temporários e efeitos server-side: resistência/absorção, visão noturna/brilho e respiração aquática/visão noturna.
+- O catálogo universal chegou a 28 magias. `gradlew test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados. A primeira tentativa de compilação detectou o tipo inválido de partícula `BLOCK`; corrigido para `POOF` antes da execução final.
+- JAR atualizado no Lote B com SHA-256 `BFF453496E84C709D7FE3A391D72AAD8571301B93CB5027A33397405B20E084B`. Homologação prática de Alteração será agrupada com a próxima sessão de magia utilitária.

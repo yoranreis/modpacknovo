@@ -138,6 +138,19 @@ public class SpellRegistry {
             "Forma uma barreira arcana que reduz o dano recebido temporariamente."
     ));
 
+    public static final SpellDefinition ARMADURA_DE_PEDRA = register(new SpellDefinition(
+            "caosarcana:armadura_de_pedra", "Armadura de Pedra", "alteracao", "Alteração", 1, 26.0f, 180, 0, 0,
+            "Endurece a pele do conjurador com a resistência mineral da pedra."
+    ));
+    public static final SpellDefinition LUZ_ARCANA = register(new SpellDefinition(
+            "caosarcana:luz_arcana", "Luz Arcana", "alteracao", "Alteração", 15, 20.0f, 80, 0, 0,
+            "Emite uma luz arcana intensa que revela o ambiente e criaturas próximas."
+    ));
+    public static final SpellDefinition RESPIRACAO_AQUATICA = register(new SpellDefinition(
+            "caosarcana:respiracao_aquatica", "Respiração Aquática", "alteracao", "Alteração", 30, 32.0f, 300, 0, 0,
+            "Permite respirar sob a água e enxergar com clareza por um período prolongado."
+    ));
+
     // --- DESTRUIÇÃO: CRIOMANCIA ---
     public static final SpellDefinition GEADA_CONGELANTE = register(new SpellDefinition(
             "caosarcana:geada_congelante",

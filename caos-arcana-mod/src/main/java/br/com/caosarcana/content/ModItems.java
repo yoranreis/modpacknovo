@@ -31,6 +31,9 @@ public class ModItems {
     public static final Item GRIMORIO_CURA_BASICA = new SpellGrimoireItem("caosarcana:cura_basica");
     public static final Item GRIMORIO_CURA_RAPIDA = new SpellGrimoireItem("caosarcana:cura_rapida");
     public static final Item GRIMORIO_BARREIRA_MENOR = new SpellGrimoireItem("caosarcana:barreira_menor");
+    public static final Item GRIMORIO_ARMADURA_DE_PEDRA = new SpellGrimoireItem("caosarcana:armadura_de_pedra");
+    public static final Item GRIMORIO_LUZ_ARCANA = new SpellGrimoireItem("caosarcana:luz_arcana");
+    public static final Item GRIMORIO_RESPIRACAO_AQUATICA = new SpellGrimoireItem("caosarcana:respiracao_aquatica");
     public static final Item GRIMORIO_GEADA = new SpellGrimoireItem("caosarcana:geada_congelante");
     public static final Item GRIMORIO_RELAMPAGO = new SpellGrimoireItem("caosarcana:relampago_arcano");
     public static final Item GRIMORIO_CURA = new SpellGrimoireItem("caosarcana:toque_de_cura");
@@ -64,6 +67,9 @@ public class ModItems {
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura_basica"), GRIMORIO_CURA_BASICA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura_rapida"), GRIMORIO_CURA_RAPIDA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_barreira_menor"), GRIMORIO_BARREIRA_MENOR);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_armadura_de_pedra"), GRIMORIO_ARMADURA_DE_PEDRA);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_luz_arcana"), GRIMORIO_LUZ_ARCANA);
+        Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_respiracao_aquatica"), GRIMORIO_RESPIRACAO_AQUATICA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_geada"), GRIMORIO_GEADA);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_relampago"), GRIMORIO_RELAMPAGO);
         Registry.register(BuiltInRegistries.ITEM, CaosArcana.id("grimorio_cura"), GRIMORIO_CURA);

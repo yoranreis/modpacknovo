@@ -682,6 +682,27 @@ public class SpellCastHandler {
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 0.8f, 1.3f);
                 player.displayClientMessage(Component.literal("§a[Restauração] §fBarreira Menor protegeu você por 8s!"), true);
             }
+            case "caosarcana:armadura_de_pedra" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 900, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 900, 0));
+                level.sendParticles(ParticleTypes.POOF, player.getX(), player.getY() + 1.0, player.getZ(), 35, 0.5, 0.8, 0.5, 0.05);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARMOR_EQUIP_IRON, SoundSource.PLAYERS, 1.0f, 0.9f);
+                player.displayClientMessage(Component.literal("§2[Alteração] §fArmadura de Pedra reforçou seu corpo por 45s!"), true);
+            }
+            case "caosarcana:luz_arcana" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 1200, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 1200, 0));
+                level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1.5, player.getZ(), 30, 0.5, 0.8, 0.5, 0.06);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.8f, 1.6f);
+                player.displayClientMessage(Component.literal("§e[Alteração] §fLuz Arcana revelou o caminho por 60s!"), true);
+            }
+            case "caosarcana:respiracao_aquatica" -> {
+                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 1200, 0));
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 1200, 0));
+                level.sendParticles(ParticleTypes.BUBBLE, player.getX(), player.getY() + 1.0, player.getZ(), 25, 0.4, 0.5, 0.4, 0.04);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_SPLASH, SoundSource.PLAYERS, 0.8f, 1.2f);
+                player.displayClientMessage(Component.literal("§b[Alteração] §fRespiração Aquática ativa por 60s!"), true);
+            }
 
             // ==========================================
             // PODERES RACIAIS ESPECÍFICOS (10 RAÇAS)
