@@ -286,3 +286,8 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 43 testes, zero falhas/erros/ignorados.
 - JAR atualizado copiado apenas para `run/teste_lote_b/client_env/mods` e `server_env/mods`, com processos Java ausentes no momento da cópia. SHA-256 confirmado nos três artefatos: `443B1E24E0CA5CF3136C97D6F2863821BC553740E810CFBFE7196E2818A10D49`.
 - Homologação visual ainda não executada. Próxima ação prática: abrir os três grimórios no cliente Lote B, confirmar a tela de estudo, aprender cada magia e testar seleção/conjuração; depois verificar reconexão e bloqueio de nível.
+
+### Revisão da árvore de talentos após a expansão — 01/11/2026
+- A árvore permanece deliberadamente com a raiz e os dois focos mutuamente exclusivos. A proposta aprovada restringe o protótipo aos modificadores da Centelha e exclui novos feitiços ativos como nós; portanto não foram inventados nós para Bola de Fogo, Manto ou Muralha.
+- Os três novos grimórios integram a camada de estudo/conhecimento, enquanto a especialização continua sendo concedida pelos marcos 10/25 e apresentada pelo Pufferfish. Essa separação preserva a ponte opcional e evita duplicar a fonte de verdade.
+- Nenhuma alteração adicional de árvore foi necessária neste lote. A próxima validação é prática no cliente Lote B, não mais uma microedição de JSON.
