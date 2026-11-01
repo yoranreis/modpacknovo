@@ -418,4 +418,10 @@ Este quadro rastreia as tarefas em andamento, disponíveis e concluídas no proj
 - O cliente não pôde concluir a homologação nesta tentativa porque o launcher isolado recebeu HTTP 401 na autenticação; nenhuma sessão do perfil principal foi usada.
 - `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 44 testes, zero falhas/erros/ignorados.
 - JAR atualizado no Lote B com SHA-256 `5F130C4346F2DA8E18CD040D766C260BC76BD35485C6A15E1C503E432BD902FF`.
+
+### Parser de comandos administrativos — 01/11/2026
+- O argumento de `/caos learn` foi migrado de texto genérico para `ResourceLocationArgument`, com validação e autocompletar nativos do Minecraft.
+- A forma recomendada agora é sem aspas: `/caos learn caosarcana:clarividencia`. O comando continua restrito a OP nível 2 e a ajuda foi atualizada.
+- `gradlew.bat test build --offline --no-daemon --console=plain`: **SUCESSO**, 44 testes, zero falhas/erros/ignorados.
+- JAR atualizado no Lote B com SHA-256 `A39BF90635B9E94CAD1585C71B7FC847928C3FE59B4071D7ED09139B8886F301`. Homologação prática continua pendente do bloqueio HTTP 401 do launcher isolado.
 - Adicionado contrato automatizado para as oito magias mais recentes, validando escola, mana, recarga e descrição. A suíte final passou com **44 testes**, zero falhas/erros/ignorados; o conteúdo do JAR permaneceu idêntico.

@@ -20,6 +20,7 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -72,7 +73,7 @@ public class CaosArcanaCommands {
                     ctx.getSource().sendSuccess(() -> Component.literal("§6--- [Caos Arcana: Ajuda] ---"), false);
                     ctx.getSource().sendSuccess(() -> Component.literal("§e/caos status §7- mostra raça, níveis, mana e magias"), false);
                     ctx.getSource().sendSuccess(() -> Component.literal("§e/caos setschool <escola> <1-100> §7- ajusta uma escola (OP 2)"), false);
-                    ctx.getSource().sendSuccess(() -> Component.literal("§e/caos learn \"caosarcana:<id>\" §7- ensina uma magia (OP 2)"), false);
+                    ctx.getSource().sendSuccess(() -> Component.literal("§e/caos learn caosarcana:<id> §7- ensina uma magia (OP 2)"), false);
                     ctx.getSource().sendSuccess(() -> Component.literal("§e/caos spells §7- lista magias conhecidas e a magia ativa"), false);
                     ctx.getSource().sendSuccess(() -> Component.literal("§7Escolas: piromancia, criomancia, eletromancia, restauracao, alteracao, conjuracao, ilusao"), false);
                     return 1;
@@ -236,9 +237,9 @@ public class CaosArcanaCommands {
             )
             .then(Commands.literal("learn")
                 .requires(source -> source.hasPermission(2))
-                .then(Commands.argument("spell", StringArgumentType.string())
+                .then(Commands.argument("spell", ResourceLocationArgument.id())
                     .executes(ctx -> {
-                        String spellId = StringArgumentType.getString(ctx, "spell");
+                        String spellId = ResourceLocationArgument.getId(ctx, "spell").toString();
                         ServerPlayer player = ctx.getSource().getPlayerOrException();
                         if (player instanceof IRPGPlayerData rpgPlayer) {
                             Optional<SpellDefinition> spellOpt = SpellRegistry.get(spellId);
